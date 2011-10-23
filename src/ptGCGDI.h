@@ -1,9 +1,9 @@
 #ifndef ptGCGDI_H_
 #define ptGCGDI_H_
 
-#if ptUSE_GCGDI == 1
-
 #include "ptGC.h"
+
+#if ptUSE_GCGDI == 1
 
 class ptGCGDI : public ptGC
 {

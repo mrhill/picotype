@@ -5,8 +5,8 @@
     Interface definition for graphics context.
 */
 
-#include "babel/defs.h"
-#include "babel/heap.h"
+#include <babel/defs.h>
+#include <babel/heap.h>
 #include "ptFont.h"
 #include "ptSprite.h"
 #include "ptPalMan.h"

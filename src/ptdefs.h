@@ -9,11 +9,9 @@
 */
 #define ptNEEDCONFIGVER 4
 
-#include "babel/defs.h" /* for auto config */
+#include <babel/defs.h> /* for auto config */
 #include "ptconfig.h"   /* include user config, will search in
-                           PTCONFIGDIR or include/picotype in this
-                           order
-                        */
+                           local app project dir or include/picotype in this order */
 
 #if ptCONFIGVER != ptNEEDCONFIGVER
 #error ptconfig.h version mismatch

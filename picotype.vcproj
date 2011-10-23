@@ -42,8 +42,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\babel\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_LIB;UNICODE;ptUSE_GCGDI=1"
+				AdditionalIncludeDirectories="..\babel\include;\Qt\4.6.2\include\QtCore;\Qt\4.6.2\include\QtGui;\Qt\4.6.2\include"
+				PreprocessorDefinitions="_DEBUG;WIN32;_LIB;UNICODE;ptUSE_GCGDI=1;ptUSE_GCQT=1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -119,8 +119,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\babel\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;UNICODE;ptUSE_GCGDI=1"
+				AdditionalIncludeDirectories="..\babel\include;\Qt\4.6.2\include\QtCore;\Qt\4.6.2\include\QtGui;\Qt\4.6.2\include"
+				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;UNICODE;ptUSE_GCGDI=1;ptUSE_GCQT=1"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				StructMemberAlignment="3"
@@ -355,6 +355,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\ptGCQT.cpp"
+				>
+			</File>
+			<File
 				RelativePath="src\ptImage.cpp"
 				>
 				<FileConfiguration
@@ -453,63 +457,75 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="include\picotype\pt.h"
+				RelativePath=".\src\pt.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptdefs.h"
+				RelativePath=".\src\ptcol.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptFont.h"
+				RelativePath=".\src\ptconfig.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptFont_mem.h"
+				RelativePath=".\src\ptdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptFont_win.h"
+				RelativePath=".\src\ptFont.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptFontMan.h"
+				RelativePath=".\src\ptFont_mem.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptGC.h"
+				RelativePath=".\src\ptFont_win.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptGC16.h"
+				RelativePath=".\src\ptFontMan.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptGC8.h"
+				RelativePath=".\src\ptGC.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptGCGDI.h"
+				RelativePath=".\src\ptGC16.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptImage.h"
+				RelativePath=".\src\ptGC8.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptImage_jpeglib.h"
+				RelativePath=".\src\ptGCGDI.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\picotype\ptPal.h"
+				RelativePath=".\src\ptGCQT.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptPalMan.h"
+				RelativePath=".\src\ptImage.h"
 				>
 			</File>
 			<File
-				RelativePath="include\picotype\ptSprite.h"
+				RelativePath=".\src\ptImage_jpeglib.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ptPal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ptPalMan.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ptSprite.h"
 				>
 			</File>
 		</Filter>

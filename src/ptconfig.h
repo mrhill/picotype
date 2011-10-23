@@ -56,9 +56,13 @@
 #define ptUSE_FONTWIN 1
 #endif
 
+/** Compile support for Windows GDI via ptGCGDI. */
 #if bbOS == bbOS_WIN32
 #define ptUSE_GCGDI 1
 #endif
+
+/** Compile support for QT QPainter via ptGCQT. */
+//#define ptUSE_GCQT 1
 
 /** Version of this ptconfig.h file, do not change.
      - V2 : added ptTEXTBOX_HEAPH
