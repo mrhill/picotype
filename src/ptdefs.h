@@ -80,7 +80,7 @@ enum ptCOLFMT
     ptCOLFMT_BGR888,
     ptCOLFMT_RGBA8888,
     ptCOLFMT_BGRA8888,
-    ptCOLFMT_YUV420P,       // these 6 must be in this order:
+    ptCOLFMT_YUV420P,       // these 6 must be in this order:  // only YUV below this point
     ptCOLFMT_YUV420P_YV12,  // - even/odd offset is UV/VU order
     ptCOLFMT_YUV420P_IMC3,  // - IMCx need to be in a group
     ptCOLFMT_YUV420P_IMC1,  //
@@ -88,6 +88,8 @@ enum ptCOLFMT
     ptCOLFMT_YUV420P_IMC2,  //
     ptCOLFMT_YUV420P_NV12,//Y,UV
     ptCOLFMT_YUV420P_NV21,//Y,VU
+    ptCOLFMT_YUV420P_12,
+    ptCOLFMT_YUV420P_16,
     ptCOLFMT_YUYV,
     ptCOLFMT_UYVY,
     ptCOLFMT_YVYU,
@@ -152,6 +154,8 @@ enum ptCOLFMTFLAG
     {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
     {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /**/\
     {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
+    {/*ptCOLFMT_YUV420P_12   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
+    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
     {/*ptCOLFMT_YUYV         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_UYVY         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YVYU         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
@@ -226,6 +230,8 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     bbT("YVU420 planar IMC2"),\
     bbT("YVU420 planar NV12"),\
     bbT("YVU420 planar NV21"),\
+    bbT("YVU420 planar 12-bit"),\
+    bbT("YVU420 planar 16-bit"),\
     bbT("YUV422 YUYV"),\
     bbT("YUV422 UYVY"),\
     bbT("YUV422 YVYU"),\
@@ -240,7 +246,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
 #define ptCOLFMTNAMEMAXLEN 24
 
 /** Index of FourCC code in colour format name, or 0 if none. */
-#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,7,7,7,7,14,0,0,0,0
+#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,7,7,7,7,14,0,0,0,0
 
 /** YUV to RGB conversion matrix IDs. */
 enum ptYUV2RGBID

@@ -24,6 +24,8 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
     case ptCOLFMT_YUV420P_YV12:
     case ptCOLFMT_YUV420P_IMC3:
     case ptCOLFMT_YUV420P_IMC1:
+    case ptCOLFMT_YUV420P_12:
+    case ptCOLFMT_YUV420P_16:
         this->pPlane[0] = pPlanes[0];
         this->pPlane[1] = pPlanes[0] + stride;
         this->pPlane[2] = pPlanes[1];
@@ -500,6 +502,118 @@ static void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
             int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
             int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
             int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+        
+            int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+            register int p;
+            if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // B0
+            if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4+2] = p; // B1
+            tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+            if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // G0
+            if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4+1] = p; // G1
+            tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+            if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[0] = p; // R0
+            if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4] = p; // R1
+            pDst[3] = pDst[4+3] = 255;
+            pDst += 8;
+        }
+        
+        pSrcU -= width>>1;
+        pSrcV -= width>>1;
+        pSrcY = pSrcY1;
+
+    } while (pSrcY && --i);
+}
+
+static void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
+                                           const bbU8* pSrcY1,
+                                           const bbU8* pSrcU,
+                                           const bbU8* pSrcV,
+                                           bbU8* pDst,
+                                           bbU32 width,
+                                           const bbS16* pYUV2RGB,
+                                           unsigned shift)
+{
+    // converts 2 lines, dst stride is width*4
+    const bbU8* pSrcY = pSrcY0;
+    bbUINT i=2;
+    do
+    {
+        bbU8* const pDstEnd = pDst + (width<<2);
+
+        while (pDst < pDstEnd)
+        {
+            int const y0 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+            int const y1 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+            int const u  = ((int)(bbLD16LE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
+            int const v  = ((int)(bbLD16LE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
+        
+            int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+            register int p;
+            if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // B0
+            if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4+2] = p; // B1
+            tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+            if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // G0
+            if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4+1] = p; // G1
+            tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+            if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[0] = p; // R0
+            if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[4] = p; // R1
+            pDst[3] = pDst[4+3] = 255;
+            pDst += 8;
+        }
+        
+        pSrcU -= width>>1;
+        pSrcV -= width>>1;
+        pSrcY = pSrcY1;
+
+    } while (pSrcY && --i);
+}
+
+static void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0,
+                                           const bbU8* pSrcY1,
+                                           const bbU8* pSrcU,
+                                           const bbU8* pSrcV,
+                                           bbU8* pDst,
+                                           bbU32 width,
+                                           const bbS16* pYUV2RGB,
+                                           unsigned shift)
+{
+    // converts 2 lines, dst stride is width*4
+    const bbU8* pSrcY = pSrcY0;
+    bbUINT i=2;
+    do
+    {
+        bbU8* const pDstEnd = pDst + (width<<2);
+
+        while (pDst < pDstEnd)
+        {
+            int const y0 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+            int const y1 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+            int const u  = ((int)(bbLD16BE(pSrcU)>>shift)*0 + (int)pYUV2RGB[1]*0); pSrcU+=2;
+            int const v  = ((int)(bbLD16BE(pSrcV)>>shift)*0 + (int)pYUV2RGB[2]*0); pSrcV+=2;
         
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -1042,6 +1156,31 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             lines = 2;
             break;
 
+        case ptCOLFMT_YUV420P_12:
+        case ptCOLFMT_YUV420P_16:
+            if (this->GetEndian() == ptENDIAN_LE)
+                ptConvert_YUV42016LEToRGBA8888(this->pPlane[0] + offsetY,
+                                               (height==1) ? NULL : this->pPlane[1] + offsetY,
+                                               this->pPlane[2] + offsetUV,
+                                               this->pPlane[3] + offsetUV,
+                                               pDataTmp,
+                                               this->width,
+                                               pYUV2RGB,
+                                               this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8);
+            else
+                ptConvert_YUV42016BEToRGBA8888(this->pPlane[0] + offsetY,
+                                               (height==1) ? NULL : this->pPlane[1] + offsetY,
+                                               this->pPlane[2] + offsetUV,
+                                               this->pPlane[3] + offsetUV,
+                                               pDataTmp,
+                                               this->width,
+                                               pYUV2RGB,
+                                               this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8);
+            offsetY  += this->GetStride()<<1;
+            offsetUV += this->GetStrideUV();
+            lines = 2;
+            break;
+
         case ptCOLFMT_YUYV:
         case ptCOLFMT_YVYU:
             ptConvert_YUYVToRGBA8888(this->pPlane[0] + offsetY,
@@ -1117,7 +1256,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
         }
 
         // - convert N lines of ARGB8888 to target RGB
-        heightEnd = height>lines ? height-lines : height-1;
+        heightEnd = height>=lines ? height-lines : height-1;
         do
         {
             switch(pDst->GetColFmt())
