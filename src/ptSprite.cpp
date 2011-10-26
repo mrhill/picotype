@@ -585,8 +585,8 @@ static void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
             pDst += 8;
         }
         
-        pSrcU -= width>>1;
-        pSrcV -= width>>1;
+        pSrcU -= width;
+        pSrcV -= width;
         pSrcY = pSrcY1;
 
     } while (pSrcY && --i);
@@ -612,8 +612,8 @@ static void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0,
         {
             int const y0 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
             int const y1 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
-            int const u  = ((int)(bbLD16BE(pSrcU)>>shift)*0 + (int)pYUV2RGB[1]*0); pSrcU+=2;
-            int const v  = ((int)(bbLD16BE(pSrcV)>>shift)*0 + (int)pYUV2RGB[2]*0); pSrcV+=2;
+            int const u  = ((int)(bbLD16BE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
+            int const v  = ((int)(bbLD16BE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
         
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -641,8 +641,8 @@ static void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0,
             pDst += 8;
         }
         
-        pSrcU -= width>>1;
-        pSrcV -= width>>1;
+        pSrcU -= width;
+        pSrcV -= width;
         pSrcY = pSrcY1;
 
     } while (pSrcY && --i);

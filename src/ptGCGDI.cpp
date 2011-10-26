@@ -1159,8 +1159,8 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
                 pLineCache = (bbU8*)(((bbUPTR)pLineCache-(pSprite->width & 1)*3+3) &~ (bbUPTR)3);
                 pData = pSprite->pPlane[1] + Yoffs;
-                pDataU -= linesize>>1;
-                pDataV -= linesize>>1;
+                pDataU -= linesize;
+                pDataV -= linesize;
 
             } while(--i);
 
@@ -1242,8 +1242,8 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
                 pLineCache = (bbU8*)(((bbUPTR)pLineCache-(pSprite->width & 1)*3+3) &~ (bbUPTR)3);
                 pData = pSprite->pPlane[1] + Yoffs;
-                pDataU -= linesize>>1;
-                pDataV -= linesize>>1;
+                pDataU -= linesize;
+                pDataV -= linesize;
 
             } while(--i);
 
