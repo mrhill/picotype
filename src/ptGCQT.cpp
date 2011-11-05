@@ -9,6 +9,7 @@
 
 ptGCQT::ptGCQT(QPainter* pPainter)
 {
+    mpSpriteBuf = 
     mpLineCache = NULL;
     AttachPainter(pPainter);
     mPalHash = 0;
@@ -18,6 +19,7 @@ ptGCQT::ptGCQT(QPainter* pPainter)
 ptGCQT::~ptGCQT()
 {
     delete mpLineCache;
+    delete mpSpriteBuf;
 }
 
 void ptGCQT::AttachPainter(QPainter* pPainter)
@@ -251,21 +253,37 @@ void ptGCQT::CachePal(ptPal* const pPal, bbUINT size)
     } while(size);
 }
 
+bbERR ptGCQT::EnsureSpriteBuf(bbUINT width, bbUINT height, QImage::Format fmt)
+{
+    if (!mpSpriteBuf ||
+        (mpSpriteBuf->format() != fmt) ||
+        ((bbUINT)mpSpriteBuf->width() < width) ||
+        ((bbUINT)mpSpriteBuf->height() < height))
+    {
+        delete mpSpriteBuf;
+        mpSpriteBuf = new QImage(width, height, fmt);
+        if (!mpSpriteBuf)
+            return bbErrSet(bbENOMEM);
+    }
+    return bbEOK;
+}
+
 void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
 {
     bbU32 i;
+    bbU8* pData = pSprite->pData;
     const bbS16* pYUV2RGB;
 
     x>>=ptGCEIGHTX; 
     y>>=ptGCEIGHTY;
-    int const y_end = y + pSprite->height;
+    int const y_end = y + pSprite->GetHeight();
 
     bbS16 yuv2rgb[12];
 
-    if (ptColFmtIsYUV(pSprite->colfmt))
+    if (ptColFmtIsYUV(pSprite->GetColFmt()))
     {
         pYUV2RGB = pSprite->pYUV2RGB;
-        if (ptgColFmtInfo[pSprite->colfmt].flags & ptCOLFMTFLAG_SWAPUV) // VU order?
+        if (ptgColFmtInfo[pSprite->GetColFmt()].flags & ptCOLFMTFLAG_SWAPUV) // VU order?
         {
             for(i=0; i<=9; i+=3) // swap UV coeffs
             {
@@ -277,14 +295,69 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
         }
     }
 
-    switch (pSprite->colfmt)
+    switch (pSprite->GetColFmt())
     {
-    case ptCOLFMT_8BPP:
+    case ptCOLFMT_1BPP:
         {
-        QImage image((const uchar*)pSprite->pData, pSprite->width, pSprite->height, pSprite->stride, QImage::Format_Indexed8);
+        QImage::Format const fmt = (pSprite->GetBitOrder() == ptBITORDER_LSBLEFT) ? QImage::Format_MonoLSB : QImage::Format_Mono;
+        QImage image((const uchar*)pSprite->pData, pSprite->GetWidth(), pSprite->GetHeight(), pSprite->GetStride(), fmt);
         CachePal(pSprite->pPal, 0);
         image.setColorTable(mPal);
         mpPainter->drawImage(QPoint(x, y), image);
+        }
+        break;
+    case ptCOLFMT_2BPP:
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_Indexed8))
+            return;
+        CachePal(pSprite->pPal, 0);
+        mpSpriteBuf->setColorTable(mPal);
+        while (y < y_end)
+        {
+            ptExpand_2BppTo8Bpp(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetBitOrder());
+            mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+        }
+        break;
+    case ptCOLFMT_4BPP:
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_Indexed8))
+            return;
+        CachePal(pSprite->pPal, 0);
+        mpSpriteBuf->setColorTable(mPal);
+        while (y < y_end)
+        {
+            ptExpand_4BppTo8Bpp(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetBitOrder());
+            mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+        }
+        break;
+    case ptCOLFMT_8BPP:
+        {
+        QImage image((const uchar*)pSprite->pData, pSprite->GetWidth(), pSprite->GetHeight(), pSprite->GetStride(), QImage::Format_Indexed8);
+        CachePal(pSprite->pPal, 0);
+        image.setColorTable(mPal);
+        mpPainter->drawImage(QPoint(x, y), image);
+        }
+        break;
+    case ptCOLFMT_2BPPP:
+    case ptCOLFMT_3BPPP:
+    case ptCOLFMT_4BPPP:
+    case ptCOLFMT_5BPPP:
+    case ptCOLFMT_6BPPP:
+    case ptCOLFMT_7BPPP:
+    case ptCOLFMT_8BPPP:
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_Indexed8))
+            return;
+        CachePal(pSprite->pPal, 0);
+        mpSpriteBuf->setColorTable(mPal);
+        while (y < y_end)
+        {
+            uchar* bits = mpSpriteBuf->bits();
+            ptExpand_1BppTo8Bpp(pData, bits, pSprite->GetWidth(), pSprite->GetBitOrder());
+            bbUINT planeCount = ptgColFmtInfo[pSprite->GetColFmt()].PlaneCount;
+            i = 1;
+            do
+            {
+                ptMerge_1BppTo8Bpp(pSprite->GetPlane(i), bits, pSprite->GetWidth(), pSprite->GetBitOrder(), i);
+            } while (++i < planeCount);
+            mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
         }
         break;
     default:

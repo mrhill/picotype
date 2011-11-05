@@ -94,7 +94,7 @@ static const bbU32 patternMSBLeft[16] =
     0x00000101UL,0x01000101UL,0x00010101UL,0x01010101UL,
 };
 
-static void ptExpand_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
+void ptExpand_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
 {
     if (srcOrder==ptBITORDER_LSBLEFT)
     {
@@ -141,7 +141,7 @@ static void ptExpand_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBIT
     }
 }
 
-static void ptMerge_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder, bbUINT shift)
+void ptMerge_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder, bbUINT shift)
 {
     if (srcOrder==ptBITORDER_LSBLEFT)
     {
@@ -200,7 +200,7 @@ static void ptMerge_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITO
     }
 }
 
-static void ptExpand_2BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
+void ptExpand_2BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
 {
     if (srcOrder == ptBITORDER_LSBLEFT)
     {
@@ -248,7 +248,7 @@ static void ptExpand_2BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBIT
     }
 }
 
-static void ptExpand_4BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
+void ptExpand_4BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder)
 {
     if (srcOrder == ptBITORDER_LSBLEFT)
     {

@@ -6,7 +6,7 @@
 #if ptUSE_GCQT == 1
 
 class QPainter;
-class QImage;
+#include <QImage>
 #include <QVector>
 #include <QColor>
 
@@ -17,10 +17,12 @@ private:
     bbUINT        mWidth;         //!< Width in units
     bbUINT        mHeight;        //!< Height in units
     QImage*       mpLineCache;
+    QImage*       mpSpriteBuf;
     QVector<QRgb> mPal;
     bbU32         mPalHash;
 
     bbERR EnsureLineCache(bbUINT width, bbUINT height);
+    bbERR EnsureSpriteBuf(bbUINT width, bbUINT height, QImage::Format fmt);
     void CachePal(ptPal* const pPal, bbUINT size);
 
 public:
