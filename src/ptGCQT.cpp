@@ -11,6 +11,8 @@ ptGCQT::ptGCQT(QPainter* pPainter)
 {
     mpLineCache = NULL;
     AttachPainter(pPainter);
+    mPalHash = 0;
+    mPal.resize(256);
 }
 
 ptGCQT::~ptGCQT()
@@ -225,6 +227,70 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
 void ptGCQT::Polygon(const ptCoord* const /*pPoly*/, const bbUINT /*points*/, const ptPEN /*pen*/) {}
 void ptGCQT::FillCircle(int /*x*/, int /*y*/, bbUINT /*rad*/, const ptPEN /*pen*/) {}
 bbUINT ptGCQT::Text(int /*x*/, int /*y*/, const bbCHAR* /*pMarkup*/, bbUINT /*fgcol*/, ptPEN /*bgpen*/, bbUINT const /*font*/) { return 0; }
-void ptGCQT::Sprite(int /*x*/, int /*y*/, const ptSprite* const /*pSprite*/) {}
+
+void ptGCQT::CachePal(ptPal* const pPal, bbUINT size)
+{
+    bbU32 const newhash = (bbU32)pPal ^ pPal->mSyncPt;
+    
+    if (newhash == mPalHash)
+        return;
+
+    mPalHash = newhash;
+
+    if (!size)
+        size = pPal->mColCount;
+
+    bbASSERT(size <= pPal->mColCount);
+    bbASSERT((size-1) < 256);
+
+    const bbU32* const pRGB = pPal->mpRGB;
+    do
+    {
+        bbU32 rgb = pRGB[--size];
+        mPal[size] = qRgb(rgb&0xFF, (rgb>>8)&0xFF, (rgb>>16)&0xFF);
+    } while(size);
+}
+
+void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
+{
+    bbU32 i;
+    const bbS16* pYUV2RGB;
+
+    x>>=ptGCEIGHTX; 
+    y>>=ptGCEIGHTY;
+    int const y_end = y + pSprite->height;
+
+    bbS16 yuv2rgb[12];
+
+    if (ptColFmtIsYUV(pSprite->colfmt))
+    {
+        pYUV2RGB = pSprite->pYUV2RGB;
+        if (ptgColFmtInfo[pSprite->colfmt].flags & ptCOLFMTFLAG_SWAPUV) // VU order?
+        {
+            for(i=0; i<=9; i+=3) // swap UV coeffs
+            {
+                yuv2rgb[i+0] = pYUV2RGB[i+0];
+                yuv2rgb[i+2] = pYUV2RGB[i+1];
+                yuv2rgb[i+1] = pYUV2RGB[i+2];
+            }
+            pYUV2RGB = yuv2rgb;
+        }
+    }
+
+    switch (pSprite->colfmt)
+    {
+    case ptCOLFMT_8BPP:
+        {
+        QImage image((const uchar*)pSprite->pData, pSprite->width, pSprite->height, pSprite->stride, QImage::Format_Indexed8);
+        CachePal(pSprite->pPal, 0);
+        image.setColorTable(mPal);
+        mpPainter->drawImage(QPoint(x, y), image);
+        }
+        break;
+    default:
+        return;
+    }
+}
 
 #endif
+

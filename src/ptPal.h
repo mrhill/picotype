@@ -45,11 +45,11 @@ enum ptPALID
 /** RGB Palette container. */
 struct ptPal
 {
+    bbU32*   mpRGB;      //!< Array of 0xAABBGGRR values
     bbU16    mColCount;  //!< Number of entried in mpRGB[]
     bbU8     mOpt;       //!< Flag bitmask, see ptPALOPT
     bbU8     mFormat;    //!< Palette format the object was created from, see ptPALFMT
     bbU32    mSyncPt;    //!< Sync point to enable caching
-    bbU32*   mpRGB;      //!< Array of 0xAABBGGRR values
     bbCHAR*  mpName;     //!< Palette name, 0-terminated string, can be NULL
     bbCHAR** mppColNames;/**< Heap-block with array of 0-terminated strings with colour names, can be NULL.
                               Individual name strings can be NULL. */

@@ -62,7 +62,7 @@
 #endif
 
 /** Compile support for QT QPainter via ptGCQT. */
-//#define ptUSE_GCQT 1
+#define ptUSE_GCQT 1
 
 /** Version of this ptconfig.h file, do not change.
      - V2 : added ptTEXTBOX_HEAPH

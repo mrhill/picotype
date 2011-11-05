@@ -7,16 +7,21 @@
 
 class QPainter;
 class QImage;
+#include <QVector>
+#include <QColor>
 
 class ptGCQT : public ptGC
 {
 private:
-    QPainter*   mpPainter;
-    bbUINT      mWidth;         //!< Width in units
-    bbUINT      mHeight;        //!< Height in units
-    QImage*     mpLineCache;
+    QPainter*     mpPainter;
+    bbUINT        mWidth;         //!< Width in units
+    bbUINT        mHeight;        //!< Height in units
+    QImage*       mpLineCache;
+    QVector<QRgb> mPal;
+    bbU32         mPalHash;
 
     bbERR EnsureLineCache(bbUINT width, bbUINT height);
+    void CachePal(ptPal* const pPal, bbUINT size);
 
 public:
     ptGCQT(QPainter* pPainter = NULL);
