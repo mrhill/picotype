@@ -8,8 +8,8 @@
 #include <babel/defs.h>
 #include <babel/heap.h>
 #include "ptFont.h"
-#include "ptSprite.h"
 #include "ptPalMan.h"
+struct ptSprite;
 
 /** Get unnormalized distance of two rgb colours.
     @param a Colour 1, 0x00BBGGRR

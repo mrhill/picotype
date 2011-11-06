@@ -4,7 +4,8 @@
 
 #include "ptPalMan.h"
 #include "ptFontMan.h"
-#include "babel/str.h"
+#include "ptSprite.h"
+#include <babel/str.h>
 
 ptGCGDI::ptGCGDI()
 {

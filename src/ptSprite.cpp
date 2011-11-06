@@ -481,6 +481,62 @@ bbERR ptSprite::Convert_YUV2Pal(ptSprite* pDst) const
     return bbErrSet(bbENOTSUP);
 }
 
+void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0,
+                              const bbU8* pSrcY1,
+                              const bbU8* pSrcU,
+                              const bbU8* pSrcV,
+                              bbU8* pDst,
+                              bbU8* pDst2,
+                              bbU32 width,
+                              const bbS16* pYUV2RGB)
+{
+    // converts 2 lines, dst stride is width*4
+    const bbU8* pSrcY = pSrcY0;
+    bbUINT i=2;
+    do
+    {
+        bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+        while (pDst < pDstEnd)
+        {
+            int const y0 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
+            int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
+            int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
+            int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+
+            int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+            register int p;
+            if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // B0
+            if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[3+2] = p; // B1
+            tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+            if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // G0
+            if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[3+1] = p; // G1
+            tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+            if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[0] = p; // R0
+            if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[3] = p; // R1
+            pDst += 6;
+        }
+
+        pSrcU -= width>>1;
+        pSrcV -= width>>1;
+        pSrcY = pSrcY1;
+        pDst = pDst2;
+
+    } while (pSrcY && --i);
+}
+
 static void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
                                        const bbU8* pSrcY1,
                                        const bbU8* pSrcU,

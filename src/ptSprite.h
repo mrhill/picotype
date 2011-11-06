@@ -201,5 +201,14 @@ extern void ptConvert_RGBA4444ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width
 extern void ptConvert_BGR888ToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
 extern void ptConvert_BGRA8888ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
 
+extern void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0,
+                                     const bbU8* pSrcY1,
+                                     const bbU8* pSrcU,
+                                     const bbU8* pSrcV,
+                                     bbU8* pDst,
+                                     bbU8* pDst2,
+                                     bbU32 width,
+                                     const bbS16* pYUV2RGB);
+
 #endif /* ptSPRITE_H_ */
 

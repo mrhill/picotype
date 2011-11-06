@@ -2,9 +2,10 @@
 
 #if ptUSE_GC16 == 1
 
-#include "babel/mem.h"
-#include "babel/fixmath.h"
-#include "babel/str.h"
+#include <babel/mem.h>
+#include <babel/fixmath.h>
+#include <babel/str.h>
+#include "ptSprite.h"
 
 ptGC16::ptGC16()
 {
