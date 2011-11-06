@@ -518,6 +518,38 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
+    case ptCOLFMT_YUYV:
+    case ptCOLFMT_YVYU:
+        {
+            bbU32 width = pSprite->GetWidth();
+            width += width&1;
+
+            if (bbEOK != EnsureSpriteBuf(width, 1, QImage::Format_RGB888))
+                return;
+
+            while (y < y_end)
+            {
+                ptConvert_YUYVToRGB888(pData, mpSpriteBuf->bits(), width, pYUV2RGB);
+                mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+            }
+        }
+        break;
+    case ptCOLFMT_UYVY:
+    case ptCOLFMT_VYUY:
+        {
+            bbU32 width = pSprite->GetWidth();
+            width += width&1;
+
+            if (bbEOK != EnsureSpriteBuf(width, 1, QImage::Format_RGB888))
+                return;
+
+            while (y < y_end)
+            {
+                ptConvert_UYVYToRGB888(pData, mpSpriteBuf->bits(), width, pYUV2RGB);
+                mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+            }
+        }
+        break;
     default:
         return;
     }

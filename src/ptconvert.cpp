@@ -734,8 +734,49 @@ void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0,
     } while (pSrcY && --i);
 }
 
+void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
+                            bbU8* pDst,
+                            bbU32 width,
+                            const bbS16* pYUV2RGB)
+{
+    // converts 1 line
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
 
-void ptConvert_YUYVToRGBA8888(const bbU8* pSrcY,
+    while (pDst < pDstEnd)
+    {
+        int const y0 = ((int)pSrcY[0] + pYUV2RGB[0]);
+        int const u  = ((int)pSrcY[1] + pYUV2RGB[1]);
+        int const y1 = ((int)pSrcY[2] + pYUV2RGB[0]);
+        int const v  = ((int)pSrcY[3] + pYUV2RGB[2]);
+        pSrcY += 4;
+
+        int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+        register int p;
+        if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[2] = p; // B0
+        if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3+2] = p; // B1
+        tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+        if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[1] = p; // G0
+        if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3+1] = p; // G1
+        tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+        if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[0] = p; // R0
+        if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3] = p; // R1
+        pDst += 6;
+    }
+}
+
+ void ptConvert_YUYVToRGBA8888(const bbU8* pSrcY,
                               bbU8* pDst,
                               bbU32 width,
                               const bbS16* pYUV2RGB)
@@ -775,6 +816,48 @@ void ptConvert_YUYVToRGBA8888(const bbU8* pSrcY,
         pDst[4] = p; // R1
         pDst[3] = pDst[4+3] = 255;
         pDst += 8;
+    }
+}
+
+void ptConvert_UYVYToRGB888(const bbU8* pSrcY,
+                            bbU8* pDst,
+                            bbU32 width,
+                            const bbS16* pYUV2RGB)
+{
+    // converts 1 line
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    while (pDst < pDstEnd)
+    {
+        int const u  = ((int)pSrcY[0] + pYUV2RGB[1]);
+        int const y0 = ((int)pSrcY[1] + pYUV2RGB[0]);
+        int const v  = ((int)pSrcY[2] + pYUV2RGB[2]);
+        int const y1 = ((int)pSrcY[3] + pYUV2RGB[0]);
+        pSrcY += 4;
+
+        int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+        register int p;
+        if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[2] = p; // B0
+        if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3+2] = p; // B1
+        tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+        if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[1] = p; // G0
+        if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3+1] = p; // G1
+        tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+        if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[0] = p; // R0
+        if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[3] = p; // R1
+        pDst += 6;
     }
 }
 

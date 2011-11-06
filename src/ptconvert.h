@@ -89,10 +89,20 @@ void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0,
                                bbU32 width,
                                const bbS16* pYUV2RGB);
 
+void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
+                            bbU8* pDst,
+                            bbU32 width,
+                            const bbS16* pYUV2RGB);
+
 void ptConvert_YUYVToRGBA8888(const bbU8* pSrcY,
                               bbU8* pDst,
                               bbU32 width,
                               const bbS16* pYUV2RGB);
+
+void ptConvert_UYVYToRGB888(const bbU8* pSrcY,
+                            bbU8* pDst,
+                            bbU32 width,
+                            const bbS16* pYUV2RGB);
 
 void ptConvert_UYVYToRGBA8888(const bbU8* pSrcY,
                               bbU8* pDst,
