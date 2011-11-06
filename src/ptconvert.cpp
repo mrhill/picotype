@@ -420,6 +420,101 @@ void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
     } while (pSrcY && --i);
 }
 
+void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0,
+                                const bbU8* pSrcY1,
+                                const bbU8* pSrcU,
+                                const bbU8* pSrcV,
+                                bbU8* pDst,
+                                bbU8* pDst2,
+                                bbU32 width,
+                                const bbS16* pYUV2RGB,
+                                unsigned shift,
+                                ptENDIAN endian)
+{
+    // converts 2 lines
+    const bbU8* pSrcY = pSrcY0;
+    bbUINT i=2;
+    do
+    {
+        bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+        if (endian == ptENDIAN_LE)
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y0 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+                int const y1 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+                int const u  = ((int)(bbLD16LE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
+                int const v  = ((int)(bbLD16LE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
+            
+                int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+                register int p;
+                if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // B0
+                if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3+2] = p; // B1
+                tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+                if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // G0
+                if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3+1] = p; // G1
+                tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+                if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[0] = p; // R0
+                if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3] = p; // R1
+                pDst += 6;
+            }
+        }
+        else
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y0 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+                int const y1 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
+                int const u  = ((int)(bbLD16BE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
+                int const v  = ((int)(bbLD16BE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
+            
+                int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
+                register int p;
+                if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // B0
+                if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3+2] = p; // B1
+                tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
+                if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // G0
+                if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3+1] = p; // G1
+                tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
+                if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[0] = p; // R0
+                if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3] = p; // R1
+                pDst += 6;
+            }
+        }
+
+        pSrcU -= width;
+        pSrcV -= width;
+        pSrcY = pSrcY1;
+        pDst = pDst2;
+
+    } while (pSrcY && --i);
+}
+
 void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
                                     const bbU8* pSrcY1,
                                     const bbU8* pSrcU,

@@ -45,6 +45,17 @@ void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
                                 bbU32 width,
                                 const bbS16* pYUV2RGB);
 
+void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0,
+                                const bbU8* pSrcY1,
+                                const bbU8* pSrcU,
+                                const bbU8* pSrcV,
+                                bbU8* pDst,
+                                bbU8* pDst2,
+                                bbU32 width,
+                                const bbS16* pYUV2RGB,
+                                unsigned shift,
+                                ptENDIAN endian);
+
 void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
                                     const bbU8* pSrcY1,
                                     const bbU8* pSrcU,
