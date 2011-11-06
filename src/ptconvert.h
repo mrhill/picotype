@@ -109,6 +109,13 @@ void ptConvert_UYVYToRGBA8888(const bbU8* pSrcY,
                               bbU32 width,
                               const bbS16* pYUV2RGB);
 
+void ptConvert_YUV422PToRGB888(const bbU8* pSrcY,
+                               const bbU8* pSrcU,
+                               const bbU8* pSrcV,
+                               bbU8* pDst,
+                               bbU32 width,
+                               const bbS16* pYUV2RGB);
+
 void ptConvert_YUV422PToRGBA8888(const bbU8* pSrcY,
                                  const bbU8* pSrcU,
                                  const bbU8* pSrcV,

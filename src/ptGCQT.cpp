@@ -550,6 +550,31 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
+    case ptCOLFMT_YUV422P:
+        {
+            bbU32 width = pSprite->GetWidth();
+            width += width&1;
+
+            if (bbEOK != EnsureSpriteBuf(width, 1, QImage::Format_RGB888))
+                return;
+
+            bbU32 offsetY = 0;
+            bbU32 offsetUV = 0;
+
+            while (y < y_end)
+            {
+                ptConvert_YUV422PToRGB888(pSprite->GetPlane(0) + offsetY,
+                                          pSprite->GetPlane(1) + offsetUV,
+                                          pSprite->GetPlane(2) + offsetUV,
+                                          mpSpriteBuf->bits(),
+                                          width,
+                                          pYUV2RGB);
+                mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+                offsetY += pSprite->GetStride();
+                offsetUV += pSprite->GetStrideUV();
+            }
+        }
+        break;
     default:
         return;
     }
