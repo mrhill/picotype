@@ -1006,6 +1006,35 @@ static void ptConvert_RGBA8888ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 wid
     }
 }
 
+void ptConvert_RGB565ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian)
+{
+    bbU8* const pDstEnd = pDst + (width<<2);
+    if (endian == ptENDIAN_LE)
+    {
+        while (pDst < pDstEnd)
+        {
+            register bbU32 rgb = bbLD16LE(pSrc); pSrc+=2;
+            register bbU32 c;
+            c = rgb >> (11-3); *pDst++ = c & (0x1F<<3);
+            c = rgb >> (5-2); *pDst++ = c & (0x3F<<2);
+            *pDst++ = (bbU8)(rgb<<3);
+            *pDst++ = 255;
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            register bbU32 rgb = bbLD16BE(pSrc); pSrc+=2;
+            register bbU32 c;
+            c = rgb >> (11-3); *pDst++ = c & (0x1F<<3);
+            c = rgb >> (5-2); *pDst++ = c & (0x3F<<2);
+            *pDst++ = (bbU8)(rgb<<3);
+            *pDst++ = 255;
+        }
+    }
+}
+
 static void ptConvert_RGB565ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
