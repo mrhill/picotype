@@ -188,27 +188,5 @@ ptSprite* ptSpriteCreate( bbUINT const width, bbUINT const height, bbUINT const 
 */
 ptSprite* ptSpriteConvert( const ptSprite* const pSrcSprite, bbUINT const depth);
 
-extern void ptExpand_4BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder);
-extern void ptExpand_2BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder);
-extern void ptExpand_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder);
-extern void ptMerge_1BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER srcOrder, bbUINT shift);
-extern void ptConvert_RGB565ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_RGB565ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_RGBA1555ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_RGBA1555ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_RGBA4444ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_RGBA4444ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_BGR888ToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-extern void ptConvert_BGRA8888ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian);
-
-extern void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0,
-                                     const bbU8* pSrcY1,
-                                     const bbU8* pSrcU,
-                                     const bbU8* pSrcV,
-                                     bbU8* pDst,
-                                     bbU8* pDst2,
-                                     bbU32 width,
-                                     const bbS16* pYUV2RGB);
-
 #endif /* ptSPRITE_H_ */
 

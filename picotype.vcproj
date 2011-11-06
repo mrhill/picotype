@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ptconvert.cpp"
+				>
+			</File>
+			<File
 				RelativePath="src\ptFont.cpp"
 				>
 				<FileConfiguration
@@ -466,6 +470,10 @@
 			</File>
 			<File
 				RelativePath=".\src\ptconfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ptconvert.h"
 				>
 			</File>
 			<File
