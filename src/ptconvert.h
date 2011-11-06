@@ -123,6 +123,15 @@ void ptConvert_YUV422PToRGBA8888(const bbU8* pSrcY,
                                  bbU32 width,
                                  const bbS16* pYUV2RGB);
 
+void ptConvert_YUV422RPToRGB888(const bbU8* pSrcY0,
+                                const bbU8* pSrcY1,
+                                const bbU8* pSrcU,
+                                const bbU8* pSrcV,
+                                bbU8* pDst,
+                                bbU8* pDst2,
+                                bbU32 width,
+                                const bbS16* pYUV2RGB);
+
 void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
                                   const bbU8* pSrcY1,
                                   const bbU8* pSrcU,
@@ -130,6 +139,18 @@ void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
                                   bbU8* pDst,
                                   bbU32 width,
                                   const bbS16* pYUV2RGB);
+
+void ptConvert_YUV444ToRGB888(const bbU8* pSrc,
+                              bbU8* pDst,
+                              bbU32 width,
+                              const bbS16* pYUV2RGB);
+
+void ptConvert_YUV444PToRGB888(const bbU8* pSrcY,
+                               const bbU8* pSrcU,
+                               const bbU8* pSrcV,
+                               bbU8* pDst,
+                               bbU32 width,
+                               const bbS16* pYUV2RGB);
 
 void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY,
                                  const bbU8* pSrcU,

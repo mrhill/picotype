@@ -991,6 +991,49 @@ void ptConvert_YUV422PToRGBA8888(const bbU8* pSrcY,
     }
 }
 
+void ptConvert_YUV422RPToRGB888(const bbU8* pSrcY0,
+                                const bbU8* pSrcY1,
+                                const bbU8* pSrcU,
+                                const bbU8* pSrcV,
+                                bbU8* pDst,
+                                bbU8* pDst2,
+                                bbU32 width,
+                                const bbS16* pYUV2RGB)
+{
+    // converts 2 lines
+    const bbU8* pSrcY = pSrcY0;
+    bbUINT i=2;
+    do
+    {
+        bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+        while (pDst < pDstEnd)
+        {
+            int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
+            int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
+            int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+
+            register int p;
+            if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // B
+            if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // G
+            if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+            if (p>255) p=255;
+            pDst[0] = p; // R
+            pDst += 3;
+        }
+        
+        pSrcU -= width;
+        pSrcV -= width;
+        pSrcY = pSrcY1;
+        pDst = pDst2;
+
+    } while (pSrcY && --i);
+}
+
 void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
                                   const bbU8* pSrcY1,
                                   const bbU8* pSrcU,
@@ -1033,6 +1076,35 @@ void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
     } while (pSrcY && --i);
 }
 
+void ptConvert_YUV444PToRGB888(const bbU8* pSrcY,
+                               const bbU8* pSrcU,
+                               const bbU8* pSrcV,
+                               bbU8* pDst,
+                               bbU32 width,
+                               const bbS16* pYUV2RGB)
+{
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    while (pDst < pDstEnd)
+    {
+        int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
+        int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
+        int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+
+        register int p;
+        if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[2] = p; // B
+        if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[1] = p; // G
+        if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[0] = p; // R
+        pDst += 3;
+    }
+}
+
 void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY,
                                  const bbU8* pSrcU,
                                  const bbU8* pSrcV,
@@ -1060,6 +1132,33 @@ void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY,
         pDst[0] = p; // R
         pDst[3] = 255;
         pDst += 4;
+    }
+}
+
+void ptConvert_YUV444ToRGB888(const bbU8* pSrc,
+                              bbU8* pDst,
+                              bbU32 width,
+                              const bbS16* pYUV2RGB)
+{
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    while (pDst < pDstEnd)
+    {
+        int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
+        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
+        int const v = ((int)*(pSrc++) + pYUV2RGB[2]);
+
+        register int p;
+        if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[2] = p; // B
+        if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[1] = p; // G
+        if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[0] = p; // R
+        pDst += 3;
     }
 }
 

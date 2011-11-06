@@ -160,8 +160,8 @@ enum ptCOLFMTFLAG
     {/*ptCOLFMT_UYVY         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YVYU         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
     {/*ptCOLFMT_VYUY         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
-    {/*ptCOLFMT_YUV422P      */  8, 4, 1, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
-    {/*ptCOLFMT_YUV422RP     */  8, 4, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1},\
+    {/*ptCOLFMT_YUV422P      */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
+    {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1},\
     {/*ptCOLFMT_YUV444       */ 24, 1, 1, 0, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0, ptCOLFMTFLAG_YUV,                     3, 0, 0},\
     {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ALPHA,  1, 0, 0}

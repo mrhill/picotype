@@ -575,6 +575,66 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
+    case ptCOLFMT_YUV422RP:
+        {
+            bbU32 width = pSprite->GetWidth();
+            width += width&1;
+
+            if (bbEOK != EnsureSpriteBuf(width, 2, QImage::Format_RGB888))
+                return;
+
+            bbU32 offsetY = 0;
+            bbU32 offsetUV = 0;
+
+            while (y < y_end)
+            {
+                ptConvert_YUV422RPToRGB888(pSprite->GetPlane(0) + offsetY,
+                                           (y_end-y) < 2 ? NULL : pSprite->GetPlane(1) + offsetY,
+                                           pSprite->GetPlane(2) + offsetUV,
+                                           pSprite->GetPlane(3) + offsetUV,
+                                           mpSpriteBuf->bits(),
+                                           mpSpriteBuf->scanLine(1),
+                                           width,
+                                           pYUV2RGB);
+                mpPainter->drawImage(QPoint(x, y), *mpSpriteBuf);
+                offsetY  += pSprite->GetStride()<<1;
+                offsetUV += pSprite->GetStrideUV();
+                y+=2;
+            }
+        }
+        break;
+    case ptCOLFMT_YUV444:
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+            return;
+        while (y < y_end)
+        {
+            ptConvert_YUV444ToRGB888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pYUV2RGB); pData+=pSprite->GetStride();
+            mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+        }
+        break;
+    case ptCOLFMT_YUV444P:
+        {
+            if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+                return;
+
+            bbU32 offsetY = 0;
+            bbU32 offsetUV = 0;
+
+            while (y < y_end)
+            {
+                ptConvert_YUV444PToRGB888(pSprite->GetPlane(0) + offsetY,
+                                          pSprite->GetPlane(1) + offsetUV,
+                                          pSprite->GetPlane(2) + offsetUV,
+                                          mpSpriteBuf->bits(),
+                                          pSprite->GetWidth(),
+                                          pYUV2RGB);
+
+                mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+                offsetY += pSprite->GetStride();
+                offsetUV += pSprite->GetStrideUV();
+            }
+        }
+        break;
     default:
         return;
     }
