@@ -35,6 +35,8 @@ void ptGCQT::AttachPainter(QPainter* pPainter)
             mWidth = pDev->width() << ptGCEIGHTX;
             mHeight = pDev->height() << ptGCEIGHTY;
         }
+        pPainter->setBackground(Qt::black);
+        pPainter->setBackgroundMode(Qt::OpaqueMode);
     }
 }
 
@@ -73,8 +75,16 @@ void ptGCQT::SetClipBox(const int /*clipminx*/, const int /*clipminy*/, const in
 void ptGCQT::GetClipBox(ptRect* const /*pRect*/) {}
 void ptGCQT::Clear(const bbUINT /*col*/) {}
 void ptGCQT::Point(const int /*x*/, const int /*y*/, const bbUINT /*col*/) {}
-void ptGCQT::HLine(int /*x*/, int /*y*/, bbUINT /*width*/, bbUINT /*col*/) {}
-void ptGCQT::VLine(int /*x*/, int /*y*/, bbUINT /*height*/, bbUINT /*col*/) {}
+
+void ptGCQT::HLine(int x, int y, bbUINT width, bbUINT col)
+{
+    Line(x, y, x+width, y, col);
+}
+
+void ptGCQT::VLine(int x, int y, bbUINT height, bbUINT col)
+{
+    Line(x, y, x, y+height, col);
+}
 
 void ptGCQT::Box(const int x, const int y, const bbUINT width, const bbUINT height, const bbUINT col)
 {
@@ -85,16 +95,47 @@ void ptGCQT::Box(const int x, const int y, const bbUINT width, const bbUINT heig
 
 void ptGCQT::FillBox(int x, int y, bbUINT width, bbUINT height, ptPEN pen)
 {
-    const bbU32 rgba = mpLogPal->mpRGB[pen & ptPENCOLMASK];
-    const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
-    mpPainter->fillRect(x>>ptGCEIGHTX, y>>ptGCEIGHTY, width>>ptGCEIGHTX, height>>ptGCEIGHTY, rgb);
+    if ((pen & ptPEN_ROP) && ((pen>>ptPENBITPOS_OPT2) == ptROP_NOT))
+    {
+        QPainter::CompositionMode cMode = mpPainter->compositionMode();
+        mpPainter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+        mpPainter->fillRect(x>>ptGCEIGHTX, y>>ptGCEIGHTY, width>>ptGCEIGHTX, height>>ptGCEIGHTY, QColor(0xFF,0xFF,0xFF));
+        mpPainter->setCompositionMode(cMode);
+    }
+    else
+    {
+        const bbU32 rgba = mpLogPal->mpRGB[pen & ptPENCOLMASK];
+        const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
+        mpPainter->fillRect(x>>ptGCEIGHTX, y>>ptGCEIGHTY, width>>ptGCEIGHTX, height>>ptGCEIGHTY, rgb);
+    }
 }
 
 void ptGCQT::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
 {
-    const bbU32 rgba = mpLogPal->mpRGB[pen & ptPENCOLMASK];
-    const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
-    mpPainter->setPen(rgb);
+    if (pen & ptPEN_ROP)
+    {
+        QPainter::CompositionMode cMode = mpPainter->compositionMode();
+        mpPainter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+        mpPainter->setPen(QColor(0xFF,0xFF,0xFF));
+        mpPainter->drawLine(x1, y1, x2, y2);
+        mpPainter->setCompositionMode(cMode);
+        return;
+    }
+
+    if (pen & ptPEN_PAT)
+    {
+        const bbU32 rgba = mpLogPal->mpRGB[pen & ptPENCOLMASK];
+        QPen pen = QPen(QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF));
+        pen.setStyle(Qt::DashLine);
+        mpPainter->setPen(pen);
+    }
+    else
+    {
+        const bbU32 rgba = mpLogPal->mpRGB[pen & ptPENCOLMASK];
+        const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
+        mpPainter->setPen(rgb);
+    }
+
     mpPainter->drawLine(x1, y1, x2, y2);
 }
 
