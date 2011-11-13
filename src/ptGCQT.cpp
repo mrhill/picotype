@@ -271,7 +271,6 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
 
 void ptGCQT::Polygon(const ptCoord* const /*pPoly*/, const bbUINT /*points*/, const ptPEN /*pen*/) {}
 void ptGCQT::FillCircle(int /*x*/, int /*y*/, bbUINT /*rad*/, const ptPEN /*pen*/) {}
-bbUINT ptGCQT::Text(int /*x*/, int /*y*/, const bbCHAR* /*pMarkup*/, bbUINT /*fgcol*/, ptPEN /*bgpen*/, bbUINT const /*font*/) { return 0; }
 
 void ptGCQT::CachePal(ptPal* const pPal, bbUINT size)
 {

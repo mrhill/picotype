@@ -36,21 +36,6 @@ bbU32 ptGetWeightedRGB(const bbU32 a, const bbU32 b, const bbU32 weight);
 */
 bbUINT ptRGBPalMatch(const bbU32* const pRGB, bbUINT const palsize, const bbU32 rgb);
 
-/** Size of ptGC shared temp buffer. */
-#define ptGCSCRATCHSIZE 0x1000U        
-
-/** Allocate scratch space of size ptGCSCRATCHSIZE, shared by ptGC* instances
-    @return Pointer to buffer, or NULL on failure
-*/
-void* ptScratchAlloc();
-
-/** Free scratch space.
-    If *ppScratch is NULL the call does nothing.
-    @param ppScratch Pointer to scratch space buffer pointer
-*/
-void ptScratchFree(void** ppScratch);
-
-
 /** Coordinate for use in graphics context #ptGC. */
 typedef struct
 {
@@ -378,7 +363,7 @@ public:
         @param font  Initial font
         @return Width plotted in units
     */
-    virtual bbUINT Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, bbUINT const font) = 0;
+    virtual bbUINT Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, bbUINT const font);
 
     /** Draw a line of markup text.
         @param x X-coordinate in units, designates left edge of textbox

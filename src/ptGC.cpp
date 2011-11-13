@@ -1,39 +1,7 @@
 #include "ptGC.h"
 #include "ptPalMan.h"
 #include "ptFontMan.h"
-#include "babel/str.h"
-
-static void*  ptgpScratch = NULL;     //!< Scratch space of size ptGCSCRATCHSIZE, can be shared by all instances
-static bbUINT ptgScratchRefCt = 0;    //!< ptgpScratch reference count
-
-void* ptScratchAlloc()
-{
-    if (ptgScratchRefCt == 0)
-    {
-        if ((ptgpScratch = bbMemAlloc(ptGCSCRATCHSIZE)) == NULL)
-            return NULL;
-    }
-
-    ptgScratchRefCt++;
-
-    return ptgpScratch;
-}
-
-void ptScratchFree(void** ppScratch)
-{
-    if (*ppScratch)
-    {
-        bbASSERT(ptgScratchRefCt);
-        bbASSERT(*ppScratch == ptgpScratch);
-
-        if (--ptgScratchRefCt == 0)
-        {
-            bbMemFreeNull(&ptgpScratch);
-        }
-
-        *ppScratch = NULL;
-    }
-}
+#include <babel/str.h>
 
 bbU32 ptRGBADistA(const bbU32 a, const bbU32 b)
 {
@@ -194,6 +162,109 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
     #endif
 
     return Text(x, y, text, fgcol, bgpen, font);
+}
+
+bbUINT ptGC::Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, bbUINT const font)
+{
+    bbUINT i=0;
+    bbU32 cp;
+    bbUINT fontIdx = 0, fgcolIdx = 0, bgpenIdx = 0;
+    bbUINT fontCnt = 1, fgcolCnt = 1, bgpenCnt = 1;
+    ptMarkupInfo info;
+    bbU32 text[256];
+
+    info.mpFont[0] = ptgFontMan.mFonts[font];
+    info.mBGPen[0] = bgpen;
+    info.mFGCol[0] = fgcol;
+
+    do
+    {
+        bbCP_NEXT_PTR(pText, cp);
+
+        if (cp >= 0x110000UL)
+            cp = info.mpFont[fontIdx]->mUkCP; // outside UNICODE codepage
+
+        if (cp == 0)
+        {
+            cp = *(pText++);
+
+            switch (cp)
+            {
+            case 1: 
+                goto ptGC_Text_out;
+            case 2:
+                cp = *pText++;
+
+                for (fgcolIdx=0; fgcolIdx<fgcolCnt; fgcolIdx++)
+                    if (cp == info.mFGCol[fgcolIdx])
+                        continue;
+
+                if (fgcolCnt < bbARRSIZE(info.mFGCol))
+                {
+                    fgcolIdx = fgcolCnt++;
+                    info.mFGCol[fgcolIdx] = (bbU8)cp;
+                    continue;
+                }
+
+                fgcolIdx=0;
+                continue;
+            case 3:
+                cp = (bgpen & ptPENMASK) | ((bbUINT)*pText++ & 0xFFU);
+                
+                for (bgpenIdx=0; bgpenIdx<bgpenCnt; bgpenIdx++)
+                    if (cp == info.mBGPen[bgpenIdx])
+                        continue;
+
+                if (bgpenCnt < bbARRSIZE(info.mBGPen))
+                {
+                    bgpenIdx = bgpenCnt++;
+                    info.mBGPen[bgpenIdx] = (bbU16)cp;
+                    continue;
+                }
+
+                bgpenIdx=0;
+                continue;
+            case 4:
+                cp = *pText++;
+                
+                for (fontIdx=0; fontIdx<fontCnt; fontIdx++)
+                    if (ptgFontMan.mFonts[cp] == info.mpFont[fontIdx])
+                        continue;
+
+                if (fontCnt < bbARRSIZE(info.mpFont))
+                {
+                    fontIdx = fontCnt++;
+                    info.mpFont[fontIdx] = ptgFontMan.mFonts[cp];
+                    continue;
+                }
+
+                fontIdx=0;
+                continue;
+            case 5:
+                #if bbSIZEOF_CHARCP == bbSIZEOF_CHAR
+                cp = *pText++;
+                #elif (bbSIZEOF_CHARCP == bbSIZEOF_CHAR*2)
+                cp = (bbU32)pText[0] | ((bbCHARCP)pText[1]<<(8*bbSIZEOF_CHAR));
+                pText += 2;
+                #elif (bbSIZEOF_CHARCP == 4) && (bbSIZEOF_CHAR == 1)
+                cp = bbLD32LE(pText);
+                pText += 4;
+                #endif
+                break;
+            }
+        }
+
+        text[i++] = cp | (fontIdx << 22) | (fgcolIdx << 28) | (bgpenIdx << 29);
+
+        if (bbCpgUnicode_IsWide(cp))
+            text[i++] = 0x3FFFFEUL;
+
+    } while (i+3 <= bbARRSIZE(text));
+
+    ptGC_Text_out:
+
+    text[i] = 0xFFFFFFFFUL;
+    return MarkupText(x, y, text, &info, 0);
 }
 
 void ptGC::MarkupTextBox(ptTextBox* const pTextbox)

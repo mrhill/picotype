@@ -19,7 +19,6 @@ private:
     const bbU8*  mpColLU;           //!< Lookup-table for logical -> physical colour numbers, managed internally
     const bbU8*  mpAALU;            //!< Lookup-table for Anti-aliasing, managed internally
     const bbU32* mpRGB;             //!< Currently set RGB palette (256 32-bit words), managed externally
-    void*        mpScratch;         //!< Scratch buffer
 
     bbUINT       mUnitWidth;        //!< Width in units
     bbUINT       mUnitHeight;       //!< Height in units

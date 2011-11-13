@@ -9,13 +9,15 @@
 #include <babel/str.h>
 #include "ptSprite.h"
 
+#define ptGCSCRATCHSIZE 0x1000U        
+static bbU8 gScratch[ptGCSCRATCHSIZE]; //!< Scratch space shared by all instances
+
 ptGC8::ptGC8()
 {
     mpBmp       = NULL;
     mpColLU     = NULL;
     mpAALU      = NULL;
     mpRGB       = NULL;
-    mpScratch   = NULL;
 }
 
 ptGC8::~ptGC8()
@@ -25,9 +27,6 @@ ptGC8::~ptGC8()
 
 bbERR ptGC8::Init()
 {
-    if ((mpScratch = ptScratchAlloc()) == NULL)
-        return bbELAST;
-
     mPixPitch   = 0;//pitch;
     mUnitWidth  = 0;//width << ptGCEIGHTX;
     mUnitHeight = 0;//height << ptGCEIGHTY;
@@ -40,7 +39,6 @@ bbERR ptGC8::Init()
 void ptGC8::Destroy()
 {
     bbMemFreeNull( (void**) &mpAALU);
-    ptScratchFree(&mpScratch);
 }
 
 void ptGC8::SetClipBox(const int clipminx, const int clipminy, const int clipmaxx, const int clipmaxy)
@@ -587,7 +585,7 @@ void ptGC8::Polygon(const ptCoord* const pPoints, const bbUINT pointcount, const
 
     // y-enum loop. build a bintree for all y-coords
 
-    bbU16* const pSort = (bbU16*) mpScratch; // 512 bytes
+    bbU16* const pSort = (bbU16*) gScratch; // 512 bytes
     bbU8* const pAE = (bbU8*)pSort + 768;
     #define pFrom pAE
 
