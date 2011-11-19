@@ -675,6 +675,15 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
+    case ptCOLFMT_AYUV:
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+            return;
+        while (y < y_end)
+        {
+            ptConvert_AYUVToRGB888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pYUV2RGB); pData+=pSprite->GetStride();
+            mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+        }
+        break;
     default:
         return;
     }

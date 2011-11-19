@@ -1190,6 +1190,33 @@ void ptConvert_YUV444ToRGBA8888(const bbU8* pSrc,
     }
 }
 
+void ptConvert_AYUVToRGB888(const bbU8* pSrc,
+                            bbU8* pDst,
+                            bbU32 width,
+                            const bbS16* pYUV2RGB)
+{
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    while (pDst < pDstEnd)
+    {
+        int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
+        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
+        int const v = ((int)*pSrc + pYUV2RGB[2]); pSrc+=2;
+
+        register int p;
+        if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[2] = p; // B
+        if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[1] = p; // G
+        if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+        if (p>255) p=255;
+        pDst[0] = p; // R
+        pDst += 3;
+    }
+}
+
 void ptConvert_AYUVToRGBA8888(const bbU8* pSrc,
                               bbU8* pDst,
                               bbU32 width,
