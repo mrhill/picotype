@@ -132,6 +132,7 @@ struct ptPal
     bbERR Load_Raw(bbU8* pBuf, bbU32 filesize);
     bbERR Load_Archimedes(bbU8* pBuf, bbU32 filesize);
 
+    inline const bbU32* GetRGBA() const { return mpRGB; }
     inline bbUINT GetColCount() const { return mColCount; }
     inline ptRGBA GetColRGBA(bbUINT idx) const { return mpRGB[idx]; }
     inline void   SetColRGBA(bbUINT idx, ptRGBA rgba) { mpRGB[idx]=rgba; mSyncPt++; }
