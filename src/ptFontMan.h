@@ -49,7 +49,7 @@ public:
                      Can be NULL to get the default font, which always succeeds.
         @return Font handle, use as index into ptFontMan::mFonts, or (bbUINT)-1 on error
     */
-    bbUINT GetFont(ptFontInfo* const pInfo);
+    bbUINT GetFont(const ptFontInfo* const pInfo);
 
     /** Release reference counted font object.
         @param hFont Font handle as returned earlier with e7Engine::GetFont(), can be (bbUINT)-1

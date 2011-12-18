@@ -3,7 +3,7 @@
 
 #include "ptFont.h"
 
-void ptFontInfo::Destroy()
+void ptFontInfo::Clear()
 {
     if (mpFont != mpName)
         bbMemFree(mpName);
@@ -11,7 +11,7 @@ void ptFontInfo::Destroy()
     bbMemClear(this, sizeof(ptFontInfo));
 }
 
-bbERR ptFontInfo::CopyTo(ptFontInfo* const pTo)
+bbERR ptFontInfo::CopyTo(ptFontInfo* const pTo) const
 {
     pTo->Destroy();
 

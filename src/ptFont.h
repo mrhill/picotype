@@ -91,8 +91,9 @@ struct ptFontInfo
     bbCHAR*     mpFont;     //!< Font Allocation Name, pointer to heap block, can be same block as pFont or different block
 
     inline void Init() { bbMemClear(this, sizeof(ptFontInfo)); }
-    void        Destroy();
-    bbERR       CopyTo(ptFontInfo* const pTo);
+    inline void Destroy() { Clear(); }
+    void        Clear();
+    bbERR       CopyTo(ptFontInfo* const pTo) const;
     bbCHAR*     ToStr();
     bbERR       FromStr(bbCHAR* pStr); // will corrupt string in pStr
 };

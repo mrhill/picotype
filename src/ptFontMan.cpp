@@ -63,7 +63,7 @@ bbUINT ptFontMan::AddFont(ptFont* const pFont)
     return i;
 }
 
-bbUINT ptFontMan::GetFont(ptFontInfo* const pInfo)
+bbUINT ptFontMan::GetFont(const ptFontInfo* const pInfo)
 {
     ptFont* pFont = NULL;
     bbCHAR* pPath;
