@@ -73,7 +73,12 @@ bbERR ptGCQT::EnsureLineCache(bbUINT width, bbUINT height)
 
 void ptGCQT::SetClipBox(const int /*clipminx*/, const int /*clipminy*/, const int /*clipmaxx*/, const int /*clipmaxy*/) {}
 void ptGCQT::GetClipBox(ptRect* const /*pRect*/) {}
-void ptGCQT::Clear(const bbUINT /*col*/) {}
+
+void ptGCQT::Clear(const bbUINT col)
+{
+    FillBox(0, 0, GetWidth(), GetHeight(), col);
+}
+
 void ptGCQT::Point(const int /*x*/, const int /*y*/, const bbUINT /*col*/) {}
 
 void ptGCQT::HLine(int x, int y, bbUINT width, bbUINT col)
