@@ -57,7 +57,7 @@ bbCHAR* ptFontInfo::ToStr()
     return pStr;
 }
 
-bbERR ptFontInfo::FromStr(bbCHAR* pStr)
+bbERR ptFontInfo::FromStr(const bbCHAR* pStr)
 {
     bbERR err = bbELAST;
     bbUINT count;

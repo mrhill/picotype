@@ -95,7 +95,7 @@ struct ptFontInfo
     void        Clear();
     bbERR       CopyTo(ptFontInfo* const pTo) const;
     bbCHAR*     ToStr();
-    bbERR       FromStr(bbCHAR* pStr); // will corrupt string in pStr
+    bbERR       FromStr(const bbCHAR* pStr);
 };
 
 /** Describes a font glyph for ptFont.
