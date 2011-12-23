@@ -122,6 +122,7 @@ fwprintf(fh, TEXT("%s %d %d\n"), pName, width, height);
     mInfo.mFormat   = (bbU8)format;
     mInfo.mWidth    = (bbU8)width;
     mInfo.mHeight   = (bbU8)height;
+    mInfo.mStyle    = (bbU8)style;
     mInfo.mCodepage = bbCPG_UCS; // Windows does not support bbCPG_UNICODE Unicode 4.0
 
     // get available unicode pages
