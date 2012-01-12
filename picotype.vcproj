@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\Debug_picotype"
+			IntermediateDirectory=".\Debug_picotype"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -48,10 +48,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				StructMemberAlignment="3"
-				PrecompiledHeaderFile=".\Debug/picotype.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\Debug_picotype/picotype.pch"
+				AssemblerListingLocation=".\Debug_picotype/"
+				ObjectFile=".\Debug_picotype/"
+				ProgramDataBaseFileName=".\Debug_picotype/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -69,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Debug\picotype.lib"
+				OutputFile=".\Debug_picotype\picotype.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -81,7 +81,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Debug/picotype.bsc"
+				OutputFile=".\Debug_picotype/picotype.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\Release_picotype"
+			IntermediateDirectory=".\Release_picotype"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -125,10 +125,10 @@
 				RuntimeLibrary="0"
 				StructMemberAlignment="3"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/picotype.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\Release_picotype/picotype.pch"
+				AssemblerListingLocation=".\Release_picotype/"
+				ObjectFile=".\Release_picotype/"
+				ProgramDataBaseFileName=".\Release_picotype/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -145,7 +145,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Release\picotype.lib"
+				OutputFile=".\Release_picotype\picotype.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -157,7 +157,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release/picotype.bsc"
+				OutputFile=".\Release_picotype/picotype.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

@@ -69,7 +69,6 @@ void ptSprite::Create(bbU8* pData, bbU32 width, bbU32 height, bbU32 stride, ptCO
 static void ptMakePal2PalLookup(const ptPal* pSrc, const ptPal* pDst, bbU8* pLU)
 {
     bbUINT srcColCount = pSrc->GetColCount();
-    bbUINT dstColCount = pDst->GetColCount();
 
     for(bbUINT i=0; i<srcColCount; i++)
     {
@@ -168,7 +167,7 @@ bbERR ptSprite::Convert_Pal2Pal(ptSprite* pDst) const
     return bbEOK;
 }
 
-bbERR ptSprite::Convert_YUV2Pal(ptSprite* pDst) const
+bbERR ptSprite::Convert_YUV2Pal(ptSprite* /*pDst*/) const
 {
     return bbErrSet(bbENOTSUP);
 }

@@ -52,7 +52,7 @@
 #define ptUSE_FONTBBC 1
 
 /** Compile support for Windows fonts via ptFont_win32. */
-#ifndef ptUSE_FONTWIN
+#if !defined(ptUSE_FONTWIN) && !defined(bbQT)
 #define ptUSE_FONTWIN 1
 #endif
 

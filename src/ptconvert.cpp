@@ -1446,7 +1446,6 @@ void ptConvert_RGBA4444ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptEND
             *pDst++ = (bbU8)((rgba>>4) & 0xF0);
             *pDst++ = (bbU8)(rgba & 0xF0);
             *pDst++ = (bbU8)(rgba<<4);
-            register bbU32 a = rgba>>12;
         }
     }
     else
@@ -1457,7 +1456,6 @@ void ptConvert_RGBA4444ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptEND
             *pDst++ = (bbU8)((rgba>>4) & 0xF0);
             *pDst++ = (bbU8)(rgba & 0xF0);
             *pDst++ = (bbU8)(rgba<<4);
-            register bbU32 a = rgba>>12;
         }
     }
 }

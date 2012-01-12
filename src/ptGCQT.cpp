@@ -176,7 +176,7 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
                 cp = lineCrop;
             mpPainter->drawImage(QPoint(x, y), *mpLineCache, QRect(0, 0, cp, height));
 
-            return (x - x_org + (DWORD)pData - (DWORD)pDataStart) << ptGCEIGHTX;
+            return (x - x_org + (bbU32)pData - (bbU32)pDataStart) << ptGCEIGHTX;
         }
 
         bbUINT const fgcol = pInfo->mFGCol[(cp >> ptGCMT_FGPOS) & ptGCMT_FGMASK];
