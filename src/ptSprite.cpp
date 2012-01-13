@@ -136,7 +136,7 @@ bbERR ptSprite::Convert_Pal2Pal(ptSprite* pDst) const
             case ptCOLFMT_8BPPP:
                 ptExpand_1BppTo8Bpp(pDataSrc, linebuf, lineBufWidth, this->GetBitOrder());
                 for(plane=1; plane < (bbUINT)(GetColFmt()-ptCOLFMT_2BPPP+2); plane++)
-                    ptMerge_1BppTo8Bpp(this->GetPlane(plane) + (bbU32)pDataSrc-(bbU32)this->GetData(), linebuf, lineBufWidth, this->GetBitOrder(), plane);
+                    ptMerge_1BppTo8Bpp(this->GetPlane(plane) + (bbU32)(bbUPTR)pDataSrc-(bbU32)(bbUPTR)this->GetData(), linebuf, lineBufWidth, this->GetBitOrder(), plane);
                 pDataSrc += sizeof(linebuf)>>3;
                 break;
             default: return bbErrSet(bbENOTSUP);
@@ -646,7 +646,7 @@ ptSprite* ptSpriteConvert( const ptSprite* const pSrcSprite, bbUINT const depth)
         case 4:
             {
                 #if pt16BPP == pt16BPP_BGR555
-                bbU32 const mask = ~0x7FF00UL;
+                bbU32 const mask = ~0x7FF00U;
                 #endif
 
                 register bbU16* pTmp = (bbU16*) pDst;

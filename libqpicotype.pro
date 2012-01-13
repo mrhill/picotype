@@ -2,11 +2,13 @@ TEMPLATE = lib
 CONFIG += staticlib
 TARGET = libqpicotype
 DEPENDPATH += .
-INCLUDEPATH += ./src ../babel/include
+INCLUDEPATH += src ../babel/include
 DEFINES += bbQT
 
+win32 {
 QMAKE_CXXFLAGS += /Zc:wchar_t /Zp4
 QMAKE_CXXFLAGS_DEBUG += /Zc:wchar_t /Zp4
+}
 
 # Input
 HEADERS += \

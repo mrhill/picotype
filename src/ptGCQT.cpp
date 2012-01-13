@@ -171,12 +171,12 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
 
         if (cp == 0xFFFFFFFFUL) // EOL?
         {
-            cp = (bbU32)pData - (bbU32)pDataStart;
+            cp = (bbU32)(bbUPTR)pData - (bbU32)(bbUPTR)pDataStart;
             if (cp > lineCrop)
                 cp = lineCrop;
             mpPainter->drawImage(QPoint(x, y), *mpLineCache, QRect(0, 0, cp, height));
 
-            return (x - x_org + (bbU32)pData - (bbU32)pDataStart) << ptGCEIGHTX;
+            return (x - x_org + (bbU32)(bbUPTR)pData - (bbU32)(bbUPTR)pDataStart) << ptGCEIGHTX;
         }
 
         bbUINT const fgcol = pInfo->mFGCol[(cp >> ptGCMT_FGPOS) & ptGCMT_FGMASK];
@@ -212,7 +212,7 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
         pSrc = pSrc + (tmp &~ 0xFF000000UL);
         tmp>>=26;
 
-        if (((bbU32)pData-(bbU32)pDataStart+tmp) <= lineCrop)
+        if (((bbU32)(bbUPTR)pData-(bbU32)(bbUPTR)pDataStart+tmp) <= lineCrop)
         {
             bbU8* const pDataSave = pData;
 
@@ -279,8 +279,8 @@ void ptGCQT::FillCircle(int /*x*/, int /*y*/, bbUINT /*rad*/, const ptPEN /*pen*
 
 void ptGCQT::CachePal(ptPal* const pPal, bbUINT size)
 {
-    bbU32 const newhash = (bbU32)pPal ^ pPal->mSyncPt;
-    
+    bbU32 const newhash = (bbU32)(bbUPTR)pPal ^ pPal->mSyncPt;
+
     if (newhash == mPalHash)
         return;
 

@@ -1041,8 +1041,8 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
 
             switch (cp)
             {
-            case 1: 
-                return ((bbUINT)pDst-(bbUINT)pDst_start) << ptGCEIGHTX;
+            case 1:
+                return ((bbUINT)(bbUPTR)pDst-(bbUINT)(bbUPTR)pDst_start) << ptGCEIGHTX;
             case 2:
                 fgcol = *(pMarkup++);
                 continue;
@@ -1098,12 +1098,12 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
         // clip max x
         if (pDst > pDst_clipmaxx)
         {
-            if (pTmpy >= pDst_clipmaxx) return ((bbUINT)pDst_clipmaxx-(bbUINT)pDst_start) << ptGCEIGHTX; // chars completely right of clip box
+            if (pTmpy >= pDst_clipmaxx) return ((bbUINT)(bbUPTR)pDst_clipmaxx-(bbUINT)(bbUPTR)pDst_start) << ptGCEIGHTX; // chars completely right of clip box
 
             clipright = (bbUINT)(tmp >> 26);
             clipright += 7;
             clipright >>= 3;
-            tmp -= ((bbU32)pDst - (bbU32)pDst_clipmaxx) << 26;
+            tmp -= ((bbU32)(bbUPTR)pDst - (bbU32)(bbUPTR)pDst_clipmaxx) << 26;
             clipright -= (bbUINT)(tmp >> (26+3));
             if (tmp & (7U<<26)) clipright--;
         }
@@ -1130,7 +1130,7 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
         {
             if (pDst <= pDst_clipminx) continue; // char completely left of clip box
 
-            const bbUINT clipleft = ((bbUINT)pDst_clipminx - (bbUINT)pTmpy);
+            const bbUINT clipleft = ((bbUINT)(bbUPTR)pDst_clipminx - (bbUINT)(bbUPTR)pTmpy);
             pTmpy = pDst_clipminx;
 
             #if bbCPU!=bbCPU_ARM
