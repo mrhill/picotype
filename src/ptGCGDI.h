@@ -5,6 +5,8 @@
 
 #if ptUSE_GCGDI == 1
 
+#include <windows.h>
+
 class ptGCGDI : public ptGC
 {
 private:

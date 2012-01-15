@@ -8,6 +8,8 @@
 
 #if ptUSE_FONTWIN == 1
 
+#include <windows.h>
+
 /** ptFont_win::Init() flagbit: Lock font's width-height aspect ratio. */
 #define ptFONT_WIN_INIT_NOHSCALE 0x1
 

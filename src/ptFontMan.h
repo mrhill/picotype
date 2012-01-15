@@ -52,7 +52,7 @@ public:
     bbUINT GetFont(const ptFontInfo* const pInfo);
 
     /** Release reference counted font object.
-        @param hFont Font handle as returned earlier with e7Engine::GetFont(), can be (bbUINT)-1
+        @param hFont Font handle, can be (bbUINT)-1
     */
     void ReleaseFont(bbUINT const hFont);
 };

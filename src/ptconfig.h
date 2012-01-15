@@ -52,13 +52,17 @@
 #define ptUSE_FONTBBC 1
 
 /** Compile support for Windows fonts via ptFont_win32. */
-#if !defined(ptUSE_FONTWIN) && !defined(bbQT)
+#ifndef ptUSE_FONTWIN
+#if defined(WIN32) || defined(_WIN64) || defined(UNDER_CE)
 #define ptUSE_FONTWIN 1
+#endif
 #endif
 
 /** Compile support for Windows GDI via ptGCGDI. */
-#if bbOS == bbOS_WIN32
+#ifndef ptUSE_GCGDI
+#if defined(WIN32) || defined(_WIN64) || defined(UNDER_CE)
 #define ptUSE_GCGDI 1
+#endif
 #endif
 
 /** Compile support for QT QPainter via ptGCQT. */
