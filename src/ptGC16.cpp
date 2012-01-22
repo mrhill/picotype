@@ -17,7 +17,7 @@ ptGC16::~ptGC16()
     bbMemFreeNull( (void**)&mpColLU);
 }
 
-void ptGC16::Clear(const bbUINT col)
+void ptGC16::Clear(const bbUINT /*col*/)
 {
 }
 

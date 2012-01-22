@@ -155,13 +155,13 @@ void ptFont::Clear()
     bbMemClear(mpPages, sizeof(mpPages));
 }
 
-const bbU8* const * ptFont::LoadPage(bbCHARCP const cp)
+const bbU8* const * ptFont::LoadPage(bbCHARCP const /*cp*/)
 {
     bbErrSet(bbENOTSUP);
     return NULL;
 }
 
-const bbU8* ptFont::LoadBank(bbCHARCP const cp)
+const bbU8* ptFont::LoadBank(bbCHARCP const /*cp*/)
 {
     bbErrSet(bbENOTSUP);
     return NULL;
