@@ -14,15 +14,6 @@ ptPal::ptPal(const bbU32* pExtRGB, bbUINT size, bbCHAR* pExtName)
 
 void ptPal::Clear()
 {
-    if (mppColNames)
-    {
-        bbUINT i = mColCount;
-        while (i>0)
-        {
-            bbMemFree(mppColNames[--i]);
-        }
-        bbMemFreeNull((void**)&mppColNames);
-    }
     bbUINT const opt = mOpt;
     if (!(opt & ptPALOPT_EXTNAME)) bbMemFreeNull((void**)&mpName);
     if (!(opt & ptPALOPT_EXTRGB)) bbMemFreeNull((void**)&mpRGB);
@@ -50,14 +41,6 @@ bbERR ptPal::Init(const ptPal& other)
 
     if (other.mpName)
         mpName = bbStrDup(other.mpName);
-
-    if (other.mppColNames)
-    {
-        for(int i=0; i<other.mColCount; i++)
-        {
-            mppColNames[i] = bbStrDup(other.mppColNames[i]);
-        }
-    }
 
     return bbEOK;
 }
@@ -485,5 +468,12 @@ bbUINT ptPal::MatchRGBA(ptRGBA rgba) const
     }
 
     return bestidx;
+}
+
+void ptPal::ToYUV(const ptRGB2YUV& rgb2yuv)
+{
+    int i = (int)mColCount; 
+    while (--i>=0)
+        mpRGB[i] = rgb2yuv.ToYUVA(mpRGB[i]);
 }
 

@@ -10,7 +10,8 @@
 enum ptPALOPT
 {
     ptPALOPT_EXTNAME = 0x1, //!< ptPal::mpName is managed externally
-    ptPALOPT_EXTRGB  = 0x2  //!< ptPal::mpRGB is managed externally
+    ptPALOPT_EXTRGB  = 0x2, //!< ptPal::mpRGB is managed externally
+    ptPALOPT_YUV     = 0x4  //!< ptPal::mpRGB contains ptYUVA values
 };
 
 /** Palette format IDs, see ptPal::mFormat. */
@@ -51,8 +52,6 @@ struct ptPal
     bbU8     mFormat;    //!< Palette format the object was created from, see ptPALFMT
     bbU32    mSyncPt;    //!< Sync point to enable caching
     bbCHAR*  mpName;     //!< Palette name, 0-terminated string, can be NULL
-    bbCHAR** mppColNames;/**< Heap-block with array of 0-terminated strings with colour names, can be NULL.
-                              Individual name strings can be NULL. */
 
     static ptPal* CreatePredefined(ptPALID const id);
     static ptPal* Create(bbU8* pRGB , ptPALFMT srcfmt, bbUINT size, bbCHAR* const pName);
@@ -133,6 +132,7 @@ struct ptPal
     bbERR Load_Archimedes(bbU8* pBuf, bbU32 filesize);
 
     inline const bbU32* GetRGBA() const { return mpRGB; }
+    inline bbUINT GetSize() const { return mColCount; }
     inline bbUINT GetColCount() const { return mColCount; }
     inline ptRGBA GetColRGBA(bbUINT idx) const { return mpRGB[idx]; }
     inline void   SetColRGBA(bbUINT idx, ptRGBA rgba) { mpRGB[idx]=rgba; mSyncPt++; }
@@ -142,6 +142,16 @@ struct ptPal
         @return Best matching index in palette
     */
     bbUINT MatchRGBA(ptRGBA rgba) const;
+
+    /** Test if palette contains YUV values.
+        @return !=0 if palette is YUV
+    */
+    inline int IsYUV() const { return mOpt & ptPALOPT_YUV; }
+
+    /** Convert RGB palette to YUV.
+        @param rgb2yuv Matrix to use
+    */
+    void ToYUV(const ptRGB2YUV& rgb2yuv);
 };
 
 #endif

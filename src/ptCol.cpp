@@ -1,5 +1,6 @@
 #include "ptCol.h"
 #include "ptPal.h"
+#include <babel/mem.h>
 
 ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT] = { ptCOLFMTINFO };
 
@@ -14,11 +15,11 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT colfmt)
     return ptCOLTYPE_RGB;
 }
 
-ptRGBA ptYUV2RGB::ToRGB(ptYUVA yuv) const
+ptRGBA ptYUV2RGB::ToRGB(ptYUVA yuva) const
 {
-    int const y = (int)ptYUVA_Y(yuv) + (int)mYUV2RGB[0];
-    int const u = (int)ptYUVA_U(yuv) + (int)mYUV2RGB[1];
-    int const v = (int)ptYUVA_V(yuv) + (int)mYUV2RGB[2];
+    int const y = (int)ptYUVA_Y(yuva) + (int)mYUV2RGB[0];
+    int const u = (int)ptYUVA_U(yuva) + (int)mYUV2RGB[1];
+    int const v = (int)ptYUVA_V(yuva) + (int)mYUV2RGB[2];
     int rgb;
 
     register int p;
@@ -35,7 +36,7 @@ ptRGBA ptYUV2RGB::ToRGB(ptYUVA yuv) const
     if (p>255) p=255;
     rgb |= p<<16; // B
 
-    return rgb;
+    return rgb | (yuva & 0xFF000000U);
 }
 
 void ptYUV2RGB::SwapUV()
@@ -46,5 +47,20 @@ void ptYUV2RGB::SwapUV()
         mYUV2RGB[i+2] = mYUV2RGB[i+1];
         mYUV2RGB[i+1] = tmp;
     }
+}
+
+ptRGB2YUV::ptRGB2YUV(const ptYUV2RGB& yuv2rgb)
+{
+    bbMemCpy(mRGB2YUV, yuv2rgb.mYUV2RGB, sizeof(mRGB2YUV)); ///xxx
+}
+
+ptYUVA ptRGB2YUV::ToYUVA(ptRGBA rgba) const
+{
+    int const r = ptRGBA_R(rgba);
+    int const g = ptRGBA_G(rgba);
+    int const b = ptRGBA_B(rgba);
+    int yuv = rgba; //xxx
+
+    return yuv | (rgba & 0xFF000000U);
 }
 

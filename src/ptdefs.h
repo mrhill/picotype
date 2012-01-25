@@ -172,9 +172,15 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
 
 /** Test if colour format ID is a YUV format.
     @param (ptCOLFMT) Colour format ID
-    @return true if YUV, false otherwise
+    @return true or false
 */
 #define ptColFmtIsYUV(colfmt) ((bbUINT)colfmt>=ptCOLFMT_YUV420P)
+
+/** Test if colour format ID is planar YUV420 format.
+    @param (ptCOLFMT) Colour format ID
+    @return true or false
+*/
+#define ptColFmtIsYUV420(colfmt) (((bbUINT)colfmt-ptCOLFMT_YUV420P)<=ptCOLFMT_YUV420P_IMC2)
 
 #define ptColFmtIsIndexed(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_PALETTE) != 0)
 
