@@ -102,6 +102,8 @@ struct ptPal
         return err;
     }
 
+    const bbCHAR* GetName() const { return mpName; }
+
     /** Attach name string.
         @param pName Pointer to heap-block containing 0-terminated string. Can be NULL. 
                      Ownership of block will be transfered to ptPal.

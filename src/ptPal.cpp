@@ -472,8 +472,7 @@ bbUINT ptPal::MatchRGBA(ptRGBA rgba) const
 
 void ptPal::ToYUV(const ptRGB2YUV& rgb2yuv)
 {
-    int i = (int)mColCount; 
-    while (--i>=0)
+    for(int i=0; i<(int)mColCount; i++)
         mpRGB[i] = rgb2yuv.ToYUVA(mpRGB[i]);
 }
 
