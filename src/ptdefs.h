@@ -102,6 +102,18 @@ enum ptCOLFMT
     ptCOLFMTCOUNT
 };
 
+/** ptColFmtInfo::flags bits. */
+enum ptCOLFMTFLAG
+{
+    ptCOLFMTFLAG_PALETTE  = 0x1,    //!< Colour format is palette indexed
+    ptCOLFMTFLAG_RGB      = 0x2,    //!< Colour format has RGB pixel data
+    ptCOLFMTFLAG_YUV      = 0x4,    //!< Colour format has YUV pixel data
+    ptCOLFMTFLAG_ALPHA    = 0x8,    //!< Colour format has alpha channel
+    ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
+    ptCOLFMTFLAG_PPBSHIFT = 5,      //!< Bitposition of PPB field in ptColFmtInfo::flags
+    ptCOLFMTFLAG_PPBMASK  = 7,      //!< Mask to mask PPB from ptColFmtInfo::flags
+};
+
 /** Colour format description. */
 struct ptColFmtInfo
 {
@@ -113,18 +125,6 @@ struct ptColFmtInfo
     bbU8 PlaneCount;    //!< Number of planes
     bbU8 PlaneShiftH;   //!< Horizontal downsampling for subplanes (planes other than plane 0)
     bbU8 PlaneShiftV;   //!< Vertical downsampling for subplanes (planes other than plane 0)
-};
-
-/** ptColFmtInfo::flags bits. */
-enum ptCOLFMTFLAG
-{
-    ptCOLFMTFLAG_PALETTE  = 0x1,    //!< Colour format is palette indexed
-    ptCOLFMTFLAG_RGB      = 0x2,    //!< Colour format has RGB pixel data
-    ptCOLFMTFLAG_YUV      = 0x4,    //!< Colour format has YUV pixel data
-    ptCOLFMTFLAG_ALPHA    = 0x8,    //!< Colour format has alpha channel
-    ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
-    ptCOLFMTFLAG_PPBSHIFT = 5,      //!< Bitposition of PPB field in ptColFmtInfo::flags
-    ptCOLFMTFLAG_PPBMASK  = 7,      //!< Mask to mask PPB from ptColFmtInfo::flags
 };
 
 #define ptCOLFMTINFO \
@@ -156,10 +156,10 @@ enum ptCOLFMTFLAG
     {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
     {/*ptCOLFMT_YUV420P_12   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
     {/*ptCOLFMT_YUV420P_16   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUYV         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_UYVY         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_YVYU         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
-    {/*ptCOLFMT_VYUY         */ 16, 4, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
+    {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
+    {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
+    {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
+    {/*ptCOLFMT_VYUY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
     {/*ptCOLFMT_YUV422P      */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
     {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1},\
     {/*ptCOLFMT_YUV444       */ 24, 1, 1, 0, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
@@ -168,6 +168,8 @@ enum ptCOLFMTFLAG
 
 extern ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT];
 
+inline const ptColFmtInfo* ptGetColFmtInfo(ptCOLFMT fmt) { return ptgColFmtInfo + fmt; }
+
 ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
 
 /** Test if colour format ID is a YUV format.
@@ -175,12 +177,6 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @return true or false
 */
 #define ptColFmtIsYUV(colfmt) ((bbUINT)colfmt>=ptCOLFMT_YUV420P)
-
-/** Test if colour format ID is planar YUV420 format.
-    @param (ptCOLFMT) Colour format ID
-    @return true or false
-*/
-#define ptColFmtIsYUV420(colfmt) (((bbUINT)colfmt-ptCOLFMT_YUV420P)<=ptCOLFMT_YUV420P_IMC2)
 
 #define ptColFmtIsIndexed(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_PALETTE) != 0)
 

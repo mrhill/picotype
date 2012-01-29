@@ -1,15 +1,12 @@
-#include "babel/mem.h"
+#include <babel/mem.h>
+#include <babel/fixmath.h>
 #include "ptSprite.h"
 #include "ptPalMan.h"
 #include "ptconvert.h"
 
-void ptSprite::Destroy()
-{
-}
-
 void ptSprite::Clear()
 {
-    Destroy();
+    bbMemFree(mpMem);
     bbMemClear(this, sizeof(*this));
 }
 
@@ -61,10 +58,185 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
     this->bitorder = bitorder;
 }
 
-void ptSprite::Create(bbU8* pData, bbU32 width, bbU32 height, bbU32 stride, ptCOLFMT fmt, ptENDIAN endian, ptBITORDER bitorder)
+void ptSprite::Create(bbU8* pData, bbU32 width, bbU32 height, bbU32 stride, bbU32 strideUV, ptCOLFMT fmt, ptENDIAN endian, ptBITORDER bitorder)
 {
-    Create(&pData, width, height, stride, 0, fmt, endian, bitorder);
+    const ptColFmtInfo* pInfo = ptGetColFmtInfo(fmt);
+    bbU32  planeSize = stride * height;
+    bbU8*  pPlanes[8];
+
+    pPlanes[0] = pData;
+    pData += planeSize;
+
+    planeSize = planeSize >> (pInfo->PlaneShiftH + pInfo->PlaneShiftV);
+    for(bbUINT plane=1; plane < pInfo->PlaneCount; plane++)
+    {
+        pPlanes[plane] = pData;
+        pData += planeSize;
+    }
+
+    Create(&pData, width, height, stride, strideUV, fmt, endian, bitorder);
 }
+
+bbERR ptSprite::Create(bbU32 width, bbU32 height, ptCOLFMT fmt, ptENDIAN endian, ptBITORDER bitorder)
+{
+    Clear();
+
+    const ptColFmtInfo* pInfo = ptGetColFmtInfo(fmt);
+
+    bbU32 stride = (((width + 7) &~ 7) * pInfo->bpp) >> 3;
+    bbU32 strideUV = stride >> pInfo->PlaneShiftH;
+
+    bbU32 planeSize = stride * height;
+    bbU32 frameSize = planeSize + (planeSize >> (pInfo->PlaneShiftH + pInfo->PlaneShiftV)) * (pInfo->PlaneCount - 1);
+
+    mpMem = (bbU8*)bbMemAlloc(frameSize);
+    if (!mpMem)
+        return bbELAST;
+
+    Create(mpMem, width, height, stride, strideUV, fmt, endian, bitorder);
+    return bbEOK;
+}
+
+bbUINT ptSprite::GetPlaneCount() const
+{
+    switch(colfmt)
+    {
+    case ptCOLFMT_YUV420P:
+    case ptCOLFMT_YUV420P_YV12:
+    case ptCOLFMT_YUV420P_IMC3:
+    case ptCOLFMT_YUV420P_IMC1:
+    case ptCOLFMT_YUV420P_12:
+    case ptCOLFMT_YUV420P_16:
+    case ptCOLFMT_YUV420P_IMC4:
+    case ptCOLFMT_YUV420P_IMC2:
+        return 4;
+    default:
+        return ptgColFmtInfo[colfmt].PlaneCount;
+    }
+}
+
+void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
+{
+    bbMemClear(pPlane, sizeof(ptPlane));
+
+    pPlane->mWidth    = width;
+    pPlane->mHeight   = height;
+    pPlane->mStride   = stride;
+    pPlane->mBPP      = ptgColFmtInfo[colfmt].bpp;
+    pPlane->mColComp  = (bbU8)plane;
+    pPlane->mFlags    = (endian ? ptPLANEFLAG_BIGENDIAN : 0) |
+                        (bitorder ? ptPLANEFLAG_MSBLEFT : 0);
+    pPlane->mpData    = this->pPlane[plane];
+
+    switch(ptColFmtGetType(GetColFmt()))
+    {
+    case ptCOLTYPE_YUV:
+
+        switch(colfmt)
+        {
+        case ptCOLFMT_YUV420P:
+        case ptCOLFMT_YUV420P_YV12:
+        case ptCOLFMT_YUV420P_IMC3:
+        case ptCOLFMT_YUV420P_IMC1:
+        case ptCOLFMT_YUV420P_IMC4:
+        case ptCOLFMT_YUV420P_IMC2:
+        case ptCOLFMT_YUV420P_12:
+        case ptCOLFMT_YUV420P_16:
+            if (plane <= 1)
+            {
+                pPlane->mColComp = 0;
+                pPlane->mStride <<= 1;
+                pPlane->mHeight >>= 1;
+            }
+            else
+            {
+                pPlane->mColComp = plane-1;
+                if (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_SWAPUV)
+                    pPlane->mColComp ^= 3;
+                pPlane->mFlags = ptPLANEFLAG_SUBSAMPLED;
+                pPlane->mWidth >>= 1;
+                pPlane->mHeight >>= 1;
+                pPlane->mStride = strideUV;
+            }
+            break;
+        default:
+            if (plane)
+            {
+                if (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_SWAPUV)
+                    pPlane->mColComp ^= 3;
+                pPlane->mFlags = ptPLANEFLAG_SUBSAMPLED;
+                pPlane->mWidth >>= ptgColFmtInfo[colfmt].PlaneShiftH;
+                pPlane->mHeight >>= ptgColFmtInfo[colfmt].PlaneShiftV;
+                pPlane->mStride = strideUV;
+            }
+            break;
+        }
+        break;
+
+    default:
+        break;
+    }
+}
+
+bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
+{
+    if (((x + width) > this->width) || ((y + height) > this->height))
+        return bbErrSet(bbEBADPARAM);
+
+    const ptColFmtInfo* pInfo = ptGetColFmtInfo((ptCOLFMT)this->colfmt);
+
+    bbUINT align = pInfo->widthalign - 1;
+    bbASSERT(bbIsPwr2(align+1));
+    if ((x & align) || (width & align))
+        return bbErrSet(bbEBADPARAM);
+
+    align = (1<<pInfo->PlaneShiftV) - 1;
+    if ((y & align) || (height & align))
+        return bbErrSet(bbEBADPARAM);
+
+    this->width = width;
+    this->height = height;
+
+    switch(ptColFmtGetType(GetColFmt()))
+    {
+    case ptCOLTYPE_YUV:
+        switch(this->colfmt)
+        {
+        case ptCOLFMT_YUV420P:
+        case ptCOLFMT_YUV420P_YV12:
+        case ptCOLFMT_YUV420P_IMC3:
+        case ptCOLFMT_YUV420P_IMC1:
+        case ptCOLFMT_YUV420P_IMC4:
+        case ptCOLFMT_YUV420P_IMC2:
+        case ptCOLFMT_YUV420P_12:
+        case ptCOLFMT_YUV420P_16:
+            this->pPlane[0] += this->stride*y + x;
+            this->pPlane[1] += this->stride*y + x;
+            this->pPlane[2] += this->strideUV*(y>>1) + (x>>1);
+            this->pPlane[3] += this->strideUV*(y>>1) + (x>>1);
+            break;
+        case ptCOLFMT_YUV420P_NV12:
+        case ptCOLFMT_YUV420P_NV21:
+            this->pPlane[0] += this->stride*y + x;
+            this->pPlane[1] += this->stride*y + x;
+            this->pPlane[2] += this->strideUV*(y>>1) + x;
+            break;
+        default:
+            this->pPlane[0] += (x * pInfo->bpp) >> 3;
+            for(bbUINT i=1; i<pInfo->PlaneCount; i++)
+                this->pPlane[i] += this->strideUV*(y>>pInfo->PlaneShiftV) + ((x * pInfo->bpp) >> (3 + pInfo->PlaneShiftH));
+            break;
+        }
+        break;
+
+    default:
+        for(bbUINT i=0; i<pInfo->PlaneCount; i++)
+            this->pPlane[i] += this->stride*y + ((x * pInfo->bpp) >> 3);
+        break;
+    }
+    return bbEOK;
+}
+
 
 static void ptMakePal2PalLookup(const ptPal* pSrc, const ptPal* pDst, bbU8* pLU)
 {
@@ -428,6 +600,32 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
     return bbELAST;
 }
 
+bbERR ptSprite::CopyTo(ptSprite* pDst) const
+{
+    bbUINT planeIdx, planeCount = GetPlaneCount();
+
+    if ((this->width != pDst->width) || (this->height != pDst->height) || (this->colfmt != pDst->colfmt))
+        return bbErrSet(bbENOTSUP);
+
+    for (planeIdx=0; planeIdx<planeCount; planeIdx++)
+    {
+        ptPlane planeSrc, planeDst;
+        GetPlane(planeIdx, &planeSrc);
+        pDst->GetPlane(planeIdx, &planeDst);
+
+        bbUINT const bytesPerLine = (planeSrc.mWidth * planeSrc.mBPP) >> 3;
+
+        for (bbUINT y=0; y<planeSrc.mHeight; y++)
+        {
+            bbMemCpy(planeDst.mpData, planeSrc.mpData, bytesPerLine);
+            planeDst.mpData += planeDst.mStride;
+            planeSrc.mpData += planeSrc.mStride;
+        }
+    }
+
+    return bbEOK;
+}
+
 bbERR ptSprite::Convert(ptSprite* pDst) const
 {
     if ((this->width != pDst->width) ||
@@ -435,6 +633,9 @@ bbERR ptSprite::Convert(ptSprite* pDst) const
     {
         return bbErrSet(bbENOTSUP);
     }
+
+    if (this->colfmt == pDst->colfmt)
+        return CopyTo(pDst);
 
     switch (ptColFmtGetType(GetColFmt()))
     {
@@ -481,7 +682,7 @@ static bbUINT ptSpriteGetBytePitch( const bbUINT pixelwidth, const bbUINT depth)
     return pitch;
 }
 
-ptSprite* ptSpriteCreate( bbUINT const width, bbUINT const height, bbUINT const depth)
+ptSprite* ptSpriteCreate(bbUINT const width, bbUINT const height, bbUINT const depth)
 {
     static const bbU8 gDepth2ColFmt[] =
     {
@@ -507,7 +708,7 @@ ptSprite* ptSpriteCreate( bbUINT const width, bbUINT const height, bbUINT const 
     return pSprite;
 }
 
-ptSprite* ptSpriteConvert( const ptSprite* const pSrcSprite, bbUINT const depth)
+ptSprite* ptSpriteConvert(const ptSprite* const pSrcSprite, bbUINT const depth)
 {
     bbUINT      y;
     const bbU8* pSrc;
