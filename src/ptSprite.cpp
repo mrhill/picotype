@@ -90,11 +90,12 @@ bbERR ptSprite::Create(bbU32 width, bbU32 height, ptCOLFMT fmt, ptENDIAN endian,
     bbU32 planeSize = stride * height;
     bbU32 frameSize = planeSize + (planeSize >> (pInfo->PlaneShiftH + pInfo->PlaneShiftV)) * (pInfo->PlaneCount - 1);
 
-    mpMem = (bbU8*)bbMemAlloc(frameSize);
-    if (!mpMem)
+    bbU8* pMem = (bbU8*)bbMemAlloc(frameSize);
+    if (!pMem)
         return bbELAST;
 
-    Create(mpMem, width, height, stride, strideUV, fmt, endian, bitorder);
+    Create(pMem, width, height, stride, strideUV, fmt, endian, bitorder);
+    mpMem = pMem;
     return bbEOK;
 }
 
@@ -239,19 +240,6 @@ bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
         break;
     }
     return bbEOK;
-}
-
-
-static void ptMakePal2PalLookup(const ptPal* pSrc, const ptPal* pDst, bbU8* pLU)
-{
-    bbUINT srcColCount = pSrc->GetColCount();
-
-    for(bbUINT i=0; i<srcColCount; i++)
-    {
-        ptRGBA srcCol = pSrc->GetColRGBA(i);
-        bbUINT dstBestIdx = pDst->MatchRGBA(srcCol);
-        *pLU++ = (bbU8)dstBestIdx;
-    }
 }
 
 bbERR ptSprite::Convert_Pal2Pal(ptSprite* pDst) const

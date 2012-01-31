@@ -1,4 +1,17 @@
 #include "ptconvert.h"
+#include "ptPal.h"
+
+void ptMakePal2PalLookup(const ptPal* pSrc, const ptPal* pDst, bbU8* pLU)
+{
+    bbUINT srcColCount = pSrc->GetColCount();
+
+    for(bbUINT i=0; i<srcColCount; i++)
+    {
+        ptRGBA srcCol = pSrc->GetColRGBA(i);
+        bbUINT dstBestIdx = pDst->MatchRGBA(srcCol);
+        *pLU++ = (bbU8)dstBestIdx;
+    }
+}
 
 static const bbU32 patternLSBLeft[16] = 
 {
