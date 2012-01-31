@@ -24,6 +24,7 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
     case ptCOLFMT_YUV420P_IMC1:
     case ptCOLFMT_YUV420P_12:
     case ptCOLFMT_YUV420P_16:
+    case ptCOLFMT_YUV422RP:
         this->pPlane[0] = pPlanes[0];
         this->pPlane[1] = pPlanes[0] + stride;
         this->pPlane[2] = pPlanes[1];
@@ -74,7 +75,7 @@ void ptSprite::Create(bbU8* pData, bbU32 width, bbU32 height, bbU32 stride, bbU3
         pData += planeSize;
     }
 
-    Create(&pData, width, height, stride, strideUV, fmt, endian, bitorder);
+    Create(pPlanes, width, height, stride, strideUV, fmt, endian, bitorder);
 }
 
 bbERR ptSprite::Create(bbU32 width, bbU32 height, ptCOLFMT fmt, ptENDIAN endian, ptBITORDER bitorder)
@@ -109,6 +110,7 @@ bbUINT ptSprite::GetPlaneCount() const
     case ptCOLFMT_YUV420P_16:
     case ptCOLFMT_YUV420P_IMC4:
     case ptCOLFMT_YUV420P_IMC2:
+    case ptCOLFMT_YUV422RP:
         return 4;
     default:
         return ptgColFmtInfo[colfmt].PlaneCount;
@@ -142,6 +144,7 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
         case ptCOLFMT_YUV420P_IMC2:
         case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
+        case ptCOLFMT_YUV422RP:
             if (plane <= 1)
             {
                 pPlane->mColComp = 0;
@@ -154,8 +157,8 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
                 if (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_SWAPUV)
                     pPlane->mColComp ^= 3;
                 pPlane->mFlags = ptPLANEFLAG_SUBSAMPLED;
-                pPlane->mWidth >>= 1;
-                pPlane->mHeight >>= 1;
+                pPlane->mWidth >>= ptgColFmtInfo[colfmt].PlaneShiftH;
+                pPlane->mHeight >>= ptgColFmtInfo[colfmt].PlaneShiftV;
                 pPlane->mStride = strideUV;
             }
             break;
@@ -210,16 +213,17 @@ bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
         case ptCOLFMT_YUV420P_IMC2:
         case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
+        case ptCOLFMT_YUV422RP:
             this->pPlane[0] += this->stride*y + x;
             this->pPlane[1] += this->stride*y + x;
-            this->pPlane[2] += this->strideUV*(y>>1) + (x>>1);
-            this->pPlane[3] += this->strideUV*(y>>1) + (x>>1);
+            this->pPlane[2] += this->strideUV*(y>>pInfo->PlaneShiftV) + (x>>pInfo->PlaneShiftH);
+            this->pPlane[3] += this->strideUV*(y>>pInfo->PlaneShiftV) + (x>>pInfo->PlaneShiftH);
             break;
         case ptCOLFMT_YUV420P_NV12:
         case ptCOLFMT_YUV420P_NV21:
             this->pPlane[0] += this->stride*y + x;
             this->pPlane[1] += this->stride*y + x;
-            this->pPlane[2] += this->strideUV*(y>>1) + x;
+            this->pPlane[2] += this->strideUV*(y>>pInfo->PlaneShiftV) + x;
             break;
         default:
             this->pPlane[0] += (x * pInfo->bpp) >> 3;
@@ -471,9 +475,9 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
 
         case ptCOLFMT_YUV422RP:
             ptConvert_YUV422RPToRGBA8888(this->pPlane[0] + offsetY,
-                                         (height==1) ? NULL : this->pPlane[0] + offsetY + this->GetStride(),
-                                         this->pPlane[1] + offsetUV,
+                                         (height==1) ? NULL : this->pPlane[1] + offsetY,
                                          this->pPlane[2] + offsetUV,
+                                         this->pPlane[3] + offsetUV,
                                          pDataTmp,
                                          this->width,
                                          pYUV2RGB);

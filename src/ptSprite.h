@@ -74,6 +74,7 @@ struct ptSprite
                                          ptCOLFMT_YUV420P_IMC2 <br>
                                          ptCOLFMT_YUV420P_12   <br>
                                          ptCOLFMT_YUV420P_16   <br>
+                                         ptCOLFMT_YUV422RP     <br> 
                                      </td>
                                      <td>pPlane[0] even Y lines, byte offset to next even line is ptSprite::stride*2 <br>
                                          pPlane[1] odd  Y lines, byte offset to next odd  line is ptSprite::stride*2 <br>
