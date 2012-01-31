@@ -312,6 +312,8 @@ bbERR ptSprite::Convert_Pal2Pal(ptSprite* pDst) const
             case ptCOLFMT_2BPP:
                 if (pDst->GetBitOrder() == ptBITORDER_LSBLEFT)
                     ptConvert_8BppTo2BppLSB(pLineBuf, pDataDst, lineBufWidth, colIdxLU);
+                else
+                    ptConvert_8BppTo2BppMSB(pLineBuf, pDataDst, lineBufWidth, colIdxLU);
                 pDataDst += sizeof(linebuf)>>2;
                 break;
             case ptCOLFMT_4BPP:
