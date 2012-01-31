@@ -213,6 +213,71 @@ void ptExpand_4BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER s
     }
 }
 
+void ptConvert_8BppTo2BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
+{
+    while(width>=16)
+    {
+        register bbU32 b = pColIdxLU[*pSrc++];
+        b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 6;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 8;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 10;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 12;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 14;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 16;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 18;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 20;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 22;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 24;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 26;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 28;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 30;
+        bbST32LE(pDst, b); pDst+=4;
+        width-=16;
+    }
+
+    if (width)
+    {
+        if (width>=8)
+        {
+            register bbU32 b = (bbU32)pColIdxLU[*pSrc++];
+            b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 6;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 8;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 10;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 12;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 14;
+            bbST16LE(pDst, b); pDst+=2;
+            width-=8;
+        }
+
+        if (width>=4)
+        {
+            register bbU32 b = (bbU32)pColIdxLU[*pSrc++];
+            b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+            b |= (bbU32)pColIdxLU[*pSrc++] << 6;
+            *pDst++=(bbU8)b;
+            width-=4;
+        }
+        
+        if (width>=2)
+        {
+            register bbU32 b = pColIdxLU[*pSrc++];
+            b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+            if (width>2)
+                b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+            *pDst = (bbU8)b;
+        }
+        else if (width)
+        {
+            *pDst = pColIdxLU[*pSrc];
+        }
+    }
+}
+
 void ptConvert_8BppTo4BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
 {
     while(width>=8)
