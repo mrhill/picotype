@@ -213,6 +213,100 @@ void ptExpand_4BppTo8Bpp(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptBITORDER s
     }
 }
 
+void ptConvert_8BppTo1BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
+{
+    while(width>=8)
+    {
+        register bbU32 b = pColIdxLU[*pSrc++];
+        b |= (bbU32)pColIdxLU[*pSrc++] << 1;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 3;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 5;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 6;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 7;
+        *pDst++ = (bbU8)b;
+        width-=8;
+    }
+
+    if (width)
+    {
+        bbUINT shift = 0;
+        register bbU32 pix = 0;
+
+        if (width>=4)
+        {
+            pix = (bbU32)pColIdxLU[*pSrc++];
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 1;
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 2;
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 3;
+            width-=4;
+            shift=4;
+        }
+
+        if (width>=2)
+        {
+            register bbU32 b = (bbU32)pColIdxLU[*pSrc++];
+            b |= (bbU32)pColIdxLU[*pSrc++] << 1;
+            pix |= b<<shift;
+            width-=2;
+            shift+=2;
+        }
+
+        if (width)
+            pix |= pColIdxLU[*pSrc] << shift;
+
+        *pDst = (bbU8)pix;
+    }
+}
+
+void ptConvert_8BppTo1BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
+{
+    while(width>=8)
+    {
+        register bbU32 b = pColIdxLU[*pSrc++] << 7;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 6;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 5;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 4;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 3;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+        b |= (bbU32)pColIdxLU[*pSrc++] << 1;
+        b |= (bbU32)pColIdxLU[*pSrc++];
+        *pDst++ = (bbU8)b;
+        width-=8;
+    }
+
+    if (width)
+    {
+        bbUINT shift = 6;
+        register bbU32 pix = 0;
+
+        if (width>=4)
+        {
+            pix = (bbU32)pColIdxLU[*pSrc++] << 7;
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 6;
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 5;
+            pix |= (bbU32)pColIdxLU[*pSrc++] << 4;
+            width-=4;
+            shift=2;
+        }
+
+        if (width>=2)
+        {
+            register bbU32 b = (bbU32)pColIdxLU[*pSrc++] << 1;
+            b |= (bbU32)pColIdxLU[*pSrc++];
+            pix |= b<<shift;
+            width-=2;
+            shift-=2;
+        }
+
+        if (width)
+            pix |= (pColIdxLU[*pSrc]<<1) << shift;
+
+        *pDst = (bbU8)pix;
+    }
+}
+
 void ptConvert_8BppTo2BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
 {
     while(width>=16)
@@ -298,7 +392,7 @@ void ptConvert_8BppTo2BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
         b |= (bbU32)pColIdxLU[*pSrc++] << 4;
         b |= (bbU32)pColIdxLU[*pSrc++] << 2;
         b |= (bbU32)pColIdxLU[*pSrc++];
-        bbST32LE(pDst, b); pDst+=4;
+        bbST32BE(pDst, b); pDst+=4;
         width-=16;
     }
 
@@ -314,7 +408,7 @@ void ptConvert_8BppTo2BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             b |= (bbU32)pColIdxLU[*pSrc++] << 4;
             b |= (bbU32)pColIdxLU[*pSrc++] << 2;
             b |= (bbU32)pColIdxLU[*pSrc++];
-            bbST16LE(pDst, b); pDst+=2;
+            bbST16BE(pDst, b); pDst+=2;
             width-=8;
         }
 
@@ -333,7 +427,7 @@ void ptConvert_8BppTo2BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             register bbU32 b = pColIdxLU[*pSrc++]<<6;
             b |= (bbU32)pColIdxLU[*pSrc++] << 4;
             if (width>2)
-                b |= (bbU32)pColIdxLU[*pSrc++] << 2;
+                b |= (bbU32)pColIdxLU[*pSrc] << 2;
             *pDst = (bbU8)b;
         }
         else if (width)
@@ -342,7 +436,6 @@ void ptConvert_8BppTo2BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
         }
     }
 }
-
 
 void ptConvert_8BppTo4BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbU8* pColIdxLU)
 {
@@ -397,7 +490,7 @@ void ptConvert_8BppTo4BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
         b |= (bbU32)pColIdxLU[*pSrc++] << 8;
         b |= (bbU32)pColIdxLU[*pSrc++] << 4;
         b |= (bbU32)pColIdxLU[*pSrc++];
-        bbST32LE(pDst, b); pDst+=4;
+        bbST32BE(pDst, b); pDst+=4;
         width-=8;
     }
 
@@ -409,7 +502,7 @@ void ptConvert_8BppTo4BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             b |= (bbU32)pColIdxLU[*pSrc++] << 8;
             b |= (bbU32)pColIdxLU[*pSrc++] << 4;
             b |= (bbU32)pColIdxLU[*pSrc++];
-            bbST16LE(pDst, b); pDst+=2;
+            bbST16BE(pDst, b); pDst+=2;
             width-=4;
         }
         
