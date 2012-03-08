@@ -88,7 +88,7 @@ bbCHARCP ptFont_mem::LoadZapFont(bbFILEH const fh)
 {
     bbUINT cp;
     bbU8** pBMP;
-    bbU32  data_wr;
+    bbU32  data_wr = 0;
     bbUINT cp_first;
     bbUINT cp_end;
     bbUINT charsize;

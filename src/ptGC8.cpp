@@ -413,7 +413,7 @@ void ptGC8::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
                 {
                     const bbUINT a = ((y>>(bbDIVTABPREC+ptGCEIGHTY-ptGCAAPREC)) & ((1<<ptGCAAPREC)-1));
                     *(pScrStart + offs)  = pAA[ ((bbUINT)pAALU[*(pScrStart  + offs)]<<ptGCAAPREC) + a];
-                    *(pScrStart2 + offs) = pAA[ ((bbUINT)pAALU[*(pScrStart2 + offs)]<<ptGCAAPREC) + a ^ ((1<<ptGCAAPREC)-1) ];
+                    *(pScrStart2 + offs) = pAA[ ((bbUINT)pAALU[*(pScrStart2 + offs)]<<ptGCAAPREC) + (a ^ ((1<<ptGCAAPREC)-1)) ];
                 }
                 offs++;
                 y += step << ptGCEIGHTY;
@@ -549,7 +549,7 @@ void ptGC8::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
                 {
                     const bbUINT a = ((x>>(bbDIVTABPREC+ptGCEIGHTX-ptGCAAPREC)) & ((1<<ptGCAAPREC)-1));
                     *(pScrStart + offs) = pAA[ ((bbUINT)pAALU[*(pScrStart + offs)]<<ptGCAAPREC) + a];
-                    *(pScrStart + offs + 1) = pAA[ ((bbUINT)pAALU[*(pScrStart + offs + 1)]<<ptGCAAPREC) + a ^ ((1<<ptGCAAPREC)-1) ];
+                    *(pScrStart + offs + 1) = pAA[ ((bbUINT)pAALU[*(pScrStart + offs + 1)]<<ptGCAAPREC) + (a ^ ((1<<ptGCAAPREC)-1)) ];
                 }
                 offs+=pitch;
                 x += step << ptGCEIGHTX;

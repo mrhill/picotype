@@ -166,7 +166,7 @@ bbERR ptPal::SetPredefined(ptPALID const id)
     switch (id)
     {
     case ptPALID_GREY256:
-        mpName = bbT("Grey256");
+        mpName = (bbCHAR*)bbT("Grey256");
         for (i=0; i<256; i++)
         {
             pRGB[i] = i | (i<<8) | (i<<16) | 0xFF000000UL;
@@ -174,7 +174,7 @@ bbERR ptPal::SetPredefined(ptPALID const id)
         break;
 
     case ptPALID_RGB232:
-        mpName = bbT("RGB232");
+        mpName = (bbCHAR*)bbT("RGB232");
         for (i=0; i<256; i++)
         {
             r = i & 3;
