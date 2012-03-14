@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += staticlib
-TARGET = libqpicotype
+TARGET = qpicotype
 DEPENDPATH += .
 INCLUDEPATH += src ../babel/include
 DEFINES += bbQT
