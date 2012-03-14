@@ -306,7 +306,7 @@ public:
     void GetGlyph(bbCHARCP cp, ptFontGlyph* const pGlyph);
 };
 
-bbDECLAREARR(ptFont*, ptArrPFont, 4);
+bbDECLAREARRPTR(ptFont*, ptArrPFont);
 
 #endif /* ptFONT_H_ */
 
