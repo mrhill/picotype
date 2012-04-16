@@ -143,20 +143,10 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
 
     #elif (bbSIZEOF_CHARCP == 4) && (bbSIZEOF_CHAR == 1)
 
-    #if bbCPUE == bbCPUE_LE
-    *(bbU16*)&text[0] = (bbU16)0x0500U;
-    *(bbU16*)&text[2] = (bbU16)cp;
-    *(bbU16*)&text[4] = (bbU16)((bbU32)cp>>16);
-    #else
-    text[0] = 0;
-    text[1] = 5;
-    text[2] = (bbCHAR)cp;
-    text[3] = (bbCHAR)((bbU32)cp >> 8);
-    text[4] = (bbCHAR)((bbU32)cp >> 16);
-    text[5] = (bbCHAR)((bbU32)cp >> 24);
-    text[6] = 0;
-    text[7] = 1;
-    #endif
+    bbST16LE(&text[0], 0x0500U);
+    bbST32LE(&text[2], cp);
+    bbST16LE(&text[6], 0x0100U);
+
     #else
     #error not implemented
     #endif
