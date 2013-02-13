@@ -207,7 +207,7 @@ public:
         @param clipmaxy Maxy (exclusive)
     */
     virtual void SetClipBox(const int clipminx, const int clipminy, const int clipmaxx, const int clipmaxy) = 0;
-    
+
     /** Get clip box.
         @param pRect Returns clipping box
     */
@@ -257,7 +257,7 @@ public:
     */
     virtual void HLine(int x, int y, bbUINT width, bbUINT col) = 0;
 
-    /** Draw a vertizontal line with given colour. 
+    /** Draw a vertizontal line with given colour.
         The line will be drawn from the start position in positive y-direction.
         @param x X-coordinate of line in units
         @param y Y-coordinate of line start in units
@@ -373,8 +373,9 @@ public:
                      Bit  0..21 - Character code point
                      Bit 22..23 - Font number 0-3
                      Bit 24..28 - FG colour number 0-31
-                     Bit 29..31 - BG colour number 0-7
+                     Bit 29..31 - BG pen number 0-7
                      </pre>
+                     Font, FG, and BG are indexes into corresponding ptMarkupInfo members.
                      The line must be terminated with 0xFFFFFFFFUL.
                      Each words stands for a half-width character. For wide characters, 2 bbU32 words
                      are used, where the 1st word holds all information and the 2nd word's low 22 bits must be 0x3FFFFEUL.

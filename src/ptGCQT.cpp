@@ -11,7 +11,7 @@
 
 ptGCQT::ptGCQT(QPainter* pPainter)
 {
-    mpSpriteBuf = 
+    mpSpriteBuf =
     mpLineCache = NULL;
     AttachPainter(pPainter);
     mPalHash = 0;
@@ -71,15 +71,42 @@ bbERR ptGCQT::EnsureLineCache(bbUINT width, bbUINT height)
     return bbEOK;
 }
 
-void ptGCQT::SetClipBox(const int /*clipminx*/, const int /*clipminy*/, const int /*clipmaxx*/, const int /*clipmaxy*/) {}
-void ptGCQT::GetClipBox(ptRect* const /*pRect*/) {}
+void ptGCQT::SetClipBox(const int x, const int y, const int maxx, const int maxy)
+{
+    mpPainter->setClipRect(x, y, maxx-x, maxy-y);
+    if ((x<=0) && (y<=0) && ((int)maxx>=mWidth) && ((int)maxy>=mHeight))
+        mpPainter->setClipping(false);
+}
+
+void ptGCQT::GetClipBox(ptRect* const pRect)
+{
+    QRect r = mpPainter->clipRegion().boundingRect();
+    if (r.isNull())
+    {
+        pRect->left = pRect->top = 0;
+        pRect->right = GetWidth();
+        pRect->bottom= GetHeight();
+    }
+    else
+    {
+        pRect->left = r.x();
+        pRect->top = r.y();
+        pRect->right = r.x() + r.width();
+        pRect->bottom= r.y() + r.height();
+    }
+}
 
 void ptGCQT::Clear(const bbUINT col)
 {
     FillBox(0, 0, GetWidth(), GetHeight(), col);
 }
 
-void ptGCQT::Point(const int /*x*/, const int /*y*/, const bbUINT /*col*/) {}
+void ptGCQT::Point(const int x, const int y, const bbUINT col)
+{
+    const bbU32 rgba = mpLogPal->mpRGB[col & ptPENCOLMASK];
+    const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
+    mpPainter->drawPoint(x, y);
+}
 
 void ptGCQT::HLine(int x, int y, bbUINT width, bbUINT col)
 {
@@ -146,7 +173,7 @@ void ptGCQT::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
 
 bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* const pInfo, bbUINT const linespacing)
 {
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const x_org = x;
 
@@ -180,7 +207,7 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
         }
 
         bbUINT const fgcol = pInfo->mFGCol[(cp >> ptGCMT_FGPOS) & ptGCMT_FGMASK];
-        ptPEN  const bgpen = pInfo->mBGPen[cp >> ptGCMT_BGPOS];
+        ptPEN const bgpen = pInfo->mBGPen[cp >> ptGCMT_BGPOS];
         pFont = pInfo->mpFont[(cp >> ptGCMT_FONTPOS) & ptGCMT_FONTMASK];
 
         cp &= ptGCMT_MASK;
@@ -215,55 +242,97 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
         if (((bbU32)(bbUPTR)pData-(bbU32)(bbUPTR)pDataStart+tmp) <= lineCrop)
         {
             bbU8* const pDataSave = pData;
+            bbUINT yctr;
 
-            bbUINT yctr = linespacing;
-            while (yctr)
+            if ((bgpen & ptPEN_TRANS)==0)
             {
-                bbU8* pTmp = pData;
-                pData += pitch;
-                bbUINT width = tmp;
-                do
+                yctr = linespacing;
+                while (yctr)
                 {
-                    *(pTmp++) = bgpen;
-                } while (--width);
-                --yctr;
+                    bbU8* pTmp = pData;
+                    pData += pitch;
+                    bbUINT width = tmp;
+                    do
+                    {
+                        *(pTmp++) = bgpen;
+                    } while (--width);
+                    --yctr;
+                }
             }
 
             yctr = pFont->GetHeight();
-            do
+            if (bgpen & ptPEN_TRANS)
             {
-                bbU8* pTmp = pData;
-                pData += pitch;
-
-                bbUINT width = tmp;
-
-                while (width >= 8)
+                do
                 {
-                    const bbUINT bits = (bbUINT) *(pSrc++);
-                    *(pTmp+0) = (bits & 0x01) ? fgcol : bgpen;
-                    *(pTmp+1) = (bits & 0x02) ? fgcol : bgpen;
-                    *(pTmp+2) = (bits & 0x04) ? fgcol : bgpen;
-                    *(pTmp+3) = (bits & 0x08) ? fgcol : bgpen;
-                    *(pTmp+4) = (bits & 0x10) ? fgcol : bgpen;
-                    *(pTmp+5) = (bits & 0x20) ? fgcol : bgpen;
-                    *(pTmp+6) = (bits & 0x40) ? fgcol : bgpen;
-                    *(pTmp+7) = (bits & 0x80) ? fgcol : bgpen;
-                    pTmp+=8;
-                    width-=8;
-                }
+                    bbU8* pTmp = pData;
+                    pData += pitch;
+                    bbUINT width = tmp;
 
-                if (width)
-                {
-                    bbUINT bits = (bbUINT) *(pSrc++);
-                    do
+                    while (width >= 8)
                     {
-                        *(pTmp++) = (bits & 1) ? fgcol : bgpen;
-                        bits >>= 1;
-                    } while (--width);
-                }
+                        const bbUINT bits = (bbUINT) *(pSrc++);
+                        if (bits & 0x01) *(pTmp+0) = fgcol;
+                        if (bits & 0x02) *(pTmp+1) = fgcol;
+                        if (bits & 0x04) *(pTmp+2) = fgcol;
+                        if (bits & 0x08) *(pTmp+3) = fgcol;
+                        if (bits & 0x10) *(pTmp+4) = fgcol;
+                        if (bits & 0x20) *(pTmp+5) = fgcol;
+                        if (bits & 0x40) *(pTmp+6) = fgcol;
+                        if (bits & 0x80) *(pTmp+7) = fgcol;
+                        pTmp+=8;
+                        width-=8;
+                    }
 
-            } while (--yctr > 0);
+                    if (width)
+                    {
+                        bbUINT bits = (bbUINT) *(pSrc++);
+                        do
+                        {
+                            if (bits & 1) *pTmp = fgcol;
+                            pTmp++;
+                            *(pTmp++) = (bits & 1) ? fgcol : bgpen;
+                            bits >>= 1;
+                        } while (--width);
+                    }
 
+                } while (--yctr > 0);
+            }
+            else
+            {
+                do
+                {
+                    bbU8* pTmp = pData;
+                    pData += pitch;
+                    bbUINT width = tmp;
+
+                    while (width >= 8)
+                    {
+                        const bbUINT bits = (bbUINT) *(pSrc++);
+                        *(pTmp+0) = (bits & 0x01) ? fgcol : bgpen;
+                        *(pTmp+1) = (bits & 0x02) ? fgcol : bgpen;
+                        *(pTmp+2) = (bits & 0x04) ? fgcol : bgpen;
+                        *(pTmp+3) = (bits & 0x08) ? fgcol : bgpen;
+                        *(pTmp+4) = (bits & 0x10) ? fgcol : bgpen;
+                        *(pTmp+5) = (bits & 0x20) ? fgcol : bgpen;
+                        *(pTmp+6) = (bits & 0x40) ? fgcol : bgpen;
+                        *(pTmp+7) = (bits & 0x80) ? fgcol : bgpen;
+                        pTmp+=8;
+                        width-=8;
+                    }
+
+                    if (width)
+                    {
+                        bbUINT bits = (bbUINT) *(pSrc++);
+                        do
+                        {
+                            *(pTmp++) = (bits & 1) ? fgcol : bgpen;
+                            bits >>= 1;
+                        } while (--width);
+                    }
+
+                } while (--yctr > 0);
+            }
             pData = pDataSave;
         }
 
@@ -322,7 +391,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
     uchar* pBits;
     const bbS16* pYUV2RGB;
 
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const y_end = y + pSprite->GetHeight();
 
