@@ -11,7 +11,7 @@
 
 ptGCQT::ptGCQT(QPainter* pPainter)
 {
-    mpSpriteBuf = 
+    mpSpriteBuf =
     mpLineCache = NULL;
     AttachPainter(pPainter);
     mPalHash = 0;
@@ -71,15 +71,42 @@ bbERR ptGCQT::EnsureLineCache(bbUINT width, bbUINT height)
     return bbEOK;
 }
 
-void ptGCQT::SetClipBox(const int /*clipminx*/, const int /*clipminy*/, const int /*clipmaxx*/, const int /*clipmaxy*/) {}
-void ptGCQT::GetClipBox(ptRect* const /*pRect*/) {}
+void ptGCQT::SetClipBox(const int x, const int y, const int maxx, const int maxy)
+{
+    mpPainter->setClipRect(x, y, maxx-x, maxy-y);
+    if ((x<=0) && (y<=0) && (maxx>=(int)mWidth) && (maxy>=(int)mHeight))
+        mpPainter->setClipping(false);
+}
+
+void ptGCQT::GetClipBox(ptRect* const pRect)
+{
+    QRect r = mpPainter->clipRegion().boundingRect();
+    if (r.isNull())
+    {
+        pRect->left = pRect->top = 0;
+        pRect->right = GetWidth();
+        pRect->bottom= GetHeight();
+    }
+    else
+    {
+        pRect->left = r.x();
+        pRect->top = r.y();
+        pRect->right = r.x() + r.width();
+        pRect->bottom= r.y() + r.height();
+    }
+}
 
 void ptGCQT::Clear(const bbUINT col)
 {
     FillBox(0, 0, GetWidth(), GetHeight(), col);
 }
 
-void ptGCQT::Point(const int /*x*/, const int /*y*/, const bbUINT /*col*/) {}
+void ptGCQT::Point(const int x, const int y, const bbUINT col)
+{
+    const bbU32 rgba = mpLogPal->mpRGB[col & ptPENCOLMASK];
+    const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
+    mpPainter->drawPoint(x, y);
+}
 
 void ptGCQT::HLine(int x, int y, bbUINT width, bbUINT col)
 {
@@ -146,7 +173,7 @@ void ptGCQT::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
 
 bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* const pInfo, bbUINT const linespacing)
 {
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const x_org = x;
 
@@ -158,6 +185,7 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
     const bbUINT pitch = mpLineCache->bytesPerLine();
     bbU8* const pDataStart = mpLineCache->bits();
     bbU8* pData = pDataStart;
+    ptPEN bgpen = 0;
 
     //xxx CachePal(mpLogPal, 0);
 
@@ -174,13 +202,23 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
             cp = (bbU32)(bbUPTR)pData - (bbU32)(bbUPTR)pDataStart;
             if (cp > lineCrop)
                 cp = lineCrop;
+
+            QRgb oldColor;
+
+            if (bgpen & ptPEN_TRANS)
+            {
+                oldColor = mpLineCache->color(bgpen & 0xFF);
+                mpLineCache->setColor(bgpen & 0xFF, qRgba(0, 0, 0, 0));
+            }
             mpPainter->drawImage(QPoint(x, y), *mpLineCache, QRect(0, 0, cp, height));
+            if (bgpen & ptPEN_TRANS)
+                mpLineCache->setColor(bgpen & 0xFF, oldColor);
 
             return (x - x_org + (bbU32)(bbUPTR)pData - (bbU32)(bbUPTR)pDataStart) << ptGCEIGHTX;
         }
 
         bbUINT const fgcol = pInfo->mFGCol[(cp >> ptGCMT_FGPOS) & ptGCMT_FGMASK];
-        ptPEN  const bgpen = pInfo->mBGPen[cp >> ptGCMT_BGPOS];
+        bgpen = pInfo->mBGPen[cp >> ptGCMT_BGPOS];
         pFont = pInfo->mpFont[(cp >> ptGCMT_FONTPOS) & ptGCMT_FONTMASK];
 
         cp &= ptGCMT_MASK;
@@ -234,7 +272,6 @@ bbUINT ptGCQT::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* 
             {
                 bbU8* pTmp = pData;
                 pData += pitch;
-
                 bbUINT width = tmp;
 
                 while (width >= 8)
@@ -322,7 +359,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
     uchar* pBits;
     const bbS16* pYUV2RGB;
 
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const y_end = y + pSprite->GetHeight();
 
