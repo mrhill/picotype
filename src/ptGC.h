@@ -335,18 +335,18 @@ public:
     /** Draw a line of escaped text.
         @param x X-coordinate in units, designates left edge of textbox
         @param y Y-coordinate in units, designates top edge of textbox
-        @param pText   Buffer containing escaped string in character encoding #bbENC.
+        @param pText   Buffer containing 0-terminated escaped string in character encoding #bbENC.
                        The buffer must be terminated as described below.
-                       Escape character is 0:
+                       Escape character is 27:
                        <table>
-                       <tr><td>0,0  </td><td>character 0</td></tr>
-                       <tr><td>0,1  </td><td>line termination</td></tr>
-                       <tr><td>0,2,c</td><td>set FG colour to \a c</td></tr>
-                       <tr><td>0,3,p</td><td>set BG pen to \a p</td></tr>
-                       <tr><td>0,4,f</td><td>set font to \a f. The new font must be of the
+                       <tr><td>27,27 </td><td>character 27</td></tr>
+                       <tr><td>27,1  </td><td>character 0</td></tr>
+                       <tr><td>27,2,c</td><td>set FG colour to \a c</td></tr>
+                       <tr><td>27,3,p</td><td>set BG pen to \a p</td></tr>
+                       <tr><td>27,4,f</td><td>set font to \a f. The new font must be of the
                                              same pixel height as \a font, behaviour is undefined
                                              otherwise.</td></tr>
-                       <tr><td>0,5,c0,..,cN</td>
+                       <tr><td>27,5,c0,..,cN</td>
                                          <td>Some encodings dont allow to encode every codepoint.
                                              Using this escape sequence any codepoint can be addressed.
                                              The number of cN depends on the size of type bbCHARCP.

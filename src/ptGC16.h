@@ -45,12 +45,12 @@ public:
     virtual bbUINT GetHeight() const { return mUnitHeight; }
 
     /** Get bitmap pointer.
-        @return Pointer to pixel data. 
+        @return Pointer to pixel data.
     */
     inline bbU16* GetBmp() const { return mpBmp; }
 
     /** Set bitmap pointer.
-        @param pBmp Pointer to pixel data. 
+        @param pBmp Pointer to pixel data.
     */
     inline void SetBmp(bbU16* const pBmp) { mpBmp = pBmp; }
 
@@ -67,7 +67,6 @@ public:
     virtual void Line(int x1, int y1, int x2, int y2, const ptPEN pen);
     virtual void Polygon(const ptCoord* const pPoly, const bbUINT points, const ptPEN pen);
     virtual void FillCircle(int x, int y, bbUINT rad, const ptPEN pen);
-    virtual bbUINT Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpen, bbUINT const font);
     virtual void Sprite(int x, int y, const ptSprite* const pSprite);
 };
 

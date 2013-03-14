@@ -9,7 +9,7 @@
 #include <babel/str.h>
 #include "ptSprite.h"
 
-#define ptGCSCRATCHSIZE 0x1000U        
+#define ptGCSCRATCHSIZE 0x1000U
 static bbU8 gScratch[ptGCSCRATCHSIZE]; //!< Scratch space shared by all instances
 
 ptGC8::ptGC8()
@@ -87,7 +87,7 @@ bbERR ptGC8::SetPal(ptPal* const pPalRGB, const bbU8* const pAAcols)
     {
         pColLU[i] = ptRGBPalMatch(pRGB, 256, pLogPal->mpRGB[i]);
     }
-    
+
     // calculate lookup physical colour number -> AA lookup table index
 
     for (i=0; i<256; ++i)
@@ -111,7 +111,7 @@ bbERR ptGC8::SetPal(ptPal* const pPalRGB, const bbU8* const pAAcols)
     // calculate AA lookup tables
 
     bbU8* const pAA = pAALU + 256;
-    
+
     #if (1<<ptGCAAPREC)==8
     static const bbU8 aascales[1<<ptGCAAPREC] = { 0x00,0x12,0x24,0x36,0x49,0x5B,0x6D,0x80 };
     #else
@@ -269,7 +269,7 @@ void ptGC8::FillBox(int x, int y, bbUINT width, bbUINT height, ptPEN pen)
             const bbU8* const pEnd = pTmp + x;
             while (pTmp < pEnd)
             {
-                *pTmp = pAA[(bbUINT)pAALU[*pTmp]<<ptGCAAPREC]; 
+                *pTmp = pAA[(bbUINT)pAALU[*pTmp]<<ptGCAAPREC];
                 pTmp++;
             }
             pTmp += pitch-x;
@@ -291,8 +291,8 @@ void ptGC8::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
     if (dx >= dy)
     {
         if (x2<x1) // sort coords
-        { 
-            const int tmpx = x1; x1 = x2; x2 = tmpx; 
+        {
+            const int tmpx = x1; x1 = x2; x2 = tmpx;
             const int tmpy = y1; y1 = y2; y2 = tmpy;
         }
 
@@ -429,8 +429,8 @@ void ptGC8::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
     else
     {
         if (y2<y1) // sort coords
-        { 
-            const int tmpx = x1; x1 = x2; x2 = tmpx; 
+        {
+            const int tmpx = x1; x1 = x2; x2 = tmpx;
             const int tmpy = y1; y1 = y2; y2 = tmpy;
         }
 
@@ -656,7 +656,7 @@ void ptGC8::Polygon(const ptCoord* const pPoints, const bbUINT pointcount, const
                 pEdge->x  = (long) pPoints[i].x << bbDIVTABPREC;
 
                 int dx = pPoints[il].x - pPoints[i].x;
-                
+
                 while (dy>=bbDIVTABSIZE) dy>>=1,dx>>=1;
                 pEdge->sx = (long)bbgpDivTab[dy] * dx;
 
@@ -713,7 +713,7 @@ void ptGC8::Polygon(const ptCoord* const pPoints, const bbUINT pointcount, const
     // xxx This tests if the poly is completely outside y-clipbox.
     // Better do this test in the very first y-enum loop, because
     // this saves the overhead of the second y-sort loop.
-    if (pEdge == pEdges) return; 
+    if (pEdge == pEdges) return;
 
     bbUINT ae = 0;
 
@@ -721,7 +721,7 @@ void ptGC8::Polygon(const ptCoord* const pPoints, const bbUINT pointcount, const
 
     // y-clipping for miny
 
-    if (y < mUnitClipMinY) 
+    if (y < mUnitClipMinY)
     {
         y = mUnitClipMinY;
         i=0;
@@ -1030,10 +1030,13 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
         bbCHARCP cp;
         bbCP_NEXT_PTR(pMarkup, cp)
 
+        if (cp == 0)
+            return ((bbUINT)(bbUPTR)pDst-(bbUINT)(bbUPTR)pDst_start) << ptGCEIGHTX;
+
         if (cp >= 0x110000UL)
             cp = pFont->mUkCP; // outside UNICODE codepage
 
-        if (cp == 0)
+        if (cp == 27)
         {
             cp = *(pMarkup++);
 
@@ -1042,7 +1045,8 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
             switch (cp)
             {
             case 1:
-                return ((bbUINT)(bbUPTR)pDst-(bbUINT)(bbUPTR)pDst_start) << ptGCEIGHTX;
+                cp = 0;
+                break;
             case 2:
                 fgcol = *(pMarkup++);
                 continue;
@@ -1065,6 +1069,9 @@ bbUINT ptGC8::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpe
                 #else
                 #error not implemented
                 #endif
+                break;
+            case 27:
+                break;
             }
         }
 

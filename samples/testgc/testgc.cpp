@@ -139,7 +139,7 @@ void gc8testrender(void)
     g_gc8.HLine(0,8,1*8,255);
     g_gc8.HLine(0,16,3*8,255);
     g_gc8.HLine(0,24,2*8,255);
-    
+
     int minx = 100*8;
     int maxx = 116*8;
     int miny = 142*8;
@@ -147,7 +147,7 @@ void gc8testrender(void)
 
     g_gc8.Box( minx-8, miny-8, maxx-minx+16, maxy-miny+16, 128);
     g_gc8.SetClipBox(minx, miny, maxx, maxy);
-    g_gc8.Text( 88*8,140*8,bbT("AB\0\2\4\0\3\xFFtext\0\1"), 0, 255);
+    g_gc8.Text( 88*8,140*8,bbT("AB\27\2\4\27\3\xFFtext"), 0, 255);
     g_gc8.ResetClipBox();
 
     minx = 50*8;
@@ -177,7 +177,7 @@ void gc8testrender(void)
         poly[w].y=g_poly[w].y*2+g_mousey1*4;
     }
     //g_gc8.LinearRing( poly, 5, 255 | ptPEN_AA);
-    
+
     for (w=0; w<5; w++)
     {
         poly[w].x=g_poly[w].x*2+g_mousex1*8;
@@ -214,7 +214,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow)) 
+	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
@@ -222,9 +222,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, (LPCTSTR)IDC_TESTGC);
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0)) 
+	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -253,7 +253,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX); 
+	wcex.cbSize = sizeof(WNDCLASSEX);
 
 	wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wcex.lpfnWndProc	= (WNDPROC)WndProc;
@@ -290,8 +290,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     int height = 480;
 
     hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW &~ WS_THICKFRAME,
-        CW_USEDEFAULT, 0, 
-        width, 
+        CW_USEDEFAULT, 0,
+        width,
         height + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYMENU),
         NULL, NULL, hInstance, NULL);
 
@@ -299,7 +299,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     {
         return FALSE;
     }
-    
+
     if (bbInitFixMath() != bbEOK)
     {
         return FALSE;
@@ -407,11 +407,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	TCHAR szHello[MAX_LOADSTRING];
 	LoadString(hInst, IDS_HELLO, szHello, MAX_LOADSTRING);
 
-	switch (message) 
+	switch (message)
 	{
 		case WM_COMMAND:
-			wmId    = LOWORD(wParam); 
-			wmEvent = HIWORD(wParam); 
+			wmId    = LOWORD(wParam);
+			wmEvent = HIWORD(wParam);
 			// Parse the menu selections:
 			switch (wmId)
 			{
@@ -484,7 +484,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				return TRUE;
 
 		case WM_COMMAND:
-			if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) 
+			if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 			{
 				EndDialog(hDlg, LOWORD(wParam));
 				return TRUE;

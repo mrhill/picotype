@@ -54,11 +54,6 @@ void ptGC16::FillCircle(int x, int y, bbUINT rad, const ptPEN pen)
 {
 }
 
-bbUINT ptGC16::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpen, bbUINT const font)
-{
-    return 0;
-}
-
 void ptGC16::Sprite(int x, int y, const ptSprite* const pSprite)
 {
     bbU8* pBmp = (bbU8*)mpBmp;

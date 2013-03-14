@@ -36,12 +36,12 @@ public:
     void Destroy();
 
     /** Get bitmap pointer.
-        @return Pointer to pixel data. 
+        @return Pointer to pixel data.
     */
     inline bbU8* GetBmp() const { return mpBmp; }
 
     /** Set bitmap pointer.
-        @param pBmp Pointer to pixel data. 
+        @param pBmp Pointer to pixel data.
     */
     inline void SetBmp(bbU8* const pBmp) { mpBmp = pBmp; }
 
