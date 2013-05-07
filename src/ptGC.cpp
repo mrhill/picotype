@@ -120,7 +120,7 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
 
     #if bbSIZEOF_CHARCP == bbSIZEOF_CHAR
 
-    text[0] = 0;
+    text[0] = 27;
     text[1] = 5;
     text[2] = (bbCHAR)cp;
     text[3] = 0;
@@ -132,7 +132,7 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
     *(bbCHARCP*)&text[2] = cp;
     *(bbCHARCP*)&text[4] = 0 | (1 << (8*bbSIZEOF_CHAR));
     #else
-    text[0] = 0;
+    text[0] = 27;
     text[1] = 5;
     text[2] = (bbCHAR)cp;
     text[3] = (bbCHAR)((bbU32)cp >> (8*bbSIZEOF_CHAR));
@@ -141,9 +141,9 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
 
     #elif (bbSIZEOF_CHARCP == 4) && (bbSIZEOF_CHAR == 1)
 
-    bbST16LE(&text[0], 0x0500U);
+    bbST16LE(&text[0], 0x051BU);
     bbST32LE(&text[2], cp);
-    bbST16LE(&text[6], 0x0100U);
+    bbST16LE(&text[6], 0x0000U);
 
     #else
     #error not implemented
