@@ -16,6 +16,7 @@ private:
     QPainter*     mpPainter;
     bbUINT        mWidth;         //!< Width in units
     bbUINT        mHeight;        //!< Height in units
+    bbU32         mLogPalHash;
     QImage*       mpLineCache;
     QImage*       mpSpriteBuf;
     QVector<QRgb> mPal;

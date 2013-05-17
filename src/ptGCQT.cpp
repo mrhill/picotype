@@ -14,6 +14,7 @@ ptGCQT::ptGCQT(QPainter* pPainter)
     mpSpriteBuf =
     mpLineCache = NULL;
     AttachPainter(pPainter);
+    mLogPalHash = 0;
     mPalHash = 0;
     mPal.resize(256);
 }
@@ -52,14 +53,23 @@ bbUINT ptGCQT::GetHeight() const
 
 bbERR ptGCQT::EnsureLineCache(bbUINT width, bbUINT height)
 {
-    if (mpLineCache && (width <= (bbUINT)mpLineCache->width()) && (height <= (bbUINT)mpLineCache->height()))
+    bbU32 const newhash = (bbU32)(bbUPTR)mpLogPal ^ mpLogPal->mSyncPt;
+
+    if (mpLineCache &&
+        (width <= (bbUINT)mpLineCache->width()) &&
+        (height <= (bbUINT)mpLineCache->height()) &&
+        (mLogPalHash == newhash))
+    {
         return bbEOK;
+    }
+
     delete mpLineCache;
 
     mpLineCache = new QImage(width, height, QImage::Format_Indexed8);
     if (!mpLineCache)
         return bbErrSet(bbENOMEM);
 
+    mLogPalHash = newhash;
     mpLineCache->setColorCount(256);
     const bbU32* const pRGB = mpLogPal->mpRGB;
     for(int i=0; i<256; i++)

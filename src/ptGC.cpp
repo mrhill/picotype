@@ -5,7 +5,7 @@
 
 bbU32 ptRGBADistA(const bbU32 a, const bbU32 b)
 {
-    long ca = a>>24; 
+    long ca = a>>24;
     long cb = b>>16;
     ca = ca-cb;
     return ca*ca;
@@ -15,17 +15,17 @@ bbU32 ptRGBDist(const bbU32 a, const bbU32 b)
 {
     long ca, cb;
 
-    ca = a & 0xFFU; 
+    ca = a & 0xFFU;
     cb = b & 0xFFU;
     ca = ca-cb;
     long dist = ca*ca;
 
-    ca = (a>>8) & 0xFFU; 
+    ca = (a>>8) & 0xFFU;
     cb = (b>>8) & 0xFFU;
     cb = ca-cb;
     dist += cb*cb;
 
-    ca = (a>>16) & 0xFFU; 
+    ca = (a>>16) & 0xFFU;
     cb = (b>>16) & 0xFFU;
     ca = ca-cb;
     return (bbU32)(dist + ca*ca);
@@ -120,11 +120,10 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
 
     #if bbSIZEOF_CHARCP == bbSIZEOF_CHAR
 
-    text[0] = 0;
+    text[0] = 27;
     text[1] = 5;
     text[2] = (bbCHAR)cp;
     text[3] = 0;
-    text[4] = 1;
 
     #elif (bbSIZEOF_CHARCP == bbSIZEOF_CHAR*2)
 
@@ -133,19 +132,18 @@ bbUINT ptGC::Char(const int x, const int y, const bbCHARCP cp, bbUINT const fgco
     *(bbCHARCP*)&text[2] = cp;
     *(bbCHARCP*)&text[4] = 0 | (1 << (8*bbSIZEOF_CHAR));
     #else
-    text[0] = 0;
+    text[0] = 27;
     text[1] = 5;
     text[2] = (bbCHAR)cp;
     text[3] = (bbCHAR)((bbU32)cp >> (8*bbSIZEOF_CHAR));
     text[4] = 0;
-    text[5] = 1;
     #endif
 
     #elif (bbSIZEOF_CHARCP == 4) && (bbSIZEOF_CHAR == 1)
 
-    bbST16LE(&text[0], 0x0500U);
+    bbST16LE(&text[0], 0x051BU);
     bbST32LE(&text[2], cp);
-    bbST16LE(&text[6], 0x0100U);
+    bbST16LE(&text[6], 0x0000U);
 
     #else
     #error not implemented
@@ -171,17 +169,21 @@ bbUINT ptGC::Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, 
     {
         bbCP_NEXT_PTR(pText, cp);
 
+        if (cp == 0)
+            goto ptGC_Text_out;
+
         if (cp >= 0x110000UL)
             cp = info.mpFont[fontIdx]->mUkCP; // outside UNICODE codepage
 
-        if (cp == 0)
+        if (cp == 27)
         {
             cp = *(pText++);
 
             switch (cp)
             {
-            case 1: 
-                goto ptGC_Text_out;
+            case 1:
+                cp = 0;
+                break;
             case 2:
                 cp = *pText++;
 
@@ -200,7 +202,7 @@ bbUINT ptGC::Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, 
                 continue;
             case 3:
                 cp = (bgpen & ptPENMASK) | ((bbUINT)*pText++ & 0xFFU);
-                
+
                 for (bgpenIdx=0; bgpenIdx<bgpenCnt; bgpenIdx++)
                     if (cp == info.mBGPen[bgpenIdx])
                         continue;
@@ -216,7 +218,7 @@ bbUINT ptGC::Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, 
                 continue;
             case 4:
                 cp = *pText++;
-                
+
                 for (fontIdx=0; fontIdx<fontCnt; fontIdx++)
                     if (ptgFontMan.mFonts[cp] == info.mpFont[fontIdx])
                         continue;
@@ -240,6 +242,8 @@ bbUINT ptGC::Text(int x, int y, const bbCHAR* pText, bbUINT fgcol, ptPEN bgpen, 
                 cp = bbLD32LE(pText);
                 pText += 4;
                 #endif
+                break;
+            case 27:
                 break;
             }
         }

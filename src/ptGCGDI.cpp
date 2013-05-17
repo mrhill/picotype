@@ -96,7 +96,7 @@ bbUINT ptGCGDI::GetHeight() const
 
 void ptGCGDI::SetClipBox(const int clipminx, const int clipminy, const int clipmaxx, const int clipmaxy)
 {
-    HRGN hrgn = CreateRectRgn(clipminx, clipminy, clipmaxx, clipmaxy); 
+    HRGN hrgn = CreateRectRgn(clipminx, clipminy, clipmaxx, clipmaxy);
     SelectClipRgn(mhDC, hrgn);
     DeleteObject(hrgn);
 }
@@ -200,7 +200,7 @@ void ptGCGDI::FillCircle(int x, int y, bbUINT rad, const ptPEN pen)
 
     SelectObject(mhDC,GetStockObject(DC_PEN));
     SetDCPenColor(mhDC, mpLogPal->mpRGB[pen & ptPENCOLMASK] & 0xFFFFFFUL);
-    
+
     Ellipse(mhDC, (x-rad)>>ptGCEIGHTX, (y-rad)>>ptGCEIGHTY, (x+rad)>>ptGCEIGHTX, (y+rad)>>ptGCEIGHTY);
 
     SelectObject(mhDC, hbrushOld);
@@ -209,7 +209,7 @@ void ptGCGDI::FillCircle(int x, int y, bbUINT rad, const ptPEN pen)
 
 bbUINT ptGCGDI::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo* const pInfo, bbUINT const linespacing)
 {
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const x_org = x;
 
@@ -347,177 +347,10 @@ bbUINT ptGCGDI::MarkupText(int x, int y, const bbU32* pText, const ptMarkupInfo*
     }
 }
 
-bbUINT ptGCGDI::Text(int x, int y, const bbCHAR* pMarkup, bbUINT fgcol, ptPEN bgpen, bbUINT const font)
-{
-    x>>=ptGCEIGHTX; 
-    y>>=ptGCEIGHTY;
-
-    ptFont* pFont = ptgFontMan.mFonts[font];
-
-/*
-    if (bbEOK != EnsureMaskBmp(mWidth >> ptGCEIGHTX, pFont->GetHeight()))
-        return 0;
-*/
-    const bbUINT pitch = ((mWidth >> ptGCEIGHTX) + 3) &~ 3;
-    if(EnsureLineCache(pitch * pFont->GetHeight()) != bbEOK)
-        return 0;
-
-    bbU8* pData = mpLineCache;
-
-    mpBMI->bmiHeader.biWidth = (LONG)pitch;
-    mpBMI->bmiHeader.biHeight = -(int)pFont->GetHeight();
-    mpBMI->bmiHeader.biCompression = BI_RGB;
-    mpBMI->bmiHeader.biBitCount = 8;
-
-    CachePal(mpLogPal, 0);
-
-    for(;;)
-    {
-        bbCHARCP cp;
-        bbCP_NEXT_PTR(pMarkup, cp)
-
-        if (cp >= 0x110000UL)
-            cp = pFont->mUkCP; // outside UNICODE codepage
-
-        if (cp == 0)
-        {
-            cp = *(pMarkup++);
-
-            bbASSERT(cp <= 5);
-
-            switch (cp)
-            {
-            case 1: 
-            ptGCGDI_MarkupText_out:
-                /*{
-                HBRUSH const hbrush = CreateSolidBrush(mpLogPal->mpRGB[fgcol] & 0xFFFFFFUL);
-                HBRUSH const hbrushOld = (HBRUSH) SelectObject(mhDC, hbrush);
-                cp = MaskBlt(mhDC,
-                        x, y,
-                        (DWORD)pData - (DWORD)mpLineCache, pFont->GetHeight(),
-                        mhDC,
-                        0, 0,
-                        mhMask,
-                        0, 0,
-                        MAKEROP4(PATCOPY, SRCPAINT)); // mask 1 -> use fore ROP, mask 0 -> use back ROP
-                cp = GetLastError();
-                SelectObject(mhDC, hbrushOld);
-                DeleteObject(hbrush);
-                }*/
-                SetDIBitsToDevice(mhDC,
-                                  x, y,
-                                  (DWORD)pData - (DWORD)mpLineCache, pFont->GetHeight(),
-                                  0, 0,
-                                  0, pFont->GetHeight(),
-                                  mpLineCache,
-                                  mpBMI,
-                                  DIB_RGB_COLORS);
-                return ((DWORD)pData - (DWORD)mpLineCache) << ptGCEIGHTX;
-
-            case 2:
-                fgcol = *(pMarkup++);
-                continue;
-            case 3:
-                bgpen = (bgpen & ptPENMASK) | ((bbUINT)*(pMarkup++) & 0xFFU);
-                continue;
-            case 4:
-                pFont = ptgFontMan.mFonts[ *(pMarkup++) ];
-                continue;
-            case 5:
-                #if bbSIZEOF_CHARCP == bbSIZEOF_CHAR
-                cp = *(pMarkup++);
-                #elif (bbSIZEOF_CHARCP == bbSIZEOF_CHAR*2)
-                cp = (bbCHARCP)pMarkup[0] | ((bbCHARCP)pMarkup[1]<<(8*bbSIZEOF_CHAR));
-                pMarkup += 2;
-                #elif (bbSIZEOF_CHARCP == 4) && (bbSIZEOF_CHAR == 1)
-                cp = (bbCHARCP)pMarkup[0] | ((bbCHARCP)pMarkup[1]<<8) | ((bbCHARCP)pMarkup[2]<<16) | ((bbCHARCP)pMarkup[3]<<24);
-                pMarkup += 4;
-                #else
-                #error not implemented
-                #endif
-            }
-        }
-
-        const bbU8* pSrc = pFont->GetBankNoReplace(cp);
-        bbU32 tmp;
-
-        if (!pSrc || ((tmp = *((bbU32*)pSrc + (cp & (ptFONT_BANKSIZE-1))))==0)) // glyph not existent
-        {
-            // if bbCE is Unicode, and ptFont is monospace, preserve the widechar property of the unknown character
-            #if (bbCPG == bbCPG_UNICODE) || (bbCPG == bbCPG_UCS)
-            if (pFont->GetWidth() && bbCpgUnicode_IsWide(cp))
-            {
-                cp = pFont->mUkCPW;
-                pSrc = pFont->mpBankUkCPW;
-            }
-            else
-            #endif
-            {
-                cp = pFont->mUkCP;
-                pSrc = pFont->mpBankUkCP;
-            }
-
-            tmp = *((bbU32*)pSrc + (cp & (ptFONT_BANKSIZE-1)));
-        }
-
-        pSrc = pSrc + (tmp &~ 0xFF000000UL);
-        tmp>>=26;
-
-        if (((bbU32)pData-(bbU32)mpLineCache+tmp) > pitch)
-            goto ptGCGDI_MarkupText_out;
-        
-        bbUINT yctr = pFont->GetHeight();
-        do
-        {
-            bbU8* pTmp = pData;
-            pData += pitch;
-
-            bbUINT width = tmp;
-
-            while (width >= 8)
-            {
-                const bbUINT bits = (bbUINT) *(pSrc++);
-                *(pTmp+0) = (bits & 0x01) ? fgcol : bgpen;
-                *(pTmp+1) = (bits & 0x02) ? fgcol : bgpen;
-                *(pTmp+2) = (bits & 0x04) ? fgcol : bgpen;
-                *(pTmp+3) = (bits & 0x08) ? fgcol : bgpen;
-                *(pTmp+4) = (bits & 0x10) ? fgcol : bgpen;
-                *(pTmp+5) = (bits & 0x20) ? fgcol : bgpen;
-                *(pTmp+6) = (bits & 0x40) ? fgcol : bgpen;
-                *(pTmp+7) = (bits & 0x80) ? fgcol : bgpen;
-                pTmp+=8;
-                width-=8;
-            }
-
-            if (width)
-            {
-                /*
-                bbUINT pix = (bbUINT) *pSrc;
-                bbU8* pDst = mpMask + (((bbUPTR)pTmp - (bbUPTR)mpLineCache)>>3);
-                bbUINT b = (bbUINT)pTmp & 7;
-                *pDst = (*pDst &~ (0xFF<<b)) | (pix<<b);
-                b=8-b;
-                *(pDst+1) = (*(pDst+1)&~ (0xFF>>b)) | (pix>>b);
-                */
-
-                bbUINT bits = (bbUINT) *(pSrc++);
-                do
-                {
-                    *(pTmp++) = (bits & 1) ? fgcol : bgpen;
-                    bits >>= 1;
-                } while (--width);
-            }
-
-        } while (--yctr > 0);
-
-        pData -= pitch * pFont->GetHeight() - tmp;
-    }
-}
-
 void ptGCGDI::CachePal(ptPal* const pPal, bbUINT size)
 {
     bbU32 const newhash = (bbU32)pPal ^ pPal->mSyncPt;
-    
+
     if (newhash == mCachedPal)
         return;
 
@@ -570,7 +403,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
     mpBMI->bmiHeader.biWidth = pSprite->width;
     mpBMI->bmiHeader.biHeight = -(int)1;
 
-    x>>=ptGCEIGHTX; 
+    x>>=ptGCEIGHTX;
     y>>=ptGCEIGHTY;
     int const y_end = y + pSprite->height;
 
@@ -615,13 +448,13 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                     a = (bbUINT)gBitReverse[a>>4] | ((bbUINT)gBitReverse[a&0xF]<<4);
                     *(pLineCache++) = a;
                 }
-            
+
                 pData += pSprite->stride - linesize;
                 pLineCache -= linesize;
 
-                SetDIBitsToDevice(mhDC, 
+                SetDIBitsToDevice(mhDC,
                                   x, y++,
-                                  pSprite->width, 1, 
+                                  pSprite->width, 1,
                                   0, 0,
                                   0, 1,
                                   pLineCache,
@@ -669,9 +502,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 }
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               pLineCache,
@@ -701,13 +534,13 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                     register bbUINT a = *(pData++);
                     *(pLineCache++) = (a>>4)|(a<<4);
                 }
-            
+
                 pData += pSprite->stride - linesize;
                 pLineCache -= linesize;
 
-                SetDIBitsToDevice(mhDC, 
+                SetDIBitsToDevice(mhDC,
                                   x, y++,
-                                  pSprite->width, 1, 
+                                  pSprite->width, 1,
                                   0, 0,
                                   0, 1,
                                   pLineCache,
@@ -744,7 +577,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
         pLineCacheEnd = mpLineCache + linesize;
         Yoffs = 0;
         linesize = ptgColFmtInfo[pSprite->colfmt].PlaneCount;
-        
+
         while (y < y_end)
         {
             pData = pSprite->pPlane[0] + Yoffs;
@@ -817,9 +650,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             Yoffs += pSprite->stride;
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               mpLineCache,
@@ -852,9 +685,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 pLineCache[i+2] = pData[i+0]; // R
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               pLineCache,
@@ -969,7 +802,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             } while(--i);
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y,
                               pSprite->width, 2,
                               0, 0,
@@ -1049,7 +882,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             } while(--i);
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y,
                               pSprite->width, 2,
                               0, 0,
@@ -1165,7 +998,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             } while(--i);
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y,
                               pSprite->width, 2,
                               0, 0,
@@ -1248,7 +1081,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             } while(--i);
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y,
                               pSprite->width, 2,
                               0, 0,
@@ -1308,9 +1141,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 pLineCache += 6;
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               mpLineCache,
@@ -1365,9 +1198,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 pLineCache += 6;
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               mpLineCache,
@@ -1424,9 +1257,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 pLineCache += 6;
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               mpLineCache,
@@ -1490,7 +1323,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
 
             } while(--i);
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y,
                               pSprite->width, 2,
                               0, 0,
@@ -1559,7 +1392,7 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 int const y = ((int)pData[0] + pYUV2RGB[0]);
                 int const u = ((int)pData[1] + pYUV2RGB[1]);
                 int const v = ((int)pData[2] + pYUV2RGB[2]); pData+=4;
-                register int p; 
+                register int p;
                 if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
                 if (p>=256) p=255;
                 pLineCache[0] = p; // B
@@ -1620,9 +1453,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
                 pLineCache+=3;
             }
 
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               mpLineCache,
@@ -1643,9 +1476,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
         y = y_end-y;
         mpBMI->bmiHeader.biHeight = -y;
 
-        SetDIBitsToDevice(mhDC, 
+        SetDIBitsToDevice(mhDC,
                           x, y,
-                          pSprite->width, y, 
+                          pSprite->width, y,
                           0, 0,
                           0, y,
                           pData,
@@ -1656,9 +1489,9 @@ void ptGCGDI::Sprite(int x, int y, const ptSprite* const pSprite)
     {
         while (y < y_end)
         {
-            SetDIBitsToDevice(mhDC, 
+            SetDIBitsToDevice(mhDC,
                               x, y++,
-                              pSprite->width, 1, 
+                              pSprite->width, 1,
                               0, 0,
                               0, 1,
                               pData,

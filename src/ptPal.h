@@ -47,7 +47,7 @@ enum ptPALID
 struct ptPal
 {
     bbU32*   mpRGB;      //!< Array of 0xAABBGGRR values
-    bbU16    mColCount;  //!< Number of entried in mpRGB[]
+    bbU16    mColCount;  //!< Number of entries in mpRGB[]
     bbU8     mOpt;       //!< Flag bitmask, see ptPALOPT
     bbU8     mFormat;    //!< Palette format the object was created from, see ptPALFMT
     bbU32    mSyncPt;    //!< Sync point to enable caching
@@ -105,7 +105,7 @@ struct ptPal
     const bbCHAR* GetName() const { return mpName; }
 
     /** Attach name string.
-        @param pName Pointer to heap-block containing 0-terminated string. Can be NULL. 
+        @param pName Pointer to heap-block containing 0-terminated string. Can be NULL.
                      Ownership of block will be transfered to ptPal.
     */
     void AttachName(bbCHAR* pName)
