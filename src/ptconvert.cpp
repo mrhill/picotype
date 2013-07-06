@@ -13,7 +13,7 @@ void ptMakePal2PalLookup(const ptPal* pSrc, const ptPal* pDst, bbU8* pLU)
     }
 }
 
-static const bbU32 patternLSBLeft[16] = 
+static const bbU32 patternLSBLeft[16] =
 {
     0x00000000UL,0x00000001UL,0x00000100UL,0x00000101UL,
     0x00010000UL,0x00010001UL,0x00010100UL,0x00010101UL,
@@ -21,7 +21,7 @@ static const bbU32 patternLSBLeft[16] =
     0x01010000UL,0x01010001UL,0x01010100UL,0x01010101UL
 };
 
-static const bbU32 patternMSBLeft[16] = 
+static const bbU32 patternMSBLeft[16] =
 {
     0x00000000UL,0x01000000UL,0x00010000UL,0x01010000UL,
     0x00000100UL,0x01000100UL,0x00010100UL,0x01010100UL,
@@ -356,7 +356,7 @@ void ptConvert_8BppTo2BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             *pDst++=(bbU8)b;
             width-=4;
         }
-        
+
         if (width>=2)
         {
             register bbU32 b = pColIdxLU[*pSrc++];
@@ -421,7 +421,7 @@ void ptConvert_8BppTo2BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             *pDst++=(bbU8)b;
             width-=4;
         }
-        
+
         if (width>=2)
         {
             register bbU32 b = pColIdxLU[*pSrc++]<<6;
@@ -464,7 +464,7 @@ void ptConvert_8BppTo4BppLSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             bbST16LE(pDst, b); pDst+=2;
             width-=4;
         }
-        
+
         if (width>=2)
         {
             register bbU32 b = pColIdxLU[*pSrc++];
@@ -505,7 +505,7 @@ void ptConvert_8BppTo4BppMSB(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bb
             bbST16BE(pDst, b); pDst+=2;
             width-=4;
         }
-        
+
         if (width>=2)
         {
             register bbU32 b = (bbU32)pColIdxLU[*pSrc++] << 4;
@@ -623,7 +623,7 @@ void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
             int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
             int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
             int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
-        
+
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
             if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -649,7 +649,7 @@ void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
             pDst[3] = pDst[4+3] = 255;
             pDst += 8;
         }
-        
+
         pSrcU -= width>>1;
         pSrcV -= width>>1;
         pSrcY = pSrcY1;
@@ -683,7 +683,7 @@ void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0,
                 int const y1 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
                 int const u  = ((int)(bbLD16LE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
                 int const v  = ((int)(bbLD16LE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
-            
+
                 int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
                 register int p;
                 if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -717,7 +717,7 @@ void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0,
                 int const y1 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
                 int const u  = ((int)(bbLD16BE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
                 int const v  = ((int)(bbLD16BE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
-            
+
                 int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
                 register int p;
                 if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -774,7 +774,7 @@ void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
             int const y1 = ((int)(bbLD16LE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
             int const u  = ((int)(bbLD16LE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
             int const v  = ((int)(bbLD16LE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
-        
+
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
             if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -800,7 +800,7 @@ void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0,
             pDst[3] = pDst[4+3] = 255;
             pDst += 8;
         }
-        
+
         pSrcU -= width;
         pSrcV -= width;
         pSrcY = pSrcY1;
@@ -830,7 +830,7 @@ void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0,
             int const y1 = ((int)(bbLD16BE(pSrcY)>>shift) + (int)pYUV2RGB[0]); pSrcY+=2;
             int const u  = ((int)(bbLD16BE(pSrcU)>>shift) + (int)pYUV2RGB[1]); pSrcU+=2;
             int const v  = ((int)(bbLD16BE(pSrcV)>>shift) + (int)pYUV2RGB[2]); pSrcV+=2;
-        
+
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
             if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -856,7 +856,7 @@ void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0,
             pDst[3] = pDst[4+3] = 255;
             pDst += 8;
         }
-        
+
         pSrcU -= width;
         pSrcV -= width;
         pSrcY = pSrcY1;
@@ -884,7 +884,7 @@ void ptConvert_YUVNV12ToRGBA8888(const bbU8* pSrcY0,
             int const y1 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
             int const u  = ((int)*(pSrcUV++) + (int)pYUV2RGB[1]);
             int const v  = ((int)*(pSrcUV++) + (int)pYUV2RGB[2]);
-        
+
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
             if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -910,7 +910,7 @@ void ptConvert_YUVNV12ToRGBA8888(const bbU8* pSrcY0,
             pDst[3] = pDst[4+3] = 255;
             pDst += 8;
         }
-        
+
         pSrcUV -= width;
         pSrcY = pSrcY1;
 
@@ -938,7 +938,7 @@ void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0,
             int const y1 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
             int const u  = ((int)*(pSrcUV++) + (int)pYUV2RGB[1]);
             int const v  = ((int)*(pSrcUV++) + (int)pYUV2RGB[2]);
-        
+
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
             if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -963,7 +963,7 @@ void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0,
             pDst[3] = p; // R1
             pDst += 6;
         }
-        
+
         pSrcUV -= width;
         pSrcY = pSrcY1;
         pDst = pDst2;
@@ -1157,7 +1157,7 @@ void ptConvert_YUV422PToRGB888(const bbU8* pSrcY,
         int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
         int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
         int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
-    
+
         int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
         register int p;
         if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -1200,7 +1200,7 @@ void ptConvert_YUV422PToRGBA8888(const bbU8* pSrcY,
         int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
         int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
         int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
-    
+
         int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
         register int p;
         if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
@@ -1262,7 +1262,7 @@ void ptConvert_YUV422RPToRGB888(const bbU8* pSrcY0,
             pDst[0] = p; // R
             pDst += 3;
         }
-        
+
         pSrcU -= width;
         pSrcV -= width;
         pSrcY = pSrcY1;
@@ -1305,7 +1305,7 @@ void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
             pDst[3] = 255;
             pDst += 4;
         }
-        
+
         pSrcU -= width;
         pSrcV -= width;
         pSrcY = pSrcY1;
@@ -1436,9 +1436,9 @@ void ptConvert_AYUVToRGB888(const bbU8* pSrc,
 
     while (pDst < pDstEnd)
     {
-        int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
-        int const v = ((int)*pSrc + pYUV2RGB[2]); pSrc+=2;
+        int const y = ((int)pSrc[2] + pYUV2RGB[0]);
+        int const u = ((int)pSrc[1] + pYUV2RGB[1]);
+        int const v = ((int)pSrc[0] + pYUV2RGB[2]); pSrc+=4;
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1463,9 +1463,9 @@ void ptConvert_AYUVToRGBA8888(const bbU8* pSrc,
 
     while (pDst < pDstEnd)
     {
-        int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
-        int const v = ((int)*(pSrc++) + pYUV2RGB[2]);
+        int const y = ((int)pSrc[2] + pYUV2RGB[0]);
+        int const u = ((int)pSrc[1] + pYUV2RGB[1]);
+        int const v = ((int)pSrc[0] + pYUV2RGB[2]);
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1477,7 +1477,7 @@ void ptConvert_AYUVToRGBA8888(const bbU8* pSrc,
         if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
         if (p>255) p=255;
         pDst[0] = p; // R
-        pDst[3] = *pSrc++;
+        pDst[3] = pSrc[3]; pSrc+=4;
         pDst += 4;
     }
 }
