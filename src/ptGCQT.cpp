@@ -115,6 +115,7 @@ void ptGCQT::Point(const int x, const int y, const bbUINT col)
 {
     const bbU32 rgba = mpLogPal->mpRGB[col & ptPENCOLMASK];
     const QColor rgb = QColor(rgba & 0xFF, (rgba>>8) & 0xFF, (rgba>>16) & 0xFF);
+    mpPainter->setPen(QPen(rgb));
     mpPainter->drawPoint(x, y);
 }
 
