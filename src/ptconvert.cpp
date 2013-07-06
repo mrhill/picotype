@@ -1544,7 +1544,7 @@ void ptConvert_RGBA8888ToUYVY(const bbU8* pSrc, bbU8* pDst, bbU32 width, const b
         p = (r2 * pRGB2YUV[3] + g2 * pRGB2YUV[4] + b2 * pRGB2YUV[5]) >> 10;
         if ((p+=(int)pRGB2YUV[0]) < 0) p=0;
         if (p>255) p=255;
-        pDst[0] = p; // Y2
+        pDst[3] = p; // Y2
 
         r2 += r1;
         g2 += g1;
@@ -1553,7 +1553,7 @@ void ptConvert_RGBA8888ToUYVY(const bbU8* pSrc, bbU8* pDst, bbU32 width, const b
         p = (r2 * pRGB2YUV[6] + g2 * pRGB2YUV[7] + b2 * pRGB2YUV[8]) >> 11;
         if ((p+=(int)pRGB2YUV[1]) < 0) p=0;
         if (p>255) p=255;
-        pDst[3] = p; // U
+        pDst[0] = p; // U
 
         p = (r2 * pRGB2YUV[9] + g2 * pRGB2YUV[10]+ b2 * pRGB2YUV[11]) >> 11;
         if ((p+=(int)pRGB2YUV[2]) < 0) p=0;
