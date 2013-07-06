@@ -271,7 +271,7 @@ bbERR ptSprite::Convert_Pal2Pal(ptSprite* pDst) const
         {
             pLineBuf = linebuf;
             lineBufWidth = width>sizeof(linebuf) ? sizeof(linebuf) : width;
-                
+
             // - convert source format to 8bpp
             switch(this->GetColFmt())
             {
@@ -552,11 +552,11 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
 bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
 {
     const bbU8* pDataSrc = this->pData;
-    bbU8*       pDataDst = pDst->pData; 
+    bbU8*       pDataDst = pDst->pData;
     bbU8*       pDataTmp;
     bbU8*       pLineBuf = NULL;
     bbU32       height   = this->height;
-    
+
     if (this->GetColFmt() != ptCOLFMT_RGBA8888)
     {
         if (NULL == (pLineBuf = (bbU8*)bbMemAlloc(this->width * 4)))
@@ -602,6 +602,65 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
     return bbEOK;
 
     ptSprite_Convert_RGB2RGB_err:
+    bbMemFree(pLineBuf);
+    return bbELAST;
+}
+
+bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
+{
+    const bbU8* pDataSrc = this->pData;
+    bbU8*       pDataDst = pDst->pData;
+    bbU8*       pDataTmp;
+    bbU8*       pLineBuf = NULL;
+    bbS32       height   = this->height;
+
+    ptRGB2YUV const rgb2yuv(*pDst->poYUV2RGB);
+
+    if (this->GetColFmt() != ptCOLFMT_RGBA8888)
+    {
+        if (NULL == (pLineBuf = (bbU8*)bbMemAlloc(this->width * 4 * 2)))
+            return bbELAST;
+    }
+
+    while (height>0)
+    {
+        height -= 1;
+        pDataTmp = pLineBuf;
+
+        // - convert 1 line of source RGB to ARGB8888
+        switch(this->GetColFmt())
+        {
+        case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGBA4444: ptConvert_RGBA4444ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGB888:   ptConvert_RGB888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_BGR888:   ptConvert_BGR888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGBA8888: pDataTmp = (bbU8*)pDataSrc; break;
+        case ptCOLFMT_BGRA8888: ptConvert_BGRA8888ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
+        default:
+            bbErrSet(bbENOTSUP);
+            goto ptSprite_Convert_RGB2YUV_err;
+        }
+
+        if (height >= 0) // repeat last uneven line
+            pDataSrc += this->stride;
+
+        // - convert 1 line of ARGB8888 to target YUV
+        switch(pDst->GetColFmt())
+        {
+        case ptCOLFMT_YUV444: ptConvert_RGBA8888ToYUV444(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
+        case ptCOLFMT_AYUV:   ptConvert_RGBA8888ToAYUV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
+        default:
+            bbErrSet(bbENOTSUP);
+            goto ptSprite_Convert_RGB2YUV_err;
+        }
+        pDataDst += pDst->stride;
+    }
+
+    bbMemFree(pLineBuf);
+    return bbEOK;
+
+    ptSprite_Convert_RGB2YUV_err:
     bbMemFree(pLineBuf);
     return bbELAST;
 }
@@ -656,6 +715,7 @@ bbERR ptSprite::Convert(ptSprite* pDst) const
         switch (ptColFmtGetType(pDst->GetColFmt()))
         {
         case ptCOLTYPE_RGB: return Convert_RGB2RGB(pDst);
+        case ptCOLTYPE_YUV: return Convert_RGB2YUV(pDst);
         default:            return bbErrSet(bbENOTSUP);
         }
         break;
@@ -699,7 +759,7 @@ ptSprite* ptSpriteCreate(bbUINT const width, bbUINT const height, bbUINT const d
         ptCOLFMT_RGB565,
         ptCOLFMT_RGBA8888
     };
-        
+
     // allocate memory
     bbUINT const bytepitch = ptSpriteGetBytePitch( width, depth);
     ptSprite* const pSprite = (ptSprite*) bbMemAlloc( ptSIZEOF_SPRITEHDR + (bbU32)((bbU32)bytepitch * height) );

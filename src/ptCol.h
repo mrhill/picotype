@@ -51,6 +51,8 @@ public:
     ptRGB2YUV() {}
     ptRGB2YUV(const ptYUV2RGB& yuv2rgb);
 
+    const bbS16* GetMatrix() const { return mRGB2YUV; }
+
     ptYUVA ToYUVA(ptRGBA rgba) const;
 
     friend class ptYUV2RGB;
