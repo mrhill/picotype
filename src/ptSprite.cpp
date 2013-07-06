@@ -614,7 +614,10 @@ bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
     bbU8*       pLineBuf = NULL;
     bbS32       height   = this->height;
 
-    ptRGB2YUV const rgb2yuv(*pDst->poYUV2RGB);
+    ptYUV2RGB yuv2rgb = *pDst->poYUV2RGB;
+    if (ptgColFmtInfo[pDst->GetColFmt()].flags & ptCOLFMTFLAG_SWAPUV) // VU order?
+        yuv2rgb.SwapUV();
+    ptRGB2YUV rgb2yuv(yuv2rgb);
 
     if (this->GetColFmt() != ptCOLFMT_RGBA8888)
     {
@@ -650,6 +653,10 @@ bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
         {
         case ptCOLFMT_YUV444: ptConvert_RGBA8888ToYUV444(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
         case ptCOLFMT_AYUV:   ptConvert_RGBA8888ToAYUV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
+        case ptCOLFMT_YUYV:
+        case ptCOLFMT_YVYU:   ptConvert_RGBA8888ToYUYV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
+        case ptCOLFMT_UYVY:
+        case ptCOLFMT_VYUY:   ptConvert_RGBA8888ToUYVY(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
         default:
             bbErrSet(bbENOTSUP);
             goto ptSprite_Convert_RGB2YUV_err;
