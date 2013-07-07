@@ -535,7 +535,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
                 bbErrSet(bbENOTSUP);
                 goto ptSprite_Convert_YUV2RGB_err;
             }
-            pDataTmp += (this->width<<2);
+            pDataTmp += this->width<<2;
             pDataDst += pDst->GetStride();
 
         } while(--height != heightEnd);
@@ -545,6 +545,63 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
     return bbEOK;
 
     ptSprite_Convert_YUV2RGB_err:
+    bbMemFree(pLineBuf);
+    return bbELAST;
+}
+
+bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
+{
+    bbU8*   pLineBuf = NULL;
+    bbU8*   pDataDst = pDst->GetData();
+    bbU8*   pDataTmp;
+    bbU32   offsetY  = 0;
+    bbU32   height   = this->height;
+    bbUINT  lines    = 1;
+
+    if (NULL == (pLineBuf = (bbU8*)bbMemAlloc(this->width * 4 * 2)))
+        return bbELAST;
+
+    while (height-->0)
+    {
+        pDataTmp = (pDst->GetColFmt() == ptCOLFMT_AYUV) ? pDataDst : pLineBuf;
+
+        // - convert 1 or 2 lines of source YUV to AYUV
+        switch(this->GetColFmt())
+        {
+        case ptCOLFMT_YUV444:
+            ptConvert_BGR888ToRGBA8888(this->pData + offsetY, // same as YUV444ToAYUV (YUV->VUYA)
+                                       pDataTmp,
+                                       this->width);
+            offsetY += this->GetStride();
+            break;
+
+        case ptCOLFMT_AYUV:
+            pDataTmp = this->pData + offsetY;
+            offsetY += this->GetStride();
+            break;
+
+        default:
+            bbErrSet(bbENOTSUP);
+            goto ptSprite_Convert_YUV2YUV_err;
+        }
+
+        // - convert 1 or 2 lines of source AYUV to target YUV
+        switch(pDst->GetColFmt())
+        {
+        case ptCOLFMT_AYUV: break;
+        case ptCOLFMT_YUV444: ptConvert_RGBA8888ToBGR888(pDataTmp, pDataDst, this->width); break; // same as AYUVToYUV444
+        default:
+            bbErrSet(bbENOTSUP);
+            goto ptSprite_Convert_YUV2YUV_err;
+        }
+        pDataTmp += this->width<<2;
+        pDataDst += pDst->GetStride();
+    }
+
+    bbMemFree(pLineBuf);
+    return bbEOK;
+
+    ptSprite_Convert_YUV2YUV_err:
     bbMemFree(pLineBuf);
     return bbELAST;
 }
@@ -731,6 +788,7 @@ bbERR ptSprite::Convert(ptSprite* pDst) const
         {
         case ptCOLTYPE_PAL: return Convert_YUV2Pal(pDst);
         case ptCOLTYPE_RGB: return Convert_YUV2RGB(pDst);
+        case ptCOLTYPE_YUV: return Convert_YUV2YUV(pDst);
         default:            return bbErrSet(bbENOTSUP);
         }
         break;

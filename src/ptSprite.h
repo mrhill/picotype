@@ -117,6 +117,7 @@ protected:
     bbERR Convert_YUV2RGB(ptSprite* pDst) const;
     bbERR Convert_RGB2RGB(ptSprite* pDst) const;
     bbERR Convert_RGB2YUV(ptSprite* pDst) const;
+    bbERR Convert_YUV2YUV(ptSprite* pDst) const;
 
 public:
     ptSprite() { bbMemClear(this, sizeof(*this)); }
