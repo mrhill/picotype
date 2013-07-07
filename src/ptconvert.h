@@ -62,5 +62,14 @@ void ptConvert_YUV444ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const
 void ptConvert_AYUVToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_AYUVToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 
+void ptConvert_YUYVToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_YVYUToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_UYVYToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_VYUYToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_AYUVToYUYV(const bbU8* pSrc, bbU8* pDst, bbU32 width);
+void ptConvert_AYUVToYVYU(const bbU8* pSrc, bbU8* pDst, bbU32 width);
+void ptConvert_AYUVToUYVY(const bbU8* pSrc, bbU8* pDst, bbU32 width);
+void ptConvert_AYUVToVYUY(const bbU8* pSrc, bbU8* pDst, bbU32 width);
+
 #endif /* ptCONVERT_H_ */
 
