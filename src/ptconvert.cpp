@@ -1955,3 +1955,41 @@ void ptConvert_BGRA8888ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptE
     }
 }
 
+void ptConvert_RGB888PToRGBA8888(const bbU8* pR, const bbU8* pG, const bbU8* pB, bbU8* pDst, bbU32 width, ptENDIAN endian)
+{
+    bbU8* const pDstEnd = pDst + (width<<2);
+    if (endian == ptENDIAN_LE)
+    {
+        while (pDst < pDstEnd)
+        {
+            pDst[0] = *pR++; //r
+            pDst[1] = *pG++; //g
+            pDst[2] = *pB++; //b
+            pDst[3] = 255;   //a
+            pDst+=4;
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            pDst[0] = 255;   //a
+            pDst[1] = *pB++; //b
+            pDst[2] = *pG++; //g
+            pDst[3] = *pR++; //r
+            pDst+=4;
+        }
+    }
+}
+
+void ptConvert_RGBA8888ToRGB888P(const bbU8* pSrc, bbU8* pDstR, bbU8* pDstG, bbU8* pDstB, bbU32 width)
+{
+    bbU8* const pDstREnd = pDstR + width;
+    while (pDstR < pDstREnd)
+    {
+        *pDstB++ = (int)pSrc[2];
+        *pDstG++ = (int)pSrc[1];
+        *pDstR++ = (int)pSrc[0]; pSrc += 4;
+    }
+}
+
