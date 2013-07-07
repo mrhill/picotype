@@ -574,6 +574,13 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
         case ptCOLFMT_YVYU:   ptConvert_YVYUToAYUV      (this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
         case ptCOLFMT_UYVY:   ptConvert_UYVYToAYUV      (this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
         case ptCOLFMT_VYUY:   ptConvert_VYUYToAYUV      (this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
+        case ptCOLFMT_YUV422P:
+            ptConvert_YUV422PToAYUV(this->pPlane[0] + srcOffsetY,
+                                    this->pPlane[1] + srcOffsetUV,
+                                    this->pPlane[2] + srcOffsetUV,
+                                    pDataTmp, this->width,
+                                    ptENDIAN_LE);
+            break;
         case ptCOLFMT_YUV444: ptConvert_BGR888ToRGBA8888(this->pData + srcOffsetY, pDataTmp, this->width); break; // same as YUV444ToAYUV (YUV->VUYA)
         case ptCOLFMT_YUV444P:
             ptConvert_RGB888PToRGBA8888(this->pPlane[2] + srcOffsetY,
@@ -587,7 +594,8 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
             bbErrSet(bbENOTSUP);
             goto ptSprite_Convert_YUV2YUV_err;
         }
-        srcOffsetY += this->GetStride();
+        srcOffsetY  += this->GetStride();
+        srcOffsetUV += this->GetStrideUV();
 
         // - convert 1 or 2 lines of source AYUV to target YUV
         switch(pDst->GetColFmt())
@@ -596,6 +604,13 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
         case ptCOLFMT_YVYU:    ptConvert_AYUVToYVYU      (pDataTmp, pDst->pData + dstOffsetY, this->width); break;
         case ptCOLFMT_UYVY:    ptConvert_AYUVToUYVY      (pDataTmp, pDst->pData + dstOffsetY, this->width); break;
         case ptCOLFMT_VYUY:    ptConvert_AYUVToVYUY      (pDataTmp, pDst->pData + dstOffsetY, this->width); break;
+        case ptCOLFMT_YUV422P:
+            ptConvert_AYUVToYUV422P(pDataTmp,
+                                    pDst->pPlane[0] + dstOffsetY,
+                                    pDst->pPlane[1] + dstOffsetUV,
+                                    pDst->pPlane[2] + dstOffsetUV,
+                                    this->width);
+            break;
         case ptCOLFMT_YUV444:  ptConvert_RGBA8888ToBGR888(pDataTmp, pDst->pData + dstOffsetY, this->width); break; // same as AYUVToYUV444
         case ptCOLFMT_YUV444P:
             ptConvert_RGBA8888ToRGB888P(pDataTmp,
@@ -609,7 +624,8 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
             bbErrSet(bbENOTSUP);
             goto ptSprite_Convert_YUV2YUV_err;
         }
-        dstOffsetY += pDst->GetStride();
+        dstOffsetY  += pDst->GetStride();
+        dstOffsetUV += pDst->GetStrideUV();
     }
 
     bbMemFree(pLineBuf);

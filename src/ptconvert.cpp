@@ -2117,6 +2117,35 @@ void ptConvert_VYUYToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN ds
     }
 }
 
+void ptConvert_YUV422PToAYUV(const bbU8* pSrcY, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
+{
+    bbU8* const pDstEnd = pDst + (width<<2);
+    if (dstEndian == ptENDIAN_LE)
+    {
+        while (pDst < pDstEnd)
+        {
+            pDst[2]   = *pSrcY++;             // y0
+            pDst[4+2] = *pSrcY++;             // y1
+            pDst[1]   = pDst[4+1] = *pSrcU++; // u
+            pDst[0]   = pDst[4+0] = *pSrcV++; // v
+            pDst[3]   = pDst[4+3] = 255;      // a
+            pDst += 8;
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            pDst[1]   = *pSrcY++;             // y0
+            pDst[4+1] = *pSrcY++;             // y0
+            pDst[2]   = pDst[4+2] = *pSrcU++; // u
+            pDst[3]   = pDst[4+3] = *pSrcV++; // v
+            pDst[0]   = pDst[4+0] = 255;      // a
+            pDst += 8;
+        }
+    }
+}
+
 void ptConvert_AYUVToYUYV(const bbU8* pSrc, bbU8* pDst, bbU32 width)
 {
     bbU8* const pDstEnd = pDst + (width<<1);
@@ -2170,6 +2199,19 @@ void ptConvert_AYUVToVYUY(const bbU8* pSrc, bbU8* pDst, bbU32 width)
         pDst[2] = ((int)pSrc[1] + (int)pSrc[4+1])>>1; // u
         pSrc += 8;
         pDst += 4;
+    }
+}
+
+void ptConvert_AYUVToYUV422P(const bbU8* pSrc, bbU8* pDstY, bbU8* pDstU, bbU8* pDstV, bbU32 width)
+{
+    const bbU8* const pSrcEnd = pSrc + (width<<2);
+    while (pSrc < pSrcEnd)
+    {
+        *pDstY++ = pSrc[2];   // y0
+        *pDstY++ = pSrc[4+2]; // y1
+        *pDstU++ = ((int)pSrc[1] + (int)pSrc[4+1])>>1; // u
+        *pDstV++ = ((int)pSrc[0] + (int)pSrc[4+0])>>1; // v
+        pSrc += 8;
     }
 }
 
