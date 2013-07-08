@@ -113,6 +113,9 @@ bbUINT ptSprite::GetPlaneCount() const
     case ptCOLFMT_YUV420P_IMC2:
     case ptCOLFMT_YUV422RP:
         return 4;
+    case ptCOLFMT_YUV420P_NV12:
+    case ptCOLFMT_YUV420P_NV21:
+        return 3;
     default:
         return ptgColFmtInfo[colfmt].PlaneCount;
     }
@@ -161,6 +164,26 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
                 pPlane->mWidth >>= ptgColFmtInfo[colfmt].PlaneShiftH;
                 pPlane->mHeight >>= ptgColFmtInfo[colfmt].PlaneShiftV;
                 pPlane->mStride = strideUV;
+            }
+            break;
+        case ptCOLFMT_YUV420P_NV12:
+        case ptCOLFMT_YUV420P_NV21:
+            if (plane <= 1)
+            {
+                pPlane->mColComp = 0;
+                pPlane->mStride <<= 1;
+                pPlane->mHeight >>= 1;
+            }
+            else
+            {
+                pPlane->mColComp = plane-1;
+                if (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_SWAPUV)
+                    pPlane->mColComp ^= 3;
+                pPlane->mFlags = ptPLANEFLAG_SUBSAMPLED;
+                pPlane->mWidth >>= 1;
+                pPlane->mHeight >>= 1;
+                pPlane->mStride = strideUV;
+                pPlane->mBPP = 16;
             }
             break;
         default:
@@ -596,6 +619,24 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 line++;
                 srcOffsetY += this->GetStride();
                 break;
+            case ptCOLFMT_YUV420P_NV12:
+                ptConvert_YUVNV12ToAYUV(this->pPlane[0] + srcOffsetY,
+                                        (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
+                                        this->pPlane[2] + srcOffsetUV,
+                                        pDataTmp, this->width,
+                                        ptENDIAN_LE);
+                line++;
+                srcOffsetY += this->GetStride();
+                break;
+            case ptCOLFMT_YUV420P_NV21:
+                ptConvert_YUVNV21ToAYUV(this->pPlane[0] + srcOffsetY,
+                                        (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
+                                        this->pPlane[2] + srcOffsetUV,
+                                        pDataTmp, this->width,
+                                        ptENDIAN_LE);
+                line++;
+                srcOffsetY += this->GetStride();
+                break;
             case ptCOLFMT_YUYV: ptConvert_YUYVToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
             case ptCOLFMT_YVYU: ptConvert_YVYUToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
             case ptCOLFMT_UYVY: ptConvert_UYVYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
@@ -665,6 +706,24 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                        pDst->pPlane[3] + dstOffsetUV,
                                        pDst->pPlane[2] + dstOffsetUV,
                                        this->width);
+                line++;
+                dstOffsetY += pDst->GetStride();
+                break;
+            case ptCOLFMT_YUV420P_NV12:
+                ptConvert_AYUVToYUVNV12(pDataTmp,
+                                        pDst->pPlane[0] + dstOffsetY,
+                                        (height==1) ? NULL : pDst->pPlane[1] + dstOffsetY,
+                                        pDst->pPlane[2] + dstOffsetUV,
+                                        this->width);
+                line++;
+                dstOffsetY += pDst->GetStride();
+                break;
+            case ptCOLFMT_YUV420P_NV21:
+                ptConvert_AYUVToYUVNV21(pDataTmp,
+                                        pDst->pPlane[0] + dstOffsetY,
+                                        (height==1) ? NULL : pDst->pPlane[1] + dstOffsetY,
+                                        pDst->pPlane[2] + dstOffsetUV,
+                                        this->width);
                 line++;
                 dstOffsetY += pDst->GetStride();
                 break;

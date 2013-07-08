@@ -69,12 +69,16 @@ void ptConvert_VYUYToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN ds
 void ptConvert_YUV422PToAYUV(const bbU8* pSrcY, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
 void ptConvert_YUV422RPToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
 void ptConvert_YUV420PToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_YUVNV12ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcUV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
+void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcVU, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
 void ptConvert_AYUVToYUYV(const bbU8* pSrc, bbU8* pDst, bbU32 width);
 void ptConvert_AYUVToYVYU(const bbU8* pSrc, bbU8* pDst, bbU32 width);
 void ptConvert_AYUVToUYVY(const bbU8* pSrc, bbU8* pDst, bbU32 width);
 void ptConvert_AYUVToVYUY(const bbU8* pSrc, bbU8* pDst, bbU32 width);
 void ptConvert_AYUVToYUV422P(const bbU8* pSrc, bbU8* pDstY, bbU8* pDstU, bbU8* pDstV, bbU32 width);
 void ptConvert_AYUVToYUV420(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstU, bbU8* pDstV, bbU32 width);
+void ptConvert_AYUVToYUVNV12(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstUV, bbU32 width);
+void ptConvert_AYUVToYUVNV21(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstVU, bbU32 width);
 
 #endif /* ptCONVERT_H_ */
 
