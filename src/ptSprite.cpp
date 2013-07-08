@@ -648,7 +648,6 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
         {
             switch(pDst->GetColFmt())
             {
-            /*
             case ptCOLFMT_YUV420P:
                 ptConvert_AYUVToYUV420(pDataTmp,
                                        pDst->pPlane[0] + dstOffsetY,
@@ -669,7 +668,6 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 line++;
                 dstOffsetY += pDst->GetStride();
                 break;
-            */
             case ptCOLFMT_YUYV: ptConvert_AYUVToYUYV(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
             case ptCOLFMT_YVYU: ptConvert_AYUVToYVYU(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
             case ptCOLFMT_UYVY: ptConvert_AYUVToUYVY(pDataTmp, pDst->pData + dstOffsetY, this->width); break;

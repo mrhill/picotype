@@ -2307,7 +2307,6 @@ void ptConvert_AYUVToYUV420(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* 
         *pDstV++ = ((int)pSrc[0] + (int)pSrc[4+0] + (int)pSrc[0+widthX4] + (int)pSrc[4+0+widthX4])>>2; // v
         pSrc += 8;
     }
-
     if (pDstY1)
     {
         pSrcEnd = pSrc + widthX4;
