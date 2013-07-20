@@ -32,10 +32,11 @@ class ptYUV2RGB
 {
     bbS16 mYUV2RGB[12];// must be first member for now, see ptSprite::pYUV2RGB
 public:
-    ptYUV2RGB(const bbS16* pM) { bbMemCpy(mYUV2RGB, pM, sizeof(mYUV2RGB)); }
+    ptYUV2RGB(const bbS16* pM) { SetMatrix(pM); }
     ptYUV2RGB() {}
 
-    const bbS16* GetMatrix() const { return mYUV2RGB; }
+    inline const bbS16* GetMatrix() const { return mYUV2RGB; }
+    inline void SetMatrix(const bbS16* pM) { bbMemCpy(mYUV2RGB, pM, sizeof(mYUV2RGB)); }
 
     ptRGBA ToRGB(ptYUVA yuva) const;
 
