@@ -40,6 +40,7 @@ public:
     ptRGBA ToRGB(ptYUVA yuva) const;
 
     void SwapUV();
+    void MaskChannel(bbUINT ch);
 
     friend class ptRGB2YUV;
 };

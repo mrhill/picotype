@@ -11,7 +11,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT colfmt)
 
     if (ptColFmtIsIndexed(colfmt))
         return ptCOLTYPE_PAL;
-    
+
     return ptCOLTYPE_RGB;
 }
 
@@ -47,6 +47,11 @@ void ptYUV2RGB::SwapUV()
         mYUV2RGB[i+2] = mYUV2RGB[i+1];
         mYUV2RGB[i+1] = tmp;
     }
+}
+
+void ptYUV2RGB::MaskChannel(bbUINT ch)
+{
+    mYUV2RGB[ch+3] = mYUV2RGB[ch+6] = mYUV2RGB[ch+9] = 0;
 }
 
 ptRGB2YUV::ptRGB2YUV(const ptYUV2RGB& yuv2rgb)
