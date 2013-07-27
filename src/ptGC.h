@@ -195,7 +195,7 @@ public:
     /** Set clip box.
         @param pRect Clip rectangle, left-top inclusive, right-bottom exclusive
     */
-    inline void SetClipBox(ptRect* const pRect)
+    inline void SetClipBox(const ptRect* pRect)
     {
         SetClipBox(pRect->left, pRect->top, pRect->right, pRect->bottom);
     }

@@ -39,7 +39,7 @@ public:
     inline void SetWidth(const bbUINT width) { mWidth = width << ptGCEIGHTX; }
     inline void SetHeight(const bbUINT height) { mHeight = height << ptGCEIGHTY; }
 
-    inline void SetClipBox(ptRect* const pRect)
+    inline void SetClipBox(const ptRect* pRect)
     {
         SetClipBox(pRect->left, pRect->top, pRect->right, pRect->bottom);
     }
