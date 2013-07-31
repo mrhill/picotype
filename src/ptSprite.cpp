@@ -576,6 +576,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
 {
     bbU8*   pLineBuf    = NULL;
     bbU8*   pDataTmp;
+    bbU8*   pDataTmp2;
     bbU32   srcOffsetY  = 0;
     bbU32   srcOffsetUV = 0;
     bbU32   dstOffsetY  = 0;
@@ -589,7 +590,17 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
     while (height>0)
     {
         // - convert 2 lines of source YUV to AYUV
-        pDataTmp = pDst->GetColFmt()==ptCOLFMT_AYUV ? pDst->pData + dstOffsetY : pLineBuf;
+        if (pDst->GetColFmt()==ptCOLFMT_AYUV)
+        {
+            pDataTmp = pDst->pData + dstOffsetY;
+            pDataTmp2 = pDataTmp + pDst->stride;
+        }
+        else
+        {
+            pDataTmp = pLineBuf;
+            pDataTmp2 = pLineBuf + (this->width<<2);
+        }
+
         line = 0;
         do
         {
@@ -602,7 +613,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                         (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
                                         this->pPlane[2] + srcOffsetUV,
                                         this->pPlane[3] + srcOffsetUV,
-                                        pDataTmp, this->width,
+                                        pDataTmp, pDataTmp2, this->width,
                                         ptENDIAN_LE);
                 line++;
                 srcOffsetY += this->GetStride();
@@ -614,7 +625,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                         (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
                                         this->pPlane[3] + srcOffsetUV,
                                         this->pPlane[2] + srcOffsetUV,
-                                        pDataTmp, this->width,
+                                        pDataTmp, pDataTmp2, this->width,
                                         ptENDIAN_LE);
                 line++;
                 srcOffsetY += this->GetStride();
@@ -623,7 +634,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 ptConvert_YUVNV12ToAYUV(this->pPlane[0] + srcOffsetY,
                                         (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
                                         this->pPlane[2] + srcOffsetUV,
-                                        pDataTmp, this->width,
+                                        pDataTmp, pDataTmp2, this->width,
                                         ptENDIAN_LE);
                 line++;
                 srcOffsetY += this->GetStride();
@@ -632,7 +643,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 ptConvert_YUVNV21ToAYUV(this->pPlane[0] + srcOffsetY,
                                         (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
                                         this->pPlane[2] + srcOffsetUV,
-                                        pDataTmp, this->width,
+                                        pDataTmp, pDataTmp2, this->width,
                                         ptENDIAN_LE);
                 line++;
                 srcOffsetY += this->GetStride();
@@ -653,7 +664,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                          (height==1) ? NULL : this->pPlane[1] + srcOffsetY,
                                          this->pPlane[2] + srcOffsetUV,
                                          this->pPlane[3] + srcOffsetUV,
-                                         pDataTmp, this->width,
+                                         pDataTmp, pDataTmp2, this->width,
                                          ptENDIAN_LE);
                 line++;
                 srcOffsetY += this->GetStride();

@@ -2194,7 +2194,7 @@ void ptConvert_YUV422PToAYUV(const bbU8* pSrcY, const bbU8* pSrcU, const bbU8* p
     }
 }
 
-void ptConvert_YUV422RPToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
+void ptConvert_YUV422RPToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, ptENDIAN dstEndian)
 {
     // converts 2 lines (1 line if pSrcY1 is NULL), dst stride is width*4
     const bbU8* pSrcY = pSrcY0;
@@ -2229,11 +2229,12 @@ void ptConvert_YUV422RPToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8
         pSrcU -= width;
         pSrcV -= width;
         pSrcY = pSrcY1;
+        pDst = pDst2;
 
     } while (pSrcY && --i);
 }
 
-void ptConvert_YUV420PToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
+void ptConvert_YUV420PToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, ptENDIAN dstEndian)
 {
     // converts 2 lines (1 line if pSrcY1 is NULL), dst stride is width*4
     const bbU8* pSrcY = pSrcY0;
@@ -2270,11 +2271,12 @@ void ptConvert_YUV420PToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
         pSrcU -= width>>1;
         pSrcV -= width>>1;
         pSrcY = pSrcY1;
+        pDst = pDst2;
 
     } while (pSrcY && --i);
 }
 
-void ptConvert_YUVNV12ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcUV, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
+void ptConvert_YUVNV12ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcUV, bbU8* pDst, bbU8* pDst2, bbU32 width, ptENDIAN dstEndian)
 {
     // converts 2 lines (1 line if pSrcY1 is NULL), dst stride is width*4
     const bbU8* pSrcY = pSrcY0;
@@ -2310,11 +2312,12 @@ void ptConvert_YUVNV12ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
 
         pSrcUV -= width;
         pSrcY = pSrcY1;
+        pDst = pDst2;
 
     } while (pSrcY && --i);
 }
 
-void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcVU, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
+void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcVU, bbU8* pDst, bbU8* pDst2, bbU32 width, ptENDIAN dstEndian)
 {
     // converts 2 lines (1 line if pSrcY1 is NULL), dst stride is width*4
     const bbU8* pSrcY = pSrcY0;
@@ -2350,6 +2353,7 @@ void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
 
         pSrcVU -= width;
         pSrcY = pSrcY1;
+        pDst = pDst2;
 
     } while (pSrcY && --i);
 }
