@@ -1897,17 +1897,33 @@ void ptConvert_RGBA4444ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptE
     }
 }
 
-void ptConvert_RGBA4444ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width)
+void ptConvert_RGBA4444ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
-    while (pDst < pDstEnd)
+
+    if (srcEndian == ptENDIAN_LE)
     {
-        register bbU32 rgba = bbLD16LE(pSrc); pSrc+=2;
-        *pDst++ = (bbU8)(rgba<<4);
-        *pDst++ = (bbU8)(rgba & 0xF0);
-        *pDst++ = (bbU8)((rgba>>4) & 0xF0);
-        register bbU32 a = rgba>>12;
-        *pDst++ = (bbU8)(a|(a<<4));
+        while (pDst < pDstEnd)
+        {
+            register bbU32 rgba = bbLD16LE(pSrc); pSrc+=2;
+            *pDst++ = (bbU8)(rgba<<4);
+            *pDst++ = (bbU8)(rgba & 0xF0);
+            *pDst++ = (bbU8)((rgba>>4) & 0xF0);
+            register bbU32 a = rgba>>12;
+            *pDst++ = (bbU8)(a|(a<<4));
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            register bbU32 rgba = bbLD16BE(pSrc); pSrc+=2;
+            *pDst++ = (bbU8)(rgba<<4);
+            *pDst++ = (bbU8)(rgba & 0xF0);
+            *pDst++ = (bbU8)((rgba>>4) & 0xF0);
+            register bbU32 a = rgba>>12;
+            *pDst++ = (bbU8)(a|(a<<4));
+        }
     }
 }
 
