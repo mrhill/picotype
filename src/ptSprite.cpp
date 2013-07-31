@@ -788,7 +788,7 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
         // - convert 1 line of source RGB to ARGB8888
         switch(this->GetColFmt())
         {
-        case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
         case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGBA4444: ptConvert_RGBA4444ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGB888:   ptConvert_RGB888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
@@ -851,7 +851,7 @@ bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
         // - convert 1 line of source RGB to ARGB8888
         switch(this->GetColFmt())
         {
-        case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
         case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGBA4444: ptConvert_RGBA4444ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGB888:   ptConvert_RGB888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
