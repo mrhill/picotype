@@ -461,29 +461,29 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
         }
         break;
     case ptCOLFMT_RGB565:
-        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB32))
             return;
         while (y < y_end)
         {
-            ptConvert_RGB565ToBGR888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
+            ptConvert_RGB565ToBGRA8888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
             mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
         }
         break;
     case ptCOLFMT_RGBA1555:
-        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB32))
             return;
         while (y < y_end)
         {
-            ptConvert_RGBA1555ToBGR888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
+            ptConvert_RGBA1555ToBGRA8888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
             mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
         }
         break;
     case ptCOLFMT_RGBA4444:
-        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB888))
+        if (bbEOK != EnsureSpriteBuf(pSprite->GetWidth(), 1, QImage::Format_RGB32))
             return;
         while (y < y_end)
         {
-            ptConvert_RGBA4444ToBGR888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
+            ptConvert_RGBA4444ToBGRA8888(pData, mpSpriteBuf->bits(), pSprite->GetWidth(), pSprite->GetEndian()); pData+=pSprite->GetStride();
             mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
         }
         break;
