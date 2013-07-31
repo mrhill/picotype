@@ -789,7 +789,7 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
         switch(this->GetColFmt())
         {
         case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
-        case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
         case ptCOLFMT_RGBA4444: ptConvert_RGBA4444ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGB888:   ptConvert_RGB888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_BGR888:   ptConvert_BGR888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
@@ -852,7 +852,7 @@ bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
         switch(this->GetColFmt())
         {
         case ptCOLFMT_RGB565:   ptConvert_RGB565ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
-        case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
+        case ptCOLFMT_RGBA1555: ptConvert_RGBA1555ToRGBA8888(pDataSrc, pDataTmp, this->width, GetEndian()); break;
         case ptCOLFMT_RGBA4444: ptConvert_RGBA4444ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_RGB888:   ptConvert_RGB888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
         case ptCOLFMT_BGR888:   ptConvert_BGR888ToRGBA8888(pDataSrc, pDataTmp, this->width); break;
