@@ -232,7 +232,7 @@ public:
         during the conversion process.
         @param pDst Target sprite container to be filled with converted data
     */
-    bbERR Convert(ptSprite* pDst) const;
+    bbERR ConvertTo(ptSprite* pDst) const;
 
     /** Copy sprite to target sprite.
         The target sprite must be initialized, and width, height, and colour format be identical

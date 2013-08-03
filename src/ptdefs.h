@@ -84,10 +84,10 @@ enum ptCOLFMT
     ptCOLFMT_YUV420P_YV12,//!< YVU 4:2:0, 3 planes                                         // - 8 YUV420P formats must be in group
     ptCOLFMT_YUV420P_IMC3,//!< YUV 4:2:0, 3 planes, UV planes full stride + unused padding // - even/odd offset is UV/VU order
     ptCOLFMT_YUV420P_IMC1,//!< YVU 4:2:0, 3 planes, VU planes full stride + unused padding // - 4 IMCx must be in a group
-    ptCOLFMT_YUV420P_IMC4,//!< YUV 4:2:0, U/V planes with interleaved lines
-    ptCOLFMT_YUV420P_IMC2,//!< YVU 4:2:0, V/U planes with interleaved lines
-    ptCOLFMT_YUV420P_NV12,//!< Semi-planar Y,UV 4:2:0, 2 planes
-    ptCOLFMT_YUV420P_NV21,//!< Semi-planar Y,VU 4:2:0, 2 planes
+    ptCOLFMT_YUV420P_IMC4,//!< YUV 4:2:0, 2 planes, UV plane with interleaved lines
+    ptCOLFMT_YUV420P_IMC2,//!< YVU 4:2:0, 2 planes, VU plane with interleaved lines
+    ptCOLFMT_YUV420P_NV12,//!< Semi-planar Y,UV 4:2:0, 2 planes, UV plane with interleaved pixels
+    ptCOLFMT_YUV420P_NV21,//!< Semi-planar Y,VU 4:2:0, 2 planes, VU plane with interleaved pixels
     ptCOLFMT_YUV420P_12,  //!< YUV 4:2:0, 3 planes, 12-bit channels, top 4 bits unused
     ptCOLFMT_YUV420P_16,  //!< YUV 4:2:0, 3 planes, 16-bit channels
     ptCOLFMT_YUYV,        //!< YUV 4:2:2, 1 plane, 0xVVYYUUYY packing

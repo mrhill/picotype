@@ -918,7 +918,7 @@ bbERR ptSprite::CopyTo(ptSprite* pDst) const
     return bbEOK;
 }
 
-bbERR ptSprite::Convert(ptSprite* pDst) const
+bbERR ptSprite::ConvertTo(ptSprite* pDst) const
 {
     if ((this->width != pDst->width) ||
         (this->height != pDst->height))
