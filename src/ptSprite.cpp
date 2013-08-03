@@ -446,24 +446,15 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
 
         case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
-            if (this->GetEndian() == ptENDIAN_LE)
-                ptConvert_YUV42016LEToRGBA8888(this->pPlane[0] + offsetY,
-                                               (height==1) ? NULL : this->pPlane[1] + offsetY,
-                                               this->pPlane[2] + offsetUV,
-                                               this->pPlane[3] + offsetUV,
-                                               pDataTmp,
-                                               this->width,
-                                               pYUV2RGB,
-                                               this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8);
-            else
-                ptConvert_YUV42016BEToRGBA8888(this->pPlane[0] + offsetY,
-                                               (height==1) ? NULL : this->pPlane[1] + offsetY,
-                                               this->pPlane[2] + offsetUV,
-                                               this->pPlane[3] + offsetUV,
-                                               pDataTmp,
-                                               this->width,
-                                               pYUV2RGB,
-                                               this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8);
+            ptConvert_YUV42016ToRGBA8888(this->pPlane[0] + offsetY,
+                                         (height==1) ? NULL : this->pPlane[1] + offsetY,
+                                         this->pPlane[2] + offsetUV,
+                                         this->pPlane[3] + offsetUV,
+                                         pDataTmp,
+                                         this->width,
+                                         pYUV2RGB,
+                                         this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8,
+                                         this->GetEndian());
             offsetY  += this->GetStride()<<1;
             offsetUV += this->GetStrideUV();
             lines = 2;

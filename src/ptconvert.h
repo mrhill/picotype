@@ -42,9 +42,8 @@ void ptConvert_RGBA8888ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const b
 
 void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
-void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, const bbS16* pYUV2RGB, unsigned shift, ptENDIAN endian);
-void ptConvert_YUV42016LEToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB, unsigned shift);
-void ptConvert_YUV42016BEToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB, unsigned shift);
+void ptConvert_YUV42016ToRGB888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, const bbS16* pYUV2RGB, unsigned shift, ptENDIAN srcEndian);
+void ptConvert_YUV42016ToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB, unsigned shift, ptENDIAN srcEndian);
 void ptConvert_YUVNV12ToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcUV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcUV, bbU8* pDst, bbU8* pDst2, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUYVToRGB888(const bbU8* pSrcY, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
