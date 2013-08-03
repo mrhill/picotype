@@ -2297,9 +2297,9 @@ void ptConvert_YUVNV12ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
             {
                 pDst[1]   = *pSrcY++; // y0
                 pDst[4+1] = *pSrcY++; // y1
-                pDst[2]   = pDst[4+1] = *pSrcUV++; // u
-                pDst[3]   = pDst[4+0] = *pSrcUV++; // v
-                pDst[0]   = pDst[4+3] = 255;      // a
+                pDst[2]   = pDst[4+2] = *pSrcUV++; // u
+                pDst[3]   = pDst[4+3] = *pSrcUV++; // v
+                pDst[0]   = pDst[4+0] = 255;      // a
                 pDst += 8;
             }
         }
@@ -2338,9 +2338,9 @@ void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
             {
                 pDst[1]   = *pSrcY++; // y0
                 pDst[4+1] = *pSrcY++; // y1
-                pDst[3]   = pDst[4+0] = *pSrcVU++; // v
-                pDst[2]   = pDst[4+1] = *pSrcVU++; // u
-                pDst[0]   = pDst[4+3] = 255;      // a
+                pDst[3]   = pDst[4+3] = *pSrcVU++; // v
+                pDst[2]   = pDst[4+2] = *pSrcVU++; // u
+                pDst[0]   = pDst[4+0] = 255;      // a
                 pDst += 8;
             }
         }
