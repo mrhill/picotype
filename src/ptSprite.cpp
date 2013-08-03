@@ -161,7 +161,12 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
                 if (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_SWAPUV)
                     pPlane->mColComp ^= 3;
                 pPlane->mFlags = ptPLANEFLAG_SUBSAMPLED;
-                pPlane->mWidth >>= ptgColFmtInfo[colfmt].PlaneShiftH;
+
+                if (((bbUINT)colfmt-ptCOLFMT_YUV420P_IMC3) <= (ptCOLFMT_YUV420P_IMC2-ptCOLFMT_YUV420P_IMC3))
+                    pPlane->mWidth >>= 1;
+                else
+                    pPlane->mWidth >>= ptgColFmtInfo[colfmt].PlaneShiftH;
+
                 pPlane->mHeight >>= ptgColFmtInfo[colfmt].PlaneShiftV;
                 pPlane->mStride = strideUV;
             }
@@ -692,6 +697,8 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
             switch(pDst->GetColFmt())
             {
             case ptCOLFMT_YUV420P:
+            case ptCOLFMT_YUV420P_IMC3:
+            case ptCOLFMT_YUV420P_IMC4:
                 ptConvert_AYUVToYUV420(pDataTmp,
                                        pDst->pPlane[0] + dstOffsetY,
                                        (height==1) ? NULL : pDst->pPlane[1] + dstOffsetY,
@@ -702,6 +709,8 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 dstOffsetY += pDst->GetStride();
                 break;
             case ptCOLFMT_YUV420P_YV12:
+            case ptCOLFMT_YUV420P_IMC1:
+            case ptCOLFMT_YUV420P_IMC2:
                 ptConvert_AYUVToYUV420(pDataTmp,
                                        pDst->pPlane[0] + dstOffsetY,
                                        (height==1) ? NULL : pDst->pPlane[1] + dstOffsetY,
