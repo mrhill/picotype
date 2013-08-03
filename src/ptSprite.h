@@ -146,7 +146,10 @@ public:
     */
     inline bbU8* GetData() { return pData; }
 
+    /** Get pointer to start of pixeldata for given plane. */
     inline const bbU8* GetPlane(bbUINT plane) const { return pPlane[plane]; }
+
+    /** Get pointer to start of pixeldata for given plane. */
     inline bbU8* GetPlane(bbUINT plane) { return pPlane[plane]; }
 
     /** Get number of planes for this sprite.
@@ -157,7 +160,7 @@ public:
     bbUINT GetPlaneCount() const;
 
     /** Get descriptor for given plane number.
-        @param plane 0-based plane index
+        @param plane 0-based plane index (ptSprite internal count, i.e. YUV420 has 4 planes)
         @param pPlane Plane descriptor, which will be filled in
     */
     void GetPlane(bbUINT plane, ptPlane* pPlane) const;

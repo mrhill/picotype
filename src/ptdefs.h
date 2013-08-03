@@ -80,25 +80,25 @@ enum ptCOLFMT
     ptCOLFMT_BGR888,
     ptCOLFMT_RGBA8888,
     ptCOLFMT_BGRA8888,
-    ptCOLFMT_YUV420P,       // these 6 must be in this order:  // only YUV below this point
-    ptCOLFMT_YUV420P_YV12,  // - even/odd offset is UV/VU order
-    ptCOLFMT_YUV420P_IMC3,  // - IMCx need to be in a group
-    ptCOLFMT_YUV420P_IMC1,  //
-    ptCOLFMT_YUV420P_IMC4,  //
-    ptCOLFMT_YUV420P_IMC2,  //
-    ptCOLFMT_YUV420P_NV12,//Y,UV
-    ptCOLFMT_YUV420P_NV21,//Y,VU
-    ptCOLFMT_YUV420P_12,
-    ptCOLFMT_YUV420P_16,
-    ptCOLFMT_YUYV,
-    ptCOLFMT_UYVY,
-    ptCOLFMT_YVYU,
-    ptCOLFMT_VYUY,
-    ptCOLFMT_YUV422P,
-    ptCOLFMT_YUV422RP,
-    ptCOLFMT_YUV444,
-    ptCOLFMT_YUV444P,
-    ptCOLFMT_AYUV,
+    ptCOLFMT_YUV420P,     //!< YUV 4:2:0, 3 planes                                         // only YUV below this point
+    ptCOLFMT_YUV420P_YV12,//!< YVU 4:2:0, 3 planes                                         // - 8 YUV420P formats must be in group
+    ptCOLFMT_YUV420P_IMC3,//!< YUV 4:2:0, 3 planes, UV planes full stride + unused padding // - even/odd offset is UV/VU order
+    ptCOLFMT_YUV420P_IMC1,//!< YVU 4:2:0, 3 planes, VU planes full stride + unused padding // - 4 IMCx must be in a group
+    ptCOLFMT_YUV420P_IMC4,//!< YUV 4:2:0, U/V planes with interleaved lines
+    ptCOLFMT_YUV420P_IMC2,//!< YVU 4:2:0, V/U planes with interleaved lines
+    ptCOLFMT_YUV420P_NV12,//!< Semi-planar Y,UV 4:2:0, 2 planes
+    ptCOLFMT_YUV420P_NV21,//!< Semi-planar Y,VU 4:2:0, 2 planes
+    ptCOLFMT_YUV420P_12,  //!< YUV 4:2:0, 3 planes, 12-bit channels, top 4 bits unused
+    ptCOLFMT_YUV420P_16,  //!< YUV 4:2:0, 3 planes, 16-bit channels
+    ptCOLFMT_YUYV,        //!< YUV 4:2:2, 1 plane, 0xVVYYUUYY packing
+    ptCOLFMT_UYVY,        //!< YUV 4:2:2, 1 plane, 0xYYVVYYUU packing
+    ptCOLFMT_YVYU,        //!< YUV 4:2:2, 1 plane, 0xUUYYVVYY packing
+    ptCOLFMT_VYUY,        //!< YUV 4:2:2, 1 plane, 0xYYUUYYVV packing
+    ptCOLFMT_YUV422P,     //!< YUV 4:2:2, 3 planes
+    ptCOLFMT_YUV422RP,    //!< YUV 4:2:2, 3 planes, horizontal downsampling
+    ptCOLFMT_YUV444,      //!< YUV 4:4:4, 1 plane, 0xYY,0xUU,0xVV tuples
+    ptCOLFMT_YUV444P,     //!< YUV 4:4:4, 3 planes
+    ptCOLFMT_AYUV,        //!< YUV 4:4:4, 1 plane, 0xAAYYUUVV packing with alpha
     ptCOLFMTCOUNT
 };
 
