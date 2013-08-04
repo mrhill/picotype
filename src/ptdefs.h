@@ -205,6 +205,11 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
 */
 #define ptColFmtGetPPB(colfmt) ((bbUINT)ptgColFmtInfo[colfmt].flags >> ptCOLFMTFLAG_PPBSHIFT)
 
+/** Get bits per pixel for colour format.
+    @return BPP
+*/
+#define ptColFmtGetBPP(colfmt) ((bbUINT)ptgColFmtInfo[colfmt].bpp)
+
 #define ptCOLFMTNAMES \
     bbT("1 bpp"),\
     bbT("2 bpp"),\
