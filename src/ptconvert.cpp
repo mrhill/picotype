@@ -2421,68 +2421,186 @@ void ptConvert_AYUVToYUV422P(const bbU8* pSrc, bbU8* pDstY, bbU8* pDstU, bbU8* p
     }
 }
 
-void ptConvert_AYUVToYUV420(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstU, bbU8* pDstV, bbU32 width)
+void ptConvert_AYUVToYUV422RP(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstU, bbU8* pDstV, bbU32 width, ptENDIAN srcEndian)
 {
-    const bbU8* pSrcEnd = pSrc + (width <<= 2);
-    while (pSrc < pSrcEnd)
+    const bbU8* pSrc0End = pSrc0 + (width <<= 2);
+    const bbU8* pSrc1End = pSrc1 ? pSrc1 + width : NULL;
+    if (!pSrc1)
+        pSrc1 = pSrc0;
+
+    if (srcEndian == ptENDIAN_LE)
     {
-        *pDstY0++ = pSrc[2];
-        *pDstY0++ = pSrc[4+2];
-        *pDstU++ = ((int)pSrc[1] + (int)pSrc[4+1] + (int)pSrc[1+width] + (int)pSrc[4+1+width])>>2; // u
-        *pDstV++ = ((int)pSrc[0] + (int)pSrc[4+0] + (int)pSrc[0+width] + (int)pSrc[4+0+width])>>2; // v
-        pSrc += 8;
-    }
-    if (pDstY1)
-    {
-        pSrcEnd = pSrc + width;
-        while (pSrc < pSrcEnd)
+        while (pSrc0 < pSrc0End)
         {
-            *pDstY1++ = pSrc[2];
-            *pDstY1++ = pSrc[4+2]; pSrc += 8;
+            *pDstY0++ = pSrc0[2]; // y0
+            *pDstU++ = ((int)pSrc0[1] + (int)pSrc1[1])>>1; // u
+            *pDstV++ = ((int)pSrc0[0] + (int)pSrc1[0])>>1; // v
+            pSrc0 += 4;
+            pSrc1 += 4;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[2]; // y1
+            pSrc1 += 4;
+        }
+    }
+    else
+    {
+        while (pSrc0 < pSrc0End)
+        {
+            *pDstY0++ = pSrc0[1]; // y0
+            *pDstU++ = ((int)pSrc0[2] + (int)pSrc1[2])>>1; // u
+            *pDstV++ = ((int)pSrc0[3] + (int)pSrc1[3])>>1; // v
+            pSrc0 += 4;
+            pSrc1 += 4;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[1]; // y1
+            pSrc1 += 4;
         }
     }
 }
 
-void ptConvert_AYUVToYUVNV12(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstUV, bbU32 width)
+void ptConvert_AYUVToYUV420(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstU, bbU8* pDstV, bbU32 width, ptENDIAN srcEndian)
 {
-    const bbU8* pSrcEnd = pSrc + (width <<= 2);
-    while (pSrc < pSrcEnd)
+    const bbU8* pSrc0End = pSrc0 + (width <<= 2);
+    const bbU8* pSrc1End = pSrc1 ? pSrc1 + width : NULL;
+    if (!pSrc1)
+        pSrc1 = pSrc0;
+
+    if (srcEndian == ptENDIAN_LE)
     {
-        *pDstY0++ = pSrc[2];
-        *pDstY0++ = pSrc[4+2];
-        *pDstUV++ = ((int)pSrc[1] + (int)pSrc[4+1] + (int)pSrc[1+width] + (int)pSrc[4+1+width])>>2; // u
-        *pDstUV++ = ((int)pSrc[0] + (int)pSrc[4+0] + (int)pSrc[0+width] + (int)pSrc[4+0+width])>>2; // v
-        pSrc += 8;
-    }
-    if (pDstY1)
-    {
-        pSrcEnd = pSrc + width;
-        while (pSrc < pSrcEnd)
+        while (pSrc0 < pSrc0End)
         {
-            *pDstY1++ = pSrc[2];
-            *pDstY1++ = pSrc[4+2]; pSrc += 8;
+            *pDstY0++ = pSrc0[2];
+            *pDstY0++ = pSrc0[4+2];
+            *pDstU++ = ((int)pSrc0[1] + (int)pSrc0[4+1] + (int)pSrc1[1] + (int)pSrc1[4+1])>>2; // u
+            *pDstV++ = ((int)pSrc0[0] + (int)pSrc0[4+0] + (int)pSrc1[0] + (int)pSrc1[4+0])>>2; // v
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[2];
+            *pDstY1++ = pSrc1[4+2];
+            pSrc1 += 8;
+        }
+    }
+    else
+    {
+        while (pSrc0 < pSrc0End)
+        {
+            *pDstY0++ = pSrc0[1];
+            *pDstY0++ = pSrc0[4+1];
+            *pDstU++ = ((int)pSrc0[2] + (int)pSrc0[4+2] + (int)pSrc1[2] + (int)pSrc1[4+2])>>2; // u
+            *pDstV++ = ((int)pSrc0[3] + (int)pSrc0[4+3] + (int)pSrc1[3] + (int)pSrc1[4+3])>>2; // v
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[1];
+            *pDstY1++ = pSrc1[4+1];
+            pSrc1 += 8;
         }
     }
 }
 
-void ptConvert_AYUVToYUVNV21(const bbU8* pSrc, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstVU, bbU32 width)
+void ptConvert_AYUVToYUVNV12(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstUV, bbU32 width, ptENDIAN srcEndian)
 {
-    const bbU8* pSrcEnd = pSrc + (width <<= 2);
-    while (pSrc < pSrcEnd)
+    const bbU8* pSrc0End = pSrc0 + (width <<= 2);
+    const bbU8* pSrc1End = pSrc1 ? pSrc1 + width : NULL;
+    if (!pSrc1)
+        pSrc1 = pSrc0;
+
+    if (srcEndian == ptENDIAN_LE)
     {
-        *pDstY0++ = pSrc[2];
-        *pDstY0++ = pSrc[4+2];
-        *pDstVU++ = ((int)pSrc[0] + (int)pSrc[4+0] + (int)pSrc[0+width] + (int)pSrc[4+0+width])>>2; // v
-        *pDstVU++ = ((int)pSrc[1] + (int)pSrc[4+1] + (int)pSrc[1+width] + (int)pSrc[4+1+width])>>2; // u
-        pSrc += 8;
-    }
-    if (pDstY1)
-    {
-        pSrcEnd = pSrc + width;
-        while (pSrc < pSrcEnd)
+        while (pSrc0 < pSrc0End)
         {
-            *pDstY1++ = pSrc[2];
-            *pDstY1++ = pSrc[4+2]; pSrc += 8;
+            *pDstY0++ = pSrc0[2];
+            *pDstY0++ = pSrc0[4+2];
+            *pDstUV++ = ((int)pSrc0[1] + (int)pSrc0[4+1] + (int)pSrc1[1] + (int)pSrc1[4+1])>>2; // u
+            *pDstUV++ = ((int)pSrc0[0] + (int)pSrc0[4+0] + (int)pSrc1[0] + (int)pSrc1[4+0])>>2; // v
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[2];
+            *pDstY1++ = pSrc1[4+2];
+            pSrc1 += 8;
+        }
+    }
+    else
+    {
+        while (pSrc0 < pSrc0End)
+        {
+            *pDstY0++ = pSrc0[1];
+            *pDstY0++ = pSrc0[4+1];
+            *pDstUV++ = ((int)pSrc0[2] + (int)pSrc0[4+2] + (int)pSrc1[2] + (int)pSrc1[4+2])>>2; // u
+            *pDstUV++ = ((int)pSrc0[3] + (int)pSrc0[4+3] + (int)pSrc1[3] + (int)pSrc1[4+3])>>2; // v
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[1];
+            *pDstY1++ = pSrc1[4+1];
+            pSrc1 += 8;
+        }
+    }
+}
+
+void ptConvert_AYUVToYUVNV21(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstVU, bbU32 width, ptENDIAN srcEndian)
+{
+    const bbU8* pSrc0End = pSrc0 + (width <<= 2);
+    const bbU8* pSrc1End = pSrc1 ? pSrc1 + width : NULL;
+    if (!pSrc1)
+        pSrc1 = pSrc0;
+
+    if (srcEndian == ptENDIAN_LE)
+    {
+        while (pSrc0 < pSrc0End)
+        {
+            *pDstY0++ = pSrc0[2];
+            *pDstY0++ = pSrc0[4+2];
+            *pDstVU++ = ((int)pSrc0[0] + (int)pSrc0[4+0] + (int)pSrc1[0] + (int)pSrc1[4+0])>>2; // v
+            *pDstVU++ = ((int)pSrc0[1] + (int)pSrc0[4+1] + (int)pSrc1[1] + (int)pSrc1[4+1])>>2; // u
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[2];
+            *pDstY1++ = pSrc1[4+2];
+            pSrc1 += 8;
+        }
+    }
+    else
+    {
+        while (pSrc0 < pSrc0End)
+        {
+            *pDstY0++ = pSrc0[1];
+            *pDstY0++ = pSrc0[4+1];
+            *pDstVU++ = ((int)pSrc0[3] + (int)pSrc0[4+3] + (int)pSrc1[3] + (int)pSrc1[4+3])>>2; // v
+            *pDstVU++ = ((int)pSrc0[2] + (int)pSrc0[4+2] + (int)pSrc1[2] + (int)pSrc1[4+2])>>2; // u
+            pSrc0 += 8;
+            pSrc1 += 8;
+        }
+        pSrc1 -= width;
+        while (pSrc1 < pSrc1End)
+        {
+            *pDstY1++ = pSrc1[1];
+            *pDstY1++ = pSrc1[4+1];
+            pSrc1 += 8;
         }
     }
 }
