@@ -72,7 +72,7 @@ enum ptFONTSTYLE
 
     ptFONTTYPE_MEM       mpFont
     ptFONTTYPE_WIN       mpFont, mFormat, mWidth, mHeight, mStyle, mCharset
-    ptFONTTYPE_COMPOSITE not supported yet    
+    ptFONTTYPE_COMPOSITE not supported yet
 
     </pre>
     All other types take no input parameters create the default font.
@@ -158,7 +158,7 @@ public:
 
 protected:
     /** Pointers for bank indices of pages of 65536 codepoints each.
-        If bbCHARCP is larger than 16 bits, this array can address 16 pages,
+        If bbCHARCP is larger than 16 bits, this array can address 17 pages,
         otherwise 1 page. Semantic for array entries:
          - 0 if bank not existent,
          - 1 if bank existent but not loaded,
@@ -286,7 +286,7 @@ public:
     }
 
     bbERR GetInfo(ptFontInfo* const pInfo);
-    
+
     /** Lookup and cache glyph array for a string.
         The returned bitmap pointers are valid only as long as no other ptFont functions are called.
         @param pText   Pointer to string in encoding specified by #bbENC.

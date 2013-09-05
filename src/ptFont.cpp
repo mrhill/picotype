@@ -95,7 +95,7 @@ bbERR ptFontInfo::FromStr(const bbCHAR* pStr)
 
     case ptFONTTYPE_DEFAULT:
         break;
-        
+
     default:
         goto ptFontInfo_FromStr_err;
     }
@@ -360,6 +360,7 @@ bbU8* ptFont::EditCP(const bbCHARCP cp, bbUINT width)
 
         if (bbMemRealloc(max + charsize, (void**)&pBank) != bbEOK)
             return NULL;
+        pPage[bank] = pBank;
 
         bbMemSet(pBank + max, 0xFF, charsize);
 
