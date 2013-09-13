@@ -35,7 +35,7 @@ bbERR ptFontInfo::CopyTo(ptFontInfo* const pTo) const
     return bbEOK;
 }
 
-bbCHAR* ptFontInfo::ToStr()
+bbCHAR* ptFontInfo::ToStr() const
 {
     bbUINT nameLen = mpFont ? bbStrLen(mpFont) : 0;
     bbCHAR* const pStr = bbStrAlloc(nameLen + 3*8);

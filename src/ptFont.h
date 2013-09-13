@@ -94,7 +94,7 @@ struct ptFontInfo
     inline void Destroy() { Clear(); }
     void        Clear();
     bbERR       CopyTo(ptFontInfo* const pTo) const;
-    bbCHAR*     ToStr();
+    bbCHAR*     ToStr() const;
     bbERR       FromStr(const bbCHAR* pStr);
 };
 
