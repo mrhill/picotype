@@ -62,6 +62,14 @@ bbERR ptFontInfo::FromStr(const bbCHAR* pStr)
     bbERR err = bbELAST;
     bbUINT count;
     bbU32 type;
+
+    if (!pStr)
+    {
+        Clear();
+        mType = ptFONTTYPE_DEFAULT;
+        return bbEOK;
+    }
+
     bbCHAR** pList = bbStrSplit(pStr, (bbU32)',' | bbSTRSPLIT_STRIPSPACE | bbSTRSPLIT_INPLACE, &count);
     if (!pList)
         return bbELAST;
