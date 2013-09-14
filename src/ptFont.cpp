@@ -70,7 +70,7 @@ bbERR ptFontInfo::FromStr(const bbCHAR* pStr)
         return bbEOK;
     }
 
-    bbCHAR** pList = bbStrSplit(pStr, (bbU32)',' | bbSTRSPLIT_STRIPSPACE | bbSTRSPLIT_INPLACE, &count);
+    bbCHAR** pList = bbStrSplit(pStr, (bbU32)',' | bbSTRSPLIT_STRIPSPACE, &count);
     if (!pList)
         return bbELAST;
 
