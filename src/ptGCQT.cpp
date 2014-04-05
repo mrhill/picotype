@@ -611,6 +611,20 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
+	case ptCOLFMT_YUV411:
+        {
+            bbU32 width = (pSprite->GetWidth() + 3) &~ 3;
+
+            if (bbEOK != EnsureSpriteBuf(width, 1, QImage::Format_RGB888))
+                return;
+
+            while (y < y_end)
+            {
+                ptConvert_YUV411ToRGB888(pData, mpSpriteBuf->bits(), width, pYUV2RGB);
+                mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
+            }
+        }
+        break;
     case ptCOLFMT_YUYV:
     case ptCOLFMT_YVYU:
         {

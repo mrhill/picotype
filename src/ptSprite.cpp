@@ -644,6 +644,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 line++;
                 srcOffsetY += this->GetStride();
                 break;
+            case ptCOLFMT_YUV411: ptConvert_YUV411ToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
             case ptCOLFMT_YUYV: ptConvert_YUYVToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
             case ptCOLFMT_YVYU: ptConvert_YVYUToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
             case ptCOLFMT_UYVY: ptConvert_UYVYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
@@ -739,6 +740,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 line++;
                 dstOffsetY += pDst->GetStride();
                 break;
+            case ptCOLFMT_YUV411: ptConvert_AYUVToYUV411(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
             case ptCOLFMT_YUYV: ptConvert_AYUVToYUYV(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
             case ptCOLFMT_YVYU: ptConvert_AYUVToYVYU(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
             case ptCOLFMT_UYVY: ptConvert_AYUVToUYVY(pDataTmp, pDst->pData + dstOffsetY, this->width); break;

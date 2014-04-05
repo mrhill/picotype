@@ -61,7 +61,7 @@ struct ptSprite
 
     union
     {
-        bbU8*   pData;      /**< Chunky formats: pointer to pixel data, . */
+        bbU8*   pData;      /**< Chunky formats: pointer to pixel data. */
         bbU8*   pPlane[8];  /**< Planar formats: pointers to pixel data for each plane.
                                  <table>
                                  <tr><th>Color format</th><th>Interpretation</th></tr>
