@@ -470,6 +470,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             ptConvert_YUYVToRGBA8888(this->pPlane[0] + offsetY,
                                      pDataTmp,
                                      this->width,
+                                     this->GetEndian(),
                                      pYUV2RGB);
             offsetY  += this->GetStride();
             break;
@@ -479,6 +480,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             ptConvert_UYVYToRGBA8888(this->pPlane[0] + offsetY,
                                      pDataTmp,
                                      this->width,
+                                     this->GetEndian(),
                                      pYUV2RGB);
             offsetY  += this->GetStride();
             break;

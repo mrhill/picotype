@@ -611,7 +611,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
-	case ptCOLFMT_YUV411:
+    case ptCOLFMT_YUV411:
         {
             bbU32 width = (pSprite->GetWidth() + 3) &~ 3;
 
@@ -636,7 +636,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
 
             while (y < y_end)
             {
-                ptConvert_YUYVToRGB888(pData, mpSpriteBuf->bits(), width, pYUV2RGB);
+                ptConvert_YUYVToRGB888(pData, mpSpriteBuf->bits(), width, pSprite->GetEndian(), pYUV2RGB);
                 mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
             }
         }
@@ -652,7 +652,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
 
             while (y < y_end)
             {
-                ptConvert_UYVYToRGB888(pData, mpSpriteBuf->bits(), width, pYUV2RGB);
+                ptConvert_UYVYToRGB888(pData, mpSpriteBuf->bits(), width, pSprite->GetEndian(), pYUV2RGB);
                 mpPainter->drawImage(QPoint(x, y++), *mpSpriteBuf);
             }
         }
