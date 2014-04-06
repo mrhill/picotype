@@ -647,10 +647,10 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 srcOffsetY += this->GetStride();
                 break;
             case ptCOLFMT_YUV411: ptConvert_YUV411ToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
-            case ptCOLFMT_YUYV: ptConvert_YUYVToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
-            case ptCOLFMT_YVYU: ptConvert_YVYUToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
-            case ptCOLFMT_UYVY: ptConvert_UYVYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
-            case ptCOLFMT_VYUY: ptConvert_VYUYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
+            case ptCOLFMT_YUYV: ptConvert_YUYVToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
+            case ptCOLFMT_YVYU: ptConvert_YVYUToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
+            case ptCOLFMT_UYVY: ptConvert_UYVYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
+            case ptCOLFMT_VYUY: ptConvert_VYUYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
             case ptCOLFMT_YUV422P:
                 ptConvert_YUV422PToAYUV(this->pPlane[0] + srcOffsetY,
                                         this->pPlane[1] + srcOffsetUV,
