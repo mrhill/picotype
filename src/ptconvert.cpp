@@ -2677,7 +2677,7 @@ void ptConvert_YUVNV21ToAYUV(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8*
 
 void ptConvert_AYUVToYUV411(const bbU8* pSrc, bbU8* pDst, bbU32 width)
 {
-    bbU8* const pDstEnd = pDst + (width<<2) + (width<<1);
+    bbU8* const pDstEnd = pDst + width + (width>>1);
     while (pDst < pDstEnd)
     {
         pDst[1] = pSrc[2];   // y0
