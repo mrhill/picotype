@@ -143,28 +143,28 @@ struct ptColFmtInfo
     {/*ptCOLFMT_RGB565       */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
     {/*ptCOLFMT_RGBA1555     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
     {/*ptCOLFMT_RGBA4444     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_RGB888       */ 24, 1, 1, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
-    {/*ptCOLFMT_BGR888       */ 24, 1, 1, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
+    {/*ptCOLFMT_RGB888       */ 24, 1, 3, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
+    {/*ptCOLFMT_BGR888       */ 24, 1, 3, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
     {/*ptCOLFMT_RGBA8888     */ 32, 1, 4, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
     {/*ptCOLFMT_BGRA8888     */ 32, 1, 4, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_YUV420P      */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_YV12 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
-    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 0, 1},\
-    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
-    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
-    {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /**/\
-    {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
-    {/*ptCOLFMT_YUV420P_12   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV411       */ 12, 4, 1, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
+    {/*ptCOLFMT_YUV420P      */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
+    {/*ptCOLFMT_YUV420P_YV12 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 1, 1},\
+    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
+    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 0, 1},\
+    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
+    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
+    {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /**/\
+    {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
+    {/*ptCOLFMT_YUV420P_12   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
+    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
+    {/*ptCOLFMT_YUV411       */ 12, 4, 6, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
     {/*ptCOLFMT_VYUY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
-    {/*ptCOLFMT_YUV422P      */  8, 2, 1, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
+    {/*ptCOLFMT_YUV422P      */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
     {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1},\
-    {/*ptCOLFMT_YUV444       */ 24, 1, 1, 0, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
+    {/*ptCOLFMT_YUV444       */ 24, 1, 3, 0, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0, ptCOLFMTFLAG_YUV,                     3, 0, 0},\
     {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ALPHA,  1, 0, 0}
 
