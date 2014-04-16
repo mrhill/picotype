@@ -27,12 +27,6 @@ enum ptPALFMT
     ptPALFMTCOUNT
 };
 
-#define ptPALFMTNAMES \
-    NULL,\
-    NULL,\
-    bbT("RAW"),\
-    bbT("Archimedes")
-
 /** Predefined palette IDs. */
 enum ptPALID
 {

@@ -1,5 +1,6 @@
 #include <babel/str.h>
 #include <babel/file.h>
+#include <babel/fixmath.h>
 #include "ptPal.h"
 #include "ptGC.h" // for ptRGBPalMatch()
 
@@ -199,23 +200,20 @@ bbERR ptPal::SetPredefined(ptPALID const id)
 
 bbERR ptPal::Save(const bbCHAR* pPath, ptPALFMT const fmt)
 {
-    int i;
+    int i, tuple;
     bbFILEH hFile = NULL;
-
-    if ((bbUINT)((bbUINT)fmt - ptPALFMT_RAWRGB) >= (bbUINT)(ptPALFMTCOUNT-ptPALFMT_RAWRGB))
-    {
-        bbErrSet(bbEBADPARAM);
-        goto ptPal_Save_err;
-    }
-
-    hFile = bbFileOpen(pPath, bbFILEOPEN_TRUNC | bbFILEOPEN_READWRITE);
-    if (hFile == NULL)
-        goto ptPal_Save_err;
 
     switch (fmt)
     {
+    case ptPALFMT_RAWRGBA:
     case ptPALFMT_RAWRGB:
     case ptPALFMT_ARCHIMEDES:
+
+        hFile = bbFileOpen(pPath, bbFILEOPEN_TRUNC | bbFILEOPEN_READWRITE);
+        if (hFile == NULL)
+            goto ptPal_Save_err;
+
+        tuple = (fmt == ptPALFMT_RAWRGBA) ? 4 : 3;
 
         for (i=0; i<(int)mColCount; i++)
         {
@@ -225,11 +223,15 @@ bbERR ptPal::Save(const bbCHAR* pPath, ptPALFMT const fmt)
                     goto ptPal_Save_err;
             }
 
-            if (bbEOK != bbFileWriteLE(hFile, mpRGB[i], 3))
+            if (bbEOK != bbFileWriteLE(hFile, mpRGB[i], tuple))
                 goto ptPal_Save_err;
         }
 
         break;
+
+    default:
+        bbErrSet(bbEBADPARAM);
+        goto ptPal_Save_err;
     }
 
     bbFileClose(hFile);
@@ -242,22 +244,42 @@ bbERR ptPal::Save(const bbCHAR* pPath, ptPALFMT const fmt)
 
 bbERR ptPal::Load_Raw(bbU8* pBuf, bbU32 filesize)
 {
-    bbUINT colcount = filesize / 3;
-    if (filesize - (colcount*3))
+    bbUINT fmt = 3;
+    bbUINT colcount = filesize>>2;;
+
+    if ((filesize & 3) == 0)
+    {
+        if (filesize % 3)
+            fmt = 4;
+        else
+            fmt = bbIsPwr2(colcount) ? 4 : 3;
+    }
+
+    if (fmt == 3)
+        colcount = filesize/3;
+
+    if (filesize - (colcount * fmt))
+        return bbErrSet(bbEFILEFORMAT);
+
+    if (!bbIsPwr2(colcount) || (colcount > 256))
         return bbErrSet(bbEFILEFORMAT);
 
     if (SetColCount(colcount) != bbEOK)
         return bbELAST;
 
-    bbU8* const pBufEnd = pBuf + colcount*3;
     bbU32* pRGB = mpRGB;
-    while (pBuf < pBufEnd)
+    bbU32* const pRGBEnd = pRGB + colcount;
+    while (pRGB < pRGBEnd)
     {
-        *(pRGB++) = bbLD24LE(pBuf) | 0xFF000000UL;
-        pBuf += 3;
+        if (fmt == 3)
+            *(pRGB++) = bbLD24LE(pBuf) | 0xFF000000UL;
+        else
+            *(pRGB++) = bbLD32LE(pBuf);
+
+        pBuf += fmt;
     }
 
-    mFormat = ptPALFMT_RAWRGB;
+    mFormat = fmt==3 ? ptPALFMT_RAWRGB : ptPALFMT_RAWRGBA;
     return bbEOK;
 }
 
