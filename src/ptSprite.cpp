@@ -217,10 +217,17 @@ bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
 
     const ptColFmtInfo* pInfo = ptGetColFmtInfo((ptCOLFMT)this->colfmt);
 
-    bbUINT align = pInfo->widthalign - 1;
-    bbASSERT(bbIsPwr2(align+1));
-    if ((x & align) || (width & align))
-        return bbErrSet(bbEBADPARAM);
+    bbUINT align = pInfo->alignH;
+    if bbIsPwr2(align)
+    {
+        if ((x & (align-1))|(width & (align-1)))
+            return bbErrSet(bbEBADPARAM);
+    }
+    else
+    {
+        if ((x % align) || (width % align))
+            return bbErrSet(bbEBADPARAM);
+    }
 
     align = (1<<pInfo->PlaneShiftV) - 1;
     if ((y & align) || (height & align))

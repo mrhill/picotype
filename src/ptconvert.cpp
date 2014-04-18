@@ -2357,6 +2357,67 @@ void ptConvert_YUV411ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN 
     }
 }
 
+void ptConvert_YUVV210ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, ptENDIAN dstEndian)
+{    
+    bbU8* const pDstEnd = pDst + (width<<2);
+
+    if (srcEndian == ptENDIAN_LE)
+    {
+        while (pDst < pDstEnd)
+        {
+            register bbU32 d = bbLD32LE(pSrc); pSrc+=4; //V01_Y0_U01
+            pDst[2] = d>>(10+2); // y0
+            pDst[1] = pDst[4+1] = d>>2; // u01
+            pDst[0] = pDst[4+0] = d>>(20+2); // v01
+
+            d = bbLD32LE(pSrc); pSrc+=4; // Y2_U23_Y1 
+            pDst[4+2] = d>>2; // y1
+            pDst[8+2] = d>>(20+2); // y2
+            pDst[12+1] = pDst[16+1] = d>>(10+2); // u23
+
+            d = bbLD32LE(pSrc); pSrc+=4; // U45_Y3_V23
+            pDst[12+0] = pDst[16+0] = d>>2; // v23
+            pDst[12+2] = d>>(10+2); // y3
+            pDst[16+1] = pDst[20+1] = d>>(20+2); // u45
+
+            d = bbLD32LE(pSrc); pSrc+=4; // Y5_V45_Y4
+            pDst[16+0] = pDst[20+0] = d>>(10+2); // v45
+            pDst[16+2] = d>>2; // y4
+            pDst[20+2] = d>>(20+2); // y5
+
+            pDst[3] = pDst[4+3] = pDst[8+3] = pDst[12+3] = pDst[16+3] = pDst[20+3] = 255;     // a
+            pDst += 4*6;
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            register bbU32 d = bbLD32BE(pSrc); pSrc+=4; //V01_Y0_U01
+            pDst[2] = d>>(10+2); // y0
+            pDst[1] = pDst[4+1] = d>>2; // u01
+            pDst[0] = pDst[4+0] = d>>(20+2); // v01
+
+            d = bbLD32BE(pSrc); pSrc+=4; // Y2_U23_Y1 
+            pDst[4+2] = d>>2; // y1
+            pDst[8+2] = d>>(20+2); // y2
+            pDst[12+1] = pDst[16+1] = d>>(10+2); // u23
+
+            d = bbLD32BE(pSrc); pSrc+=4; // U45_Y3_V23
+            pDst[12+0] = pDst[16+0] = d>>2; // v23
+            pDst[12+2] = d>>(10+2); // y3
+            pDst[16+1] = pDst[20+1] = d>>(20+2); // u45
+
+            d = bbLD32BE(pSrc); pSrc+=4; // Y5_V45_Y4
+            pDst[16+0] = pDst[20+0] = d>>(10+2); // v45
+            pDst[16+2] = d>>2; // y4
+            pDst[20+2] = d>>(20+2); // y5
+
+            pDst[3] = pDst[4+3] = pDst[8+3] = pDst[12+3] = pDst[16+3] = pDst[20+3] = 255;     // a
+            pDst += 4*6;
+        }
+    }
+}
 
 void ptConvert_YUYVToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, ptENDIAN dstEndian)
 {
