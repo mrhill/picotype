@@ -115,6 +115,8 @@ enum ptCOLFMTFLAG
     ptCOLFMTFLAG_ALPHA    = 0x8,    //!< Colour format has alpha channel
     ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
     ptCOLFMTFLAG_NOTREG   = 0x20,   //!< Colour format properties are not aligned, e.g. stride cannot be calculated from bpp
+    ptCOLFMTFLAG_ENDIAN   = 0x40,   //!< Colour has little and big endian variants
+    
 };
 
 /** Colour format properties. */
@@ -124,52 +126,52 @@ struct ptColFmtInfo
     bbU8 alignH;        //!< Alignment requirement for pixel width, identical to pixels per access unit
     bbU8 bpu;           //!< Bytes per access unit (in plane 0)
     bbU8 pixalign;      //!< Alignment requirement for byte access to pixel data, must be power of 2-1
-    bbU8 flags;         //!< Flag bitmask see ptCOLFMTFLAG, top 4 bits is pixels per byte - 1
     bbU8 PlaneCount;    //!< Number of planes
     bbU8 PlaneShiftH;   //!< Horizontal downsampling for subplanes (planes other than plane 0)
     bbU8 PlaneShiftV;   //!< Vertical downsampling for subplanes (planes other than plane 0)
+    bbU8 flags;         //!< Flag bitmask see ptCOLFMTFLAG, top 4 bits is pixels per byte - 1
 };
 
 #define ptCOLFMTINFO \
-    {/*ptCOLFMT_1BPP         */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
-    {/*ptCOLFMT_2BPP         */  2, 4, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
-    {/*ptCOLFMT_4BPP         */  4, 2, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
-    {/*ptCOLFMT_8BPP         */  8, 1, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
-    {/*ptCOLFMT_2BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 2, 0, 0},\
-    {/*ptCOLFMT_3BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 3, 0, 0},\
-    {/*ptCOLFMT_4BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 4, 0, 0},\
-    {/*ptCOLFMT_5BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 5, 0, 0},\
-    {/*ptCOLFMT_6BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 6, 0, 0},\
-    {/*ptCOLFMT_7BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 7, 0, 0},\
-    {/*ptCOLFMT_8BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 8, 0, 0},\
-    {/*ptCOLFMT_RGB565       */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
-    {/*ptCOLFMT_RGBA1555     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_RGBA4444     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_RGB888       */ 24, 1, 3, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
-    {/*ptCOLFMT_BGR888       */ 24, 1, 3, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
-    {/*ptCOLFMT_RGBA8888     */ 32, 1, 4, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_BGRA8888     */ 32, 1, 4, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
-    {/*ptCOLFMT_YUV420P      */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_YV12 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
-    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 3, 0, 1},\
-    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
-    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
-    {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     2, 0, 1}, /**/\
-    {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 2, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 2, 0, 1},\
-    {/*ptCOLFMT_YUV420P_12   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
-    {/*ptCOLFMT_YUV411       */ 12, 4, 6, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_YUV422_V210  */ 20, 6,16, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_NOTREG, 1, 0, 0},\
-    {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
-    {/*ptCOLFMT_VYUY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
-    {/*ptCOLFMT_YUV422P      */  8, 2, 2, 1, ptCOLFMTFLAG_YUV,                     3, 1, 0},\
-    {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1, ptCOLFMTFLAG_YUV,                     3, 0, 1},\
-    {/*ptCOLFMT_YUV444       */ 24, 1, 3, 0, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0, ptCOLFMTFLAG_YUV,                     3, 0, 0},\
-    {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ALPHA,  1, 0, 0}
+    {/*ptCOLFMT_1BPP         */  1, 8, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_2BPP         */  2, 4, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_4BPP         */  4, 2, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_8BPP         */  8, 1, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_2BPPP        */  1, 8, 1, 0,  2, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_3BPPP        */  1, 8, 1, 0,  3, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_4BPPP        */  1, 8, 1, 0,  4, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_5BPPP        */  1, 8, 1, 0,  5, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_6BPPP        */  1, 8, 1, 0,  6, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_7BPPP        */  1, 8, 1, 0,  7, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_8BPPP        */  1, 8, 1, 0,  8, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_RGB565       */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_RGBA1555     */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGBA4444     */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGB888       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
+    {/*ptCOLFMT_BGR888       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
+    {/*ptCOLFMT_RGBA8888     */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_BGRA8888     */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_YUV420P      */  8, 2, 2, 1,  3, 1, 1, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV420P_YV12 */  8, 2, 2, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2, 2, 1,  3, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
+    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2, 2, 1,  3, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
+    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /**/\
+    {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_12   */ 16, 2, 4, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 4, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YUV411       */ 12, 4, 6, 1,  1, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV422_V210  */ 20, 6,16, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_NOTREG},\
+    {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_VYUY         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV422P      */  8, 2, 2, 1,  3, 1, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1,  3, 0, 1, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV444       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0,  3, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA}
 
 extern ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT];
 
@@ -202,7 +204,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @param (ptCOLFMT) Colour format ID
     @return true if endianess matters, false otherwise
 */
-#define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].bpu > 1)
+#define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_ENDIAN)
 
 /** Get bits per pixel for colour format.
     @return BPP
