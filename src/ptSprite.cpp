@@ -84,7 +84,9 @@ bbERR ptSprite::Create(bbU32 width, bbU32 height, ptCOLFMT fmt, ptENDIAN endian,
 
     const ptColFmtInfo* pInfo = ptGetColFmtInfo(fmt);
 
-    bbU32 stride = (((width + 7) &~ 7) * pInfo->bpp) >> 3;
+    bbU32 stride = pInfo->flags & ptCOLFMTFLAG_NOTREG ?
+                    (width / pInfo->alignH) * pInfo->bpu :
+                    (((width + 7) &~ 7) * pInfo->bpp) >> 3;
     bbU32 strideUV = stride >> pInfo->PlaneShiftH;
 
     bbU32 planeSize = stride * height;
@@ -654,6 +656,7 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 srcOffsetY += this->GetStride();
                 break;
             case ptCOLFMT_YUV411: ptConvert_YUV411ToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, ptENDIAN_LE); break;
+            case ptCOLFMT_YUV422_V210: ptConvert_YUVV210ToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
             case ptCOLFMT_YUYV: ptConvert_YUYVToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
             case ptCOLFMT_YVYU: ptConvert_YVYUToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
             case ptCOLFMT_UYVY: ptConvert_UYVYToAYUV(this->pData + srcOffsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE); break;
