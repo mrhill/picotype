@@ -112,8 +112,6 @@ enum ptCOLFMTFLAG
     ptCOLFMTFLAG_YUV      = 0x4,    //!< Colour format has YUV pixel data
     ptCOLFMTFLAG_ALPHA    = 0x8,    //!< Colour format has alpha channel
     ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
-    ptCOLFMTFLAG_PPBSHIFT = 5,      //!< Bitposition of PPB field in ptColFmtInfo::flags
-    ptCOLFMTFLAG_PPBMASK  = 7,      //!< Mask to mask PPB from ptColFmtInfo::flags
 };
 
 /** Colour format description. */
@@ -130,17 +128,17 @@ struct ptColFmtInfo
 };
 
 #define ptCOLFMTINFO \
-    {/*ptCOLFMT_1BPP         */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 1, 0, 0},\
-    {/*ptCOLFMT_2BPP         */  2, 4, 1, 0, ptCOLFMTFLAG_PALETTE|(3<<ptCOLFMTFLAG_PPBSHIFT), 1, 0, 0},\
-    {/*ptCOLFMT_4BPP         */  4, 2, 1, 0, ptCOLFMTFLAG_PALETTE|(1<<ptCOLFMTFLAG_PPBSHIFT), 1, 0, 0},\
-    {/*ptCOLFMT_8BPP         */  8, 1, 1, 0, ptCOLFMTFLAG_PALETTE|(0<<ptCOLFMTFLAG_PPBSHIFT), 1, 0, 0},\
-    {/*ptCOLFMT_2BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 2, 0, 0},\
-    {/*ptCOLFMT_3BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 3, 0, 0},\
-    {/*ptCOLFMT_4BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 4, 0, 0},\
-    {/*ptCOLFMT_5BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 5, 0, 0},\
-    {/*ptCOLFMT_6BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 6, 0, 0},\
-    {/*ptCOLFMT_7BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 7, 0, 0},\
-    {/*ptCOLFMT_8BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE|(7<<ptCOLFMTFLAG_PPBSHIFT), 8, 0, 0},\
+    {/*ptCOLFMT_1BPP         */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
+    {/*ptCOLFMT_2BPP         */  2, 4, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
+    {/*ptCOLFMT_4BPP         */  4, 2, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
+    {/*ptCOLFMT_8BPP         */  8, 1, 1, 0, ptCOLFMTFLAG_PALETTE, 1, 0, 0},\
+    {/*ptCOLFMT_2BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 2, 0, 0},\
+    {/*ptCOLFMT_3BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 3, 0, 0},\
+    {/*ptCOLFMT_4BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 4, 0, 0},\
+    {/*ptCOLFMT_5BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 5, 0, 0},\
+    {/*ptCOLFMT_6BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 6, 0, 0},\
+    {/*ptCOLFMT_7BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 7, 0, 0},\
+    {/*ptCOLFMT_8BPPP        */  1, 8, 1, 0, ptCOLFMTFLAG_PALETTE, 8, 0, 0},\
     {/*ptCOLFMT_RGB565       */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB,                    1, 0, 0},\
     {/*ptCOLFMT_RGBA1555     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
     {/*ptCOLFMT_RGBA4444     */ 16, 1, 2, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ALPHA, 1, 0, 0},\
@@ -195,19 +193,13 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @return true if bitorder matters, false otherwise
     @see ptBITORDER
 */
-#define ptColFmtHasBitorder(colfmt) ((ptgColFmtInfo[colfmt].flags & (ptCOLFMTFLAG_PPBMASK<<ptCOLFMTFLAG_PPBSHIFT)) != 0)
+#define ptColFmtHasBitorder(colfmt) (ptgColFmtInfo[colfmt].bpp < 8)
 
 /** Test if colour format is sensible to byte endianess.
     @param (ptCOLFMT) Colour format ID
     @return true if endianess matters, false otherwise
 */
 #define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].bpu > 1)
-
-/** Get pixels per byte (minus 1) for colour format.
-    This call only works for colour formats, where a byte holds one or more complete pixels
-    @return PPB -1
-*/
-#define ptColFmtGetPPB(colfmt) ((bbUINT)ptgColFmtInfo[colfmt].flags >> ptCOLFMTFLAG_PPBSHIFT)
 
 /** Get bits per pixel for colour format.
     @return BPP
