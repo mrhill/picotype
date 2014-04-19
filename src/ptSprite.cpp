@@ -545,6 +545,18 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             offsetY += this->GetStride();
             break;
 
+        case ptCOLFMT_YUV411:
+            ptConvert_YUV411ToAYUV(this->pPlane[0] + offsetY, pDataTmp, this->width, ptENDIAN_LE);
+            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB);
+            offsetY += this->GetStride();
+            break;
+
+        case ptCOLFMT_YUV422_V210:
+            ptConvert_YUVV210ToAYUV(this->pPlane[0] + offsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE);
+            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB);
+            offsetY += this->GetStride();
+            break;
+
         default:
             bbErrSet(bbENOTSUP);
             goto ptSprite_Convert_YUV2RGB_err;
