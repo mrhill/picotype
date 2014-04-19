@@ -120,8 +120,8 @@ enum ptCOLFMTFLAG
 struct ptColFmtInfo
 {
     bbU8 bpp;           //!< Bits per pixel
-    bbU8 alignH;        //!< Alignment requirement for pixel width
-    bbU8 accessunit;    //!< Bytes per access unit
+    bbU8 alignH;        //!< Alignment requirement for pixel width, identical to pixels per access unit
+    bbU8 bpu;           //!< Bytes per access unit (in plane 0)
     bbU8 pixalign;      //!< Alignment requirement for byte access to pixel data, must be power of 2-1
     bbU8 flags;         //!< Flag bitmask see ptCOLFMTFLAG, top 4 bits is pixels per byte - 1
     bbU8 PlaneCount;    //!< Number of planes
@@ -201,7 +201,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @param (ptCOLFMT) Colour format ID
     @return true if endianess matters, false otherwise
 */
-#define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].accessunit > 1)
+#define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].bpu > 1)
 
 /** Get pixels per byte (minus 1) for colour format.
     This call only works for colour formats, where a byte holds one or more complete pixels
