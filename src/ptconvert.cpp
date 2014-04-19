@@ -2373,10 +2373,10 @@ void ptConvert_YUVV210ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN
             d = bbLD32LE(pSrc); pSrc+=4; // Y2_U23_Y1 
             pDst[4+2] = d>>2; // y1
             pDst[8+2] = d>>(20+2); // y2
-            pDst[12+1] = pDst[16+1] = d>>(10+2); // u23
+            pDst[8+1] = pDst[12+1] = d>>(10+2); // u23
 
             d = bbLD32LE(pSrc); pSrc+=4; // U45_Y3_V23
-            pDst[12+0] = pDst[16+0] = d>>2; // v23
+            pDst[8+0] = pDst[12+0] = d>>2; // v23
             pDst[12+2] = d>>(10+2); // y3
             pDst[16+1] = pDst[20+1] = d>>(20+2); // u45
 
@@ -2401,10 +2401,10 @@ void ptConvert_YUVV210ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN
             d = bbLD32BE(pSrc); pSrc+=4; // Y2_U23_Y1 
             pDst[4+2] = d>>2; // y1
             pDst[8+2] = d>>(20+2); // y2
-            pDst[12+1] = pDst[16+1] = d>>(10+2); // u23
+            pDst[8+1] = pDst[12+1] = d>>(10+2); // u23
 
             d = bbLD32BE(pSrc); pSrc+=4; // U45_Y3_V23
-            pDst[12+0] = pDst[16+0] = d>>2; // v23
+            pDst[8+0] = pDst[12+0] = d>>2; // v23
             pDst[12+2] = d>>(10+2); // y3
             pDst[16+1] = pDst[20+1] = d>>(20+2); // u45
 
