@@ -112,9 +112,10 @@ enum ptCOLFMTFLAG
     ptCOLFMTFLAG_YUV      = 0x4,    //!< Colour format has YUV pixel data
     ptCOLFMTFLAG_ALPHA    = 0x8,    //!< Colour format has alpha channel
     ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
+    ptCOLFMTFLAG_NOTREG   = 0x20,   //!< Colour format properties are not aligned, e.g. stride cannot be calculated from bpp
 };
 
-/** Colour format description. */
+/** Colour format properties. */
 struct ptColFmtInfo
 {
     bbU8 bpp;           //!< Bits per pixel
@@ -157,7 +158,7 @@ struct ptColFmtInfo
     {/*ptCOLFMT_YUV420P_12   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
     {/*ptCOLFMT_YUV420P_16   */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     3, 1, 1},\
     {/*ptCOLFMT_YUV411       */ 12, 4, 6, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
-    {/*ptCOLFMT_YUV422_V210  */ 20, 6,16, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
+    {/*ptCOLFMT_YUV422_V210  */ 20, 6,16, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_NOTREG, 1, 0, 0},\
     {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV,                     1, 0, 0},\
     {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV, 1, 0, 0},\
