@@ -25,14 +25,16 @@ enum ptERR
 };
 
 /** Rectangle descriptor. */
-typedef struct
+struct ptRect
 {
     bbS32 left;     //!< Left border, inclusive
     bbS32 top;      //!< Left border, inclusive
     bbS32 right;    //!< Left border, exclusive unless stated otherwise
     bbS32 bottom;   //!< Left border, exclusive unless stated otherwise
 
-} ptRect;
+    inline bbU32 width() const { return right-left; }
+    inline bbU32 height() const { return bottom-top; }
+};
 
 struct ptPal;
 class ptYUV2RGB;
