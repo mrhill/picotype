@@ -103,6 +103,22 @@ enum ptCOLFMT
     ptCOLFMT_YUV444,      //!< YUV 4:4:4, 1 plane, 0xYY,0xUU,0xVV tuples
     ptCOLFMT_YUV444P,     //!< YUV 4:4:4, 3 planes
     ptCOLFMT_AYUV,        //!< YUV 4:4:4, 1 plane, 0xAAYYUUVV packing with alpha
+    ptCOLFMT_RGGB16,      //!< Bayer RGGB 16-bit
+    ptCOLFMT_GRBG16,      //!< Bayer GRBG 16-bit
+    ptCOLFMT_GBRG16,      //!< Bayer GBRG 16-bit
+    ptCOLFMT_BGGR16,      //!< Bayer BGGR 16-bit
+    ptCOLFMT_RGGB14,      //!< Bayer RGGB 14-bit
+    ptCOLFMT_GRBG14,      //!< Bayer GRBG 14-bit
+    ptCOLFMT_GBRG14,      //!< Bayer GBRG 14-bit
+    ptCOLFMT_BGGR14,      //!< Bayer BGGR 14-bit
+    ptCOLFMT_RGGB12,      //!< Bayer RGGB 12-bit
+    ptCOLFMT_GRBG12,      //!< Bayer GRBG 12-bit
+    ptCOLFMT_GBRG12,      //!< Bayer GBRG 12-bit
+    ptCOLFMT_BGGR12,      //!< Bayer BGGR 12-bit
+    ptCOLFMT_RGGB10,      //!< Bayer RGGB 10-bit
+    ptCOLFMT_GRBG10,      //!< Bayer GRBG 10-bit
+    ptCOLFMT_GBRG10,      //!< Bayer GBRG 10-bit
+    ptCOLFMT_BGGR10,      //!< Bayer BGGR 10-bit
     ptCOLFMTCOUNT
 };
 
@@ -116,7 +132,7 @@ enum ptCOLFMTFLAG
     ptCOLFMTFLAG_SWAPUV   = 0x10,   //!< Internal use: swap VU planes to use UV rendering code
     ptCOLFMTFLAG_NOTREG   = 0x20,   //!< Colour format properties are not aligned, e.g. stride cannot be calculated from bpp
     ptCOLFMTFLAG_ENDIAN   = 0x40,   //!< Colour has little and big endian variants
-    
+    ptCOLFMTFLAG_BAYER    = 0x80    //!< Colour format has Bayer pixel data
 };
 
 /** Colour format properties. */
@@ -171,7 +187,23 @@ struct ptColFmtInfo
     {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1,  3, 0, 1, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV444       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0,  3, 0, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA}
+    {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGGB16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GRBG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GBRG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_BGGR16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_RGGB14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GRBG14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GBRG14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_BGGR14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_RGGB12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GRBG12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GBRG12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_BGGR12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_RGGB10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GRBG10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GBRG10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_BGGR10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
 
 extern ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT];
 
@@ -183,7 +215,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @param (ptCOLFMT) Colour format ID
     @return true or false
 */
-#define ptColFmtIsYUV(colfmt) ((bbUINT)colfmt>=ptCOLFMT_YUV420P)
+#define ptColFmtIsYUV(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_YUV) != 0)
 
 #define ptColFmtIsIndexed(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_PALETTE) != 0)
 
@@ -250,13 +282,29 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     bbT("YUV422R planar"),\
     bbT("YUV444"),\
     bbT("YUV444 planar"),\
-    bbT("AYUV")
+    bbT("AYUV"),\
+    bbT("Bayer RGGB 16-bit"),\
+    bbT("Bayer GRBG 16-bit"),\
+    bbT("Bayer GBRG 16-bit"),\
+    bbT("Bayer BGGR 16-bit"),\
+    bbT("Bayer RGGB 14-bit"),\
+    bbT("Bayer GRBG 14-bit"),\
+    bbT("Bayer GBRG 14-bit"),\
+    bbT("Bayer BGGR 14-bit"),\
+    bbT("Bayer RGGB 12-bit"),\
+    bbT("Bayer GRBG 12-bit"),\
+    bbT("Bayer GBRG 12-bit"),\
+    bbT("Bayer BGGR 12-bit"),\
+    bbT("Bayer RGGB 10-bit"),\
+    bbT("Bayer GRBG 10-bit"),\
+    bbT("Bayer GBRG 10-bit"),\
+    bbT("Bayer BGGR 10-bit"),\
 
 /** Maximum string length for names in ptCOLFMTNAMES array. */
 #define ptCOLFMTNAMEMAXLEN 24
 
 /** Index of FourCC code in colour format name, or 0 if none. */
-#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,0,14,7,7,7,7,14,0,0,0,0
+#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,0,14,7,7,7,7,14,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 /** YUV to RGB conversion matrix IDs. */
 enum ptYUV2RGBID

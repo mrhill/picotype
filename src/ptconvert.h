@@ -62,6 +62,8 @@ void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY, const bbU8* pSrcU, const bbU
 void ptConvert_YUV444ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_AYUVToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_AYUVToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
+void ptConvert_RGGBToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift);
+void ptConvert_GRBGToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift);
 
 void ptConvert_YUV411ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian);
 void ptConvert_YUVV210ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, ptENDIAN dstEndian);

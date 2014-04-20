@@ -2322,6 +2322,102 @@ void ptConvert_RGBA8888ToRGB888P(const bbU8* pSrc, bbU8* pDstR, bbU8* pDstG, bbU
     }
 }
 
+void ptConvert_RGGBToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift)
+{
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    if (srcEndian == ptENDIAN_LE)
+    {
+        if (vphase == 0)
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = bbLD16LE(pSrc0)>>shift; pSrc0+=2; // r
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = 0;
+                *pDst++ = bbLD16LE(pSrc0)>>shift; pSrc0+=2; // g0
+                *pDst++ = 0;
+            }
+        else
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = 0;
+                *pDst++ = bbLD16LE(pSrc1)>>shift; pSrc1+=2; // g1
+                *pDst++ = 0;
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = bbLD16LE(pSrc1)>>shift; pSrc1+=2; // b        
+            }
+    }
+    else
+    {
+        if (vphase == 0)
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = bbLD16BE(pSrc0)>>shift; pSrc0+=2; // r
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = 0;
+                *pDst++ = bbLD16BE(pSrc0)>>shift; pSrc0+=2; // g0
+                *pDst++ = 0;
+            }
+        else
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = 0;
+                *pDst++ = bbLD16BE(pSrc1)>>shift; pSrc1+=2; // g1
+                *pDst++ = 0;
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = bbLD16BE(pSrc1)>>shift; pSrc1+=2; // b        
+            }
+    }
+}
+
+void ptConvert_GRBGToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift)
+{
+    bbU8* const pDstEnd = pDst + (width<<1) + width;
+
+    if (srcEndian == ptENDIAN_LE)
+    {
+        if (vphase == 0)
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = 0;
+                *pDst++ = bbLD16LE(pSrc0)>>shift; pSrc0+=2; // g0
+                *pDst++ = 0;
+                *pDst++ = bbLD16LE(pSrc0)>>shift; pSrc0+=2; // r
+                bbST16(pDst, 0); pDst+=2;
+            }
+        else
+            while(pDst < pDstEnd)
+            {
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = bbLD16LE(pSrc1)>>shift; pSrc1+=2; // b        
+                *pDst++ = 0;
+                *pDst++ = bbLD16LE(pSrc1)>>shift; pSrc1+=2; // g1
+                *pDst++ = 0;
+            }
+    }
+    else
+    {
+        if (vphase == 0)
+            while(pDst < pDstEnd)
+            {
+                *pDst++ = 0;
+                *pDst++ = bbLD16BE(pSrc0)>>shift; pSrc0+=2; // g0
+                *pDst++ = 0;
+                *pDst++ = bbLD16BE(pSrc0)>>shift; pSrc0+=2; // r
+                bbST16(pDst, 0); pDst+=2;
+            }
+        else
+            while(pDst < pDstEnd)
+            {
+                bbST16(pDst, 0); pDst+=2;
+                *pDst++ = bbLD16BE(pSrc1)>>shift; pSrc1+=2; // b        
+                *pDst++ = 0;
+                *pDst++ = bbLD16BE(pSrc1)>>shift; pSrc1+=2; // g1
+                *pDst++ = 0;
+            }
+    }
+}
+
 void ptConvert_YUV411ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN dstEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
