@@ -265,7 +265,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     g_pSprite->width = 80;
     g_pSprite->height = 80;
     g_pSprite->colfmt = ptCOLFMT_RGB565;
-    g_pSprite->flags = 0;
+    g_pSprite->bpc = 16;
 
     FILE* fh = fopen("1.bmp", "rb");
     if (!fh)

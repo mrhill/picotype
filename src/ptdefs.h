@@ -107,18 +107,6 @@ enum ptCOLFMT
     ptCOLFMT_GRBG16,      //!< Bayer GRBG 16-bit
     ptCOLFMT_GBRG16,      //!< Bayer GBRG 16-bit
     ptCOLFMT_BGGR16,      //!< Bayer BGGR 16-bit
-    ptCOLFMT_RGGB14,      //!< Bayer RGGB 14-bit
-    ptCOLFMT_GRBG14,      //!< Bayer GRBG 14-bit
-    ptCOLFMT_GBRG14,      //!< Bayer GBRG 14-bit
-    ptCOLFMT_BGGR14,      //!< Bayer BGGR 14-bit
-    ptCOLFMT_RGGB12,      //!< Bayer RGGB 12-bit
-    ptCOLFMT_GRBG12,      //!< Bayer GRBG 12-bit
-    ptCOLFMT_GBRG12,      //!< Bayer GBRG 12-bit
-    ptCOLFMT_BGGR12,      //!< Bayer BGGR 12-bit
-    ptCOLFMT_RGGB10,      //!< Bayer RGGB 10-bit
-    ptCOLFMT_GRBG10,      //!< Bayer GRBG 10-bit
-    ptCOLFMT_GBRG10,      //!< Bayer GBRG 10-bit
-    ptCOLFMT_BGGR10,      //!< Bayer BGGR 10-bit
     ptCOLFMTCOUNT
 };
 
@@ -192,18 +180,6 @@ struct ptColFmtInfo
     {/*ptCOLFMT_GRBG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
     {/*ptCOLFMT_GBRG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
     {/*ptCOLFMT_BGGR16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_RGGB14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GRBG14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GBRG14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_BGGR14       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_RGGB12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GRBG12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GBRG12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_BGGR12       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_RGGB10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GRBG10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GBRG10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_BGGR10       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
 
 extern ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT];
 
@@ -237,6 +213,12 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @return true if endianess matters, false otherwise
 */
 #define ptColFmtHasEndianess(colfmt) (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_ENDIAN)
+
+/** Test if colour format supports variable bits per component.
+    @param (ptCOLFMT) Colour format ID
+    @return true if variable bits supported, false otherwise
+*/
+#define ptColFmtHasVariableBitPerComponent(colfmt) (ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_BAYER)
 
 /** Get bits per pixel for colour format.
     @return BPP
@@ -287,24 +269,12 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     bbT("Bayer GRBG 16-bit"),\
     bbT("Bayer GBRG 16-bit"),\
     bbT("Bayer BGGR 16-bit"),\
-    bbT("Bayer RGGB 14-bit"),\
-    bbT("Bayer GRBG 14-bit"),\
-    bbT("Bayer GBRG 14-bit"),\
-    bbT("Bayer BGGR 14-bit"),\
-    bbT("Bayer RGGB 12-bit"),\
-    bbT("Bayer GRBG 12-bit"),\
-    bbT("Bayer GBRG 12-bit"),\
-    bbT("Bayer BGGR 12-bit"),\
-    bbT("Bayer RGGB 10-bit"),\
-    bbT("Bayer GRBG 10-bit"),\
-    bbT("Bayer GBRG 10-bit"),\
-    bbT("Bayer BGGR 10-bit"),\
 
 /** Maximum string length for names in ptCOLFMTNAMES array. */
 #define ptCOLFMTNAMEMAXLEN 24
 
 /** Index of FourCC code in colour format name, or 0 if none. */
-#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,0,14,7,7,7,7,14,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,0,14,7,7,7,7,14,0,0,0,0, 0,0,0,0
 
 /** YUV to RGB conversion matrix IDs. */
 enum ptYUV2RGBID

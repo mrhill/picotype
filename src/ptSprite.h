@@ -28,12 +28,6 @@ struct ptPlane
     bbU8*   mpData;     //!< Pointer to pixel data
 };
 
-/** Flagbits for ptSprite::flags. */
-enum ptSPRITEFLAG
-{
-    ptSPRITEFLAG_TRANSPARENT = 0x01, //!< Colour 0 of sprite is transparent.
-};
-
 /** Sprite for use in graphics context #ptGC.
     Sprites of bit depth 1, 2, 4, and 8 bpp are palette indexed.
     Sprites with planar colour format have plane stride of stride*height
@@ -47,7 +41,7 @@ struct ptSprite
     bbU8    colfmt;         //!< ptCOLFMT
     bbU8    endian;         //!< ptENDIAN
     bbU8    bitorder;       //!< ptBITORDER
-    bbU8    flags;          //!< Flag bits, see ptSPRITEFLAG
+    bbU8    bpc;            //!< Valid bits per component, see ptColFmtHasVariableBitPerComponent()
 
     union
     {
@@ -120,7 +114,7 @@ protected:
     bbERR Convert_YUV2YUV(ptSprite* pDst) const;
 
 public:
-    ptSprite() { bbMemClear(this, sizeof(*this)); }
+    ptSprite() { bbMemClear(this, sizeof(*this)); bpc=16; }
     ~ptSprite() { Clear(); }
 
     /** Release any buffers and clear instance to a 0-sized sprite. */
@@ -129,6 +123,8 @@ public:
     inline ptCOLFMT GetColFmt() const { return (ptCOLFMT)colfmt; }
     inline ptENDIAN GetEndian() const { return (ptENDIAN)endian; }
     inline ptBITORDER GetBitOrder() const { return (ptBITORDER)bitorder; }
+    inline bbUINT GetBitsPerComponent() const { return bpc; }
+    inline void SetBitsPerComponent(bbUINT bits) { bpc = bits; }
     inline bbU32 GetWidth() const { return width; }        //!< Get width in pixels.
     inline bbU32 GetHeight() const { return height; }      //!< Get height in pixels.
     inline bbU32 GetStride() const { return stride; }      //!< Get stride of first plane in bytes. Stride of a rasterline in bytes, for planar formats this is the stride in the 1st plane.

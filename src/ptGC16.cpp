@@ -29,32 +29,31 @@ void ptGC16::Point(const int x, const int y, const bbUINT col)
     }
 }
 
-void ptGC16::HLine(int x, int y, bbUINT width, bbUINT col)
+void ptGC16::HLine(int /*x*/, int /*y*/, bbUINT /*width*/, bbUINT /*col*/)
 {
 }
 
-void ptGC16::VLine(int x, int y, bbUINT height, bbUINT col)
+void ptGC16::VLine(int /*x*/, int /*y*/, bbUINT /*height*/, bbUINT /*col*/)
 {
 }
 
-void ptGC16::FillBox(int x, int y, bbUINT width, bbUINT height, ptPEN pen)
+void ptGC16::FillBox(int /*x*/, int /*y*/, bbUINT /*width*/, bbUINT /*height*/, ptPEN /*pen*/)
 {
 }
 
-void ptGC16::Line(int x1, int y1, int x2, int y2, const ptPEN pen)
-{
-
-}
-
-void ptGC16::Polygon(const ptCoord* const pPoints, const bbUINT pointcount, const ptPEN pen)
+void ptGC16::Line(int /*x1*/, int /*y1*/, int /*x2*/, int /*y2*/, const ptPEN /*pen*/)
 {
 }
 
-void ptGC16::FillCircle(int x, int y, bbUINT rad, const ptPEN pen)
+void ptGC16::Polygon(const ptCoord* const /*pPoints*/, const bbUINT /*pointcount*/, const ptPEN /*pen*/)
 {
 }
 
-void ptGC16::Sprite(int x, int y, const ptSprite* const pSprite)
+void ptGC16::FillCircle(int /*x*/, int /*y*/, bbUINT /*rad*/, const ptPEN /*pen*/)
+{
+}
+
+void ptGC16::Sprite(int /*x*/, int /*y*/, const ptSprite* const pSprite)
 {
     bbU8* pBmp = (bbU8*)mpBmp;
     bbU8* pSpr = (bbU8*) &pSprite->data[0];

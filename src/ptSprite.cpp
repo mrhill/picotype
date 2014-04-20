@@ -1044,7 +1044,7 @@ ptSprite* ptSpriteCreate(bbUINT const width, bbUINT const height, bbUINT const d
     pSprite->height  = height;
     pSprite->stride  = bytepitch;
     pSprite->colfmt  = gDepth2ColFmt[depth];
-    pSprite->flags   = 0;
+    pSprite->bpc     = 16;
 
     return pSprite;
 }
