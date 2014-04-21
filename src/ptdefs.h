@@ -127,7 +127,9 @@ struct ptColFmtInfo
 {
     bbU8 bpp;           //!< Bits per pixel
     bbU8 alignH;        //!< Alignment requirement for pixel width, identical to pixels per access unit
+    bbU8 alignV;        //!< Alignment requirement for line height
     bbU8 bpu;           //!< Bytes per access unit (in plane 0)
+    bbU8 bpc;           //!< Max bits per color channel (in plane 0)
     bbU8 pixalign;      //!< Alignment requirement for byte access to pixel data, must be power of 2-1
     bbU8 PlaneCount;    //!< Number of planes
     bbU8 PlaneShiftH;   //!< Horizontal downsampling for subplanes (planes other than plane 0)
@@ -136,48 +138,48 @@ struct ptColFmtInfo
 };
 
 #define ptCOLFMTINFO \
-    {/*ptCOLFMT_1BPP         */  1, 8, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_2BPP         */  2, 4, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_4BPP         */  4, 2, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_8BPP         */  8, 1, 1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_2BPPP        */  1, 8, 1, 0,  2, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_3BPPP        */  1, 8, 1, 0,  3, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_4BPPP        */  1, 8, 1, 0,  4, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_5BPPP        */  1, 8, 1, 0,  5, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_6BPPP        */  1, 8, 1, 0,  6, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_7BPPP        */  1, 8, 1, 0,  7, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_8BPPP        */  1, 8, 1, 0,  8, 0, 0, ptCOLFMTFLAG_PALETTE},\
-    {/*ptCOLFMT_RGB565       */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_RGBA1555     */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_RGBA4444     */ 16, 1, 2, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_RGB888       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
-    {/*ptCOLFMT_BGR888       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
-    {/*ptCOLFMT_RGBA8888     */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_BGRA8888     */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_YUV420P      */  8, 2, 2, 1,  3, 1, 1, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_YUV420P_YV12 */  8, 2, 2, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2, 2, 1,  3, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
-    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2, 2, 1,  3, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
-    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_YUV420P_NV12 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /**/\
-    {/*ptCOLFMT_YUV420P_NV21 */  8, 2, 2, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_YUV420P_16   */ 16, 2, 4, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_YUV411       */ 12, 4, 6, 1,  1, 0, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_YUV422_V210  */ 20, 6,16, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_NOTREG},\
-    {/*ptCOLFMT_YUYV         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_UYVY         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_YVYU         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_VYUY         */ 16, 2, 4, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
-    {/*ptCOLFMT_YUV422P      */  8, 2, 2, 1,  3, 1, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_YUV422RP     */  8, 1, 1, 1,  3, 0, 1, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_YUV444       */ 24, 1, 3, 0,  1, 0, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_YUV444P      */  8, 1, 1, 0,  3, 0, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_AYUV         */ 32, 1, 4, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_RGGB16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GRBG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_GBRG16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
-    {/*ptCOLFMT_BGGR16       */ 16, 2, 2, 1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_1BPP         */  1, 8,1, 1,1, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_2BPP         */  2, 4,1, 1,2, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_4BPP         */  4, 2,1, 1,4, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_8BPP         */  8, 1,1, 1,8, 0,  1, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_2BPPP        */  1, 8,1, 1,2, 0,  2, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_3BPPP        */  1, 8,1, 1,3, 0,  3, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_4BPPP        */  1, 8,1, 1,4, 0,  4, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_5BPPP        */  1, 8,1, 1,5, 0,  5, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_6BPPP        */  1, 8,1, 1,6, 0,  6, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_7BPPP        */  1, 8,1, 1,7, 0,  7, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_8BPPP        */  1, 8,1, 1,8, 0,  8, 0, 0, ptCOLFMTFLAG_PALETTE},\
+    {/*ptCOLFMT_RGB565       */ 16, 1,1, 2,6, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_RGBA1555     */ 16, 1,1, 2,5, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGBA4444     */ 16, 1,1, 2,4, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGB888       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
+    {/*ptCOLFMT_BGR888       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
+    {/*ptCOLFMT_RGBA8888     */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_BGRA8888     */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_YUV420P      */  8, 2,2, 2,8, 1,  3, 1, 1, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV420P_YV12 */  8, 2,2, 2,8, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_IMC3 */  8, 2,2, 2,8, 1,  3, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
+    {/*ptCOLFMT_YUV420P_IMC1 */  8, 2,2, 2,8, 1,  3, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_IMC4 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0, plane count 2 (interleaved UV is 1 plane)*/\
+    {/*ptCOLFMT_YUV420P_IMC2 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_NV12 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /**/\
+    {/*ptCOLFMT_YUV420P_NV21 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV420P_16   */ 16, 2,2, 4,16,1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YUV411       */ 12, 4,1, 6,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV422_V210  */ 20, 6,1,16,10,1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_NOTREG},\
+    {/*ptCOLFMT_YUYV         */ 16, 2,1, 4,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_UYVY         */ 16, 2,1, 4,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YVYU         */ 16, 2,1, 4,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_VYUY         */ 16, 2,1, 4,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_SWAPUV},\
+    {/*ptCOLFMT_YUV422P      */  8, 2,1, 2,8, 1,  3, 1, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV422RP     */  8, 1,2, 1,8, 1,  3, 0, 1, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV444       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_YUV444P      */  8, 1,1, 1,8, 0,  3, 0, 0, ptCOLFMTFLAG_YUV},\
+    {/*ptCOLFMT_AYUV         */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_RGGB16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GRBG16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_GBRG16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_BGGR16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
 
 extern ptColFmtInfo ptgColFmtInfo[ptCOLFMTCOUNT];
 
