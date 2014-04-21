@@ -579,7 +579,6 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
             }
         }
         break;
-    case ptCOLFMT_YUV420P_12:
     case ptCOLFMT_YUV420P_16:
         {
             bbU32 width = pSprite->GetWidth();
@@ -590,6 +589,8 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
 
             bbU32 offsetY = 0;
             bbU32 offsetUV = 0;
+            int shift = pSprite->bpc-8;
+            if (shift<0) shift=0;
 
             while (y < y_end)
             {
@@ -601,7 +602,7 @@ void ptGCQT::Sprite(int x, int y, const ptSprite* const pSprite)
                                            mpSpriteBuf->scanLine(1),
                                            width,
                                            pYUV2RGB,
-                                           pSprite->GetColFmt() == ptCOLFMT_YUV420P_12 ? 4 : 8,
+                                           shift,
                                            pSprite->GetEndian());
 
                 mpPainter->drawImage(QPoint(x, y), *mpSpriteBuf);

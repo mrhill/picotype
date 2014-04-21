@@ -22,7 +22,6 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
     case ptCOLFMT_YUV420P_YV12:
     case ptCOLFMT_YUV420P_IMC3:
     case ptCOLFMT_YUV420P_IMC1:
-    case ptCOLFMT_YUV420P_12:
     case ptCOLFMT_YUV420P_16:
     case ptCOLFMT_YUV422RP:
         this->pPlane[0] = pPlanes[0];
@@ -109,7 +108,6 @@ bbUINT ptSprite::GetPlaneCount() const
     case ptCOLFMT_YUV420P_YV12:
     case ptCOLFMT_YUV420P_IMC3:
     case ptCOLFMT_YUV420P_IMC1:
-    case ptCOLFMT_YUV420P_12:
     case ptCOLFMT_YUV420P_16:
     case ptCOLFMT_YUV420P_IMC4:
     case ptCOLFMT_YUV420P_IMC2:
@@ -148,7 +146,6 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
         case ptCOLFMT_YUV420P_IMC1:
         case ptCOLFMT_YUV420P_IMC4:
         case ptCOLFMT_YUV420P_IMC2:
-        case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
         case ptCOLFMT_YUV422RP:
             if (plane <= 1)
@@ -249,7 +246,6 @@ bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
         case ptCOLFMT_YUV420P_IMC1:
         case ptCOLFMT_YUV420P_IMC4:
         case ptCOLFMT_YUV420P_IMC2:
-        case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
         case ptCOLFMT_YUV422RP:
             this->pPlane[0] += this->stride*y + x;
@@ -398,6 +394,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
     bbUINT       lines    = 1;
     bbU32        height   = this->height;
     bbU32        heightEnd;
+    int          shift;
     ptYUV2RGB    yuv2rgb_swapUV;
 
     if (pDst->GetColFmt() != ptCOLFMT_RGBA8888)
@@ -458,8 +455,9 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             lines = 2;
             break;
 
-        case ptCOLFMT_YUV420P_12:
         case ptCOLFMT_YUV420P_16:
+            shift = this->GetBitsPerComponent()-8;
+            if (shift<0) shift=0;
             ptConvert_YUV42016ToRGBA8888(this->pPlane[0] + offsetY,
                                          (height==1) ? NULL : this->pPlane[1] + offsetY,
                                          this->pPlane[2] + offsetUV,
@@ -467,7 +465,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
                                          pDataTmp,
                                          this->width,
                                          pYUV2RGB,
-                                         this->GetColFmt()==ptCOLFMT_YUV420P_12 ? 4 : 8,
+                                         shift,
                                          this->GetEndian());
             offsetY  += this->GetStride()<<1;
             offsetUV += this->GetStrideUV();

@@ -66,7 +66,6 @@ struct ptSprite
                                          ptCOLFMT_YUV420P_IMC1 <br>
                                          ptCOLFMT_YUV420P_IMC4 <br>
                                          ptCOLFMT_YUV420P_IMC2 <br>
-                                         ptCOLFMT_YUV420P_12   <br>
                                          ptCOLFMT_YUV420P_16   <br>
                                          ptCOLFMT_YUV422RP     <br>
                                      </td>
