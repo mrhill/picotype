@@ -566,8 +566,8 @@ void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0,
         {
             int const y0 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
             int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
-            int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
-            int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+            int const u  = ((int)(bbS8)(*(pSrcU++) + (int)pYUV2RGB[1]));
+            int const v  = ((int)(bbS8)(*(pSrcV++) + (int)pYUV2RGB[2]));
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -621,8 +621,8 @@ void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0,
         {
             int const y0 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
             int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
-            int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
-            int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+            int const u  = ((int)(bbS8)(*(pSrcU++) + (int)pYUV2RGB[1]));
+            int const v  = ((int)(bbS8)(*(pSrcV++) + (int)pYUV2RGB[2]));
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -876,8 +876,8 @@ void ptConvert_YUVNV12ToRGBA8888(const bbU8* pSrcY0,
         {
             int const y0 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
             int const y1 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
-            int const u  = ((int)*(pSrcUV++) + (int)pYUV2RGB[1]);
-            int const v  = ((int)*(pSrcUV++) + (int)pYUV2RGB[2]);
+            int const u  = ((int)(bbS8)(*(pSrcUV++) + (int)pYUV2RGB[1]));
+            int const v  = ((int)(bbS8)(*(pSrcUV++) + (int)pYUV2RGB[2]));
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -930,8 +930,8 @@ void ptConvert_YUVNV12ToRGB888(const bbU8* pSrcY0,
         {
             int const y0 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
             int const y1 = ((int)*(pSrcY++)  + (int)pYUV2RGB[0]);
-            int const u  = ((int)*(pSrcUV++) + (int)pYUV2RGB[1]);
-            int const v  = ((int)*(pSrcUV++) + (int)pYUV2RGB[2]);
+            int const u  = ((int)(bbS8)(*(pSrcUV++) + (int)pYUV2RGB[1]));
+            int const v  = ((int)(bbS8)(*(pSrcUV++) + (int)pYUV2RGB[2]));
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
             register int p;
@@ -974,10 +974,10 @@ void ptConvert_YUV411ToRGB888(const bbU8* pSrc,
 
     while (pDst < pDstEnd)
     {
-        int const u  = ((int)pSrc[0] + pYUV2RGB[1]);
+        int const u  = ((int)(bbS8)(pSrc[0] + pYUV2RGB[1]));
         int const y0 = ((int)pSrc[1] + pYUV2RGB[0]);
         int const y1 = ((int)pSrc[3] + pYUV2RGB[0]);
-        int const v  = ((int)pSrc[2] + pYUV2RGB[2]);
+        int const v  = ((int)(bbS8)(pSrc[2] + pYUV2RGB[2]));
         int const y2 = ((int)pSrc[4] + pYUV2RGB[0]);
         int const y3 = ((int)pSrc[5] + pYUV2RGB[0]);
         pSrc += 6;
@@ -1029,71 +1029,6 @@ void ptConvert_YUV411ToRGB888(const bbU8* pSrc,
     }
 }
 
-void ptConvert_YUV411ToRGBA8888(const bbU8* pSrc,
-                                bbU8* pDst,
-                                bbU32 width,
-                                const bbS16* pYUV2RGB)
-{
-    bbU8* const pDstEnd = pDst + (width<<2);
-
-    while (pDst < pDstEnd)
-    {
-        int const u  = ((int)pSrc[0] + pYUV2RGB[1]);
-        int const y0 = ((int)pSrc[1] + pYUV2RGB[0]);
-        int const y1 = ((int)pSrc[3] + pYUV2RGB[0]);
-        int const v  = ((int)pSrc[2] + pYUV2RGB[2]);
-        int const y2 = ((int)pSrc[4] + pYUV2RGB[0]);
-        int const y3 = ((int)pSrc[5] + pYUV2RGB[0]);
-        pSrc += 6;
-
-        int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
-        register int p;
-        if ((p = (y0 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[2] = p; // B0
-        if ((p = (y1 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[4+2] = p; // B1
-        if ((p = (y2 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[8+2] = p; // B2
-        if ((p = (y3 * pYUV2RGB[9] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[12+2] = p; // B3
-
-        tmp = u * pYUV2RGB[7] + v * pYUV2RGB[8];
-        if ((p = (y0 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[1] = p; // G0
-        if ((p = (y1 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[4+1] = p; // G1
-        if ((p = (y2 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[8+1] = p; // G2
-        if ((p = (y3 * pYUV2RGB[6] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[12+1] = p; // G3
-
-        tmp = u * pYUV2RGB[4] + v * pYUV2RGB[5];
-        if ((p = (y0 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[0] = p; // R0
-        if ((p = (y1 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[4] = p; // R1
-        if ((p = (y2 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[8] = p; // R0
-        if ((p = (y3 * pYUV2RGB[3] + tmp)>>10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[12] = p; // R1
-
-        pDst[3] = pDst[4+3] = pDst[8+3] = pDst[12+3] = 255;
-        pDst += 16;
-    }
-}
-
 void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
                             bbU8* pDst,
                             bbU32 width,
@@ -1108,9 +1043,9 @@ void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
         while (pDst < pDstEnd)
         {
             int const y0 = ((int)pSrcY[0] + pYUV2RGB[0]);
-            int const u  = ((int)pSrcY[1] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[1] + pYUV2RGB[1]));
             int const y1 = ((int)pSrcY[2] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[3] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[3] + pYUV2RGB[2]));
             pSrcY += 4;
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
@@ -1143,9 +1078,9 @@ void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
         while (pDst < pDstEnd)
         {
             int const y0 = ((int)pSrcY[3] + pYUV2RGB[0]);
-            int const u  = ((int)pSrcY[2] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[2] + pYUV2RGB[1]));
             int const y1 = ((int)pSrcY[1] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[0] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[0] + pYUV2RGB[2]));
             pSrcY += 4;
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
@@ -1189,9 +1124,9 @@ void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
         while (pDst < pDstEnd)
         {
             int const y0 = ((int)pSrcY[0] + pYUV2RGB[0]);
-            int const u  = ((int)pSrcY[1] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[1] + pYUV2RGB[1]));
             int const y1 = ((int)pSrcY[2] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[3] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[3] + pYUV2RGB[2]));
             pSrcY += 4;
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
@@ -1225,9 +1160,9 @@ void ptConvert_YUYVToRGB888(const bbU8* pSrcY,
         while (pDst < pDstEnd)
         {
             int const y0 = ((int)pSrcY[3] + pYUV2RGB[0]);
-            int const u  = ((int)pSrcY[2] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[2] + pYUV2RGB[1]));
             int const y1 = ((int)pSrcY[1] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[0] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[0] + pYUV2RGB[2]));
             pSrcY += 4;
 
             int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
@@ -1271,9 +1206,9 @@ void ptConvert_UYVYToRGB888(const bbU8* pSrcY,
     {
         while (pDst < pDstEnd)
         {
-            int const u  = ((int)pSrcY[0] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[0] + pYUV2RGB[1]));
             int const y0 = ((int)pSrcY[1] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[2] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[2] + pYUV2RGB[2]));
             int const y1 = ((int)pSrcY[3] + pYUV2RGB[0]);
             pSrcY += 4;
 
@@ -1306,9 +1241,9 @@ void ptConvert_UYVYToRGB888(const bbU8* pSrcY,
     {
         while (pDst < pDstEnd)
         {
-            int const u  = ((int)pSrcY[3] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[3] + pYUV2RGB[1]));
             int const y0 = ((int)pSrcY[2] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[1] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[1] + pYUV2RGB[2]));
             int const y1 = ((int)pSrcY[0] + pYUV2RGB[0]);
             pSrcY += 4;
 
@@ -1352,9 +1287,9 @@ void ptConvert_UYVYToRGBA8888(const bbU8* pSrcY,
     {
         while (pDst < pDstEnd)
         {
-            int const u  = ((int)pSrcY[0] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[0] + pYUV2RGB[1]));
             int const y0 = ((int)pSrcY[1] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[2] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[2] + pYUV2RGB[2]));
             int const y1 = ((int)pSrcY[3] + pYUV2RGB[0]);
             pSrcY += 4;
 
@@ -1388,9 +1323,9 @@ void ptConvert_UYVYToRGBA8888(const bbU8* pSrcY,
     {
         while (pDst < pDstEnd)
         {
-            int const u  = ((int)pSrcY[3] + pYUV2RGB[1]);
+            int const u  = ((int)(bbS8)(pSrcY[3] + pYUV2RGB[1]));
             int const y0 = ((int)pSrcY[2] + pYUV2RGB[0]);
-            int const v  = ((int)pSrcY[1] + pYUV2RGB[2]);
+            int const v  = ((int)(bbS8)(pSrcY[1] + pYUV2RGB[2]));
             int const y1 = ((int)pSrcY[0] + pYUV2RGB[0]);
             pSrcY += 4;
 
@@ -1436,8 +1371,8 @@ void ptConvert_YUV422PToRGB888(const bbU8* pSrcY,
     {
         int const y0 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
         int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
-        int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
-        int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+        int const u  = ((int)(bbS8)(*(pSrcU++) + (int)pYUV2RGB[1]));
+        int const v  = ((int)(bbS8)(*(pSrcV++) + (int)pYUV2RGB[2]));
 
         int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
         register int p;
@@ -1479,8 +1414,8 @@ void ptConvert_YUV422PToRGBA8888(const bbU8* pSrcY,
     {
         int const y0 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
         int const y1 = ((int)*(pSrcY++) + (int)pYUV2RGB[0]);
-        int const u  = ((int)*(pSrcU++) + (int)pYUV2RGB[1]);
-        int const v  = ((int)*(pSrcV++) + (int)pYUV2RGB[2]);
+        int const u  = ((int)(bbS8)(*(pSrcU++) + (int)pYUV2RGB[1]));
+        int const v  = ((int)(bbS8)(*(pSrcV++) + (int)pYUV2RGB[2]));
 
         int tmp = u * pYUV2RGB[10] + v * pYUV2RGB[11];
         register int p;
@@ -1528,8 +1463,8 @@ void ptConvert_YUV422RPToRGB888(const bbU8* pSrcY0,
         while (pDst < pDstEnd)
         {
             int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
-            int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
-            int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+            int const u = ((int)(bbS8)(*(pSrcU++) + pYUV2RGB[1]));
+            int const v = ((int)(bbS8)(*(pSrcV++) + pYUV2RGB[2]));
 
             register int p;
             if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1570,8 +1505,8 @@ void ptConvert_YUV422RPToRGBA8888(const bbU8* pSrcY0,
         while (pDst < pDstEnd)
         {
             int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
-            int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
-            int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+            int const u = ((int)(bbS8)(*(pSrcU++) + pYUV2RGB[1]));
+            int const v = ((int)(bbS8)(*(pSrcV++) + pYUV2RGB[2]));
 
             register int p;
             if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1606,8 +1541,8 @@ void ptConvert_YUV444PToRGB888(const bbU8* pSrcY,
     while (pDst < pDstEnd)
     {
         int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
-        int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+        int const u = ((int)(bbS8)(*(pSrcU++) + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(*(pSrcV++) + pYUV2RGB[2]));
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1635,8 +1570,8 @@ void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY,
     while (pDst < pDstEnd)
     {
         int const y = ((int)*(pSrcY++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrcU++) + pYUV2RGB[1]);
-        int const v = ((int)*(pSrcV++) + pYUV2RGB[2]);
+        int const u = ((int)(bbS8)(*(pSrcU++) + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(*(pSrcV++) + pYUV2RGB[2]));
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1663,8 +1598,8 @@ void ptConvert_YUV444ToRGB888(const bbU8* pSrc,
     while (pDst < pDstEnd)
     {
         int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
-        int const v = ((int)*(pSrc++) + pYUV2RGB[2]);
+        int const u = ((int)(bbS8)(*(pSrc++) + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(*(pSrc++) + pYUV2RGB[2]));
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1690,8 +1625,8 @@ void ptConvert_YUV444ToRGBA8888(const bbU8* pSrc,
     while (pDst < pDstEnd)
     {
         int const y = ((int)*(pSrc++) + pYUV2RGB[0]);
-        int const u = ((int)*(pSrc++) + pYUV2RGB[1]);
-        int const v = ((int)*(pSrc++) + pYUV2RGB[2]);
+        int const u = ((int)(bbS8)(*(pSrc++) + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(*(pSrc++) + pYUV2RGB[2]));
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1718,8 +1653,8 @@ void ptConvert_AYUVToRGB888(const bbU8* pSrc,
     while (pDst < pDstEnd)
     {
         int const y = ((int)pSrc[2] + pYUV2RGB[0]);
-        int const u = ((int)pSrc[1] + pYUV2RGB[1]);
-        int const v = ((int)pSrc[0] + pYUV2RGB[2]); pSrc+=4;
+        int const u = ((int)(bbS8)(pSrc[1] + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(pSrc[0] + pYUV2RGB[2])); pSrc+=4;
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
@@ -1745,8 +1680,8 @@ void ptConvert_AYUVToRGBA8888(const bbU8* pSrc,
     while (pDst < pDstEnd)
     {
         int const y = ((int)pSrc[2] + pYUV2RGB[0]);
-        int const u = ((int)pSrc[1] + pYUV2RGB[1]);
-        int const v = ((int)pSrc[0] + pYUV2RGB[2]);
+        int const u = ((int)(bbS8)(pSrc[1] + pYUV2RGB[1]));
+        int const v = ((int)(bbS8)(pSrc[0] + pYUV2RGB[2]));
 
         register int p;
         if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;

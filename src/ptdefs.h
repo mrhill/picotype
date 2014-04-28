@@ -283,6 +283,7 @@ enum ptYUV2RGBID
     ptYUV2RGBID_YCBCR_HDTV,
     ptYUV2RGBID_YIQ,
     ptYUV2RGBID_PHOTOYCC,
+    ptYUV2RGBID_JFIF_UV0,
     ptYUV2RGBIDCOUNT
 };
 
@@ -291,10 +292,17 @@ enum ptYUV2RGBID
     bbT("YCbCr SDTV (ITU-R BT.601)"), \
     bbT("YCbCr HDTV"), \
     bbT("YIQ NTSC"), \
-    bbT("PhotoYCC")
+    bbT("PhotoYCC"), \
+    bbT("JFIF signed UV"), \
 
 #define ptYUV2RGBMATRIX_JFIF \
    0, -128, -128, \
+   (int)(1.000 * (1<<10)), (int)(0.000 * (1<<10)),  (int)(1.402   * (1<<10)), \
+   (int)(1.000 * (1<<10)), (int)(-0.34414*(1<<10)), (int)(-0.71414* (1<<10)), \
+   (int)(1.000 * (1<<10)), (int)(1.772 * (1<<10)),  (int)(0.000   * (1<<10))
+
+#define ptYUV2RGBMATRIX_JFIF_UV0 \
+   0, 0, 0, \
    (int)(1.000 * (1<<10)), (int)(0.000 * (1<<10)),  (int)(1.402   * (1<<10)), \
    (int)(1.000 * (1<<10)), (int)(-0.34414*(1<<10)), (int)(-0.71414* (1<<10)), \
    (int)(1.000 * (1<<10)), (int)(1.772 * (1<<10)),  (int)(0.000   * (1<<10))
