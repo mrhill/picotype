@@ -763,10 +763,10 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                 dstOffsetY += pDst->GetStride();
                 break;
             case ptCOLFMT_YUV411: ptConvert_AYUVToYUV411(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
-            case ptCOLFMT_YUYV: ptConvert_AYUVToYUYV(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
-            case ptCOLFMT_YVYU: ptConvert_AYUVToYVYU(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
-            case ptCOLFMT_UYVY: ptConvert_AYUVToUYVY(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
-            case ptCOLFMT_VYUY: ptConvert_AYUVToVYUY(pDataTmp, pDst->pData + dstOffsetY, this->width); break;
+            case ptCOLFMT_YUYV: ptConvert_AYUVToYUYV(pDataTmp, pDst->pData + dstOffsetY, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
+            case ptCOLFMT_YVYU: ptConvert_AYUVToYVYU(pDataTmp, pDst->pData + dstOffsetY, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
+            case ptCOLFMT_UYVY: ptConvert_AYUVToUYVY(pDataTmp, pDst->pData + dstOffsetY, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
+            case ptCOLFMT_VYUY: ptConvert_AYUVToVYUY(pDataTmp, pDst->pData + dstOffsetY, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
             case ptCOLFMT_YUV422P:
                 ptConvert_AYUVToYUV422P(pDataTmp,
                                         pDst->pPlane[0] + dstOffsetY,
@@ -971,7 +971,7 @@ bbERR ptSprite::ConvertTo(ptSprite* pDst) const
         return bbErrSet(bbENOTSUP);
     }
 
-    if (this->colfmt == pDst->colfmt)
+    if (this->colfmt == pDst->colfmt && this->endian == pDst->endian && this->bitorder == pDst->bitorder)
         return CopyTo(pDst);
 
     switch (ptColFmtGetType(GetColFmt()))
