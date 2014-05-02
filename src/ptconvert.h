@@ -38,7 +38,7 @@ void ptConvert_RGBA8888ToRGB888P(const bbU8* pSrc, bbU8* pDstR, bbU8* pDstG, bbU
 void ptConvert_RGBA8888ToYUYV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV);
 void ptConvert_RGBA8888ToUYVY(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV);
 void ptConvert_RGBA8888ToYUV444(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV);
-void ptConvert_RGBA8888ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV);
+void ptConvert_RGBA8888ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV, ptENDIAN dstEndian);
 
 void ptConvert_YUV420ToRGB888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU8* pDst2, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUV420ToRGBA8888(const bbU8* pSrcY0, const bbU8* pSrcY1, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
@@ -59,7 +59,7 @@ void ptConvert_YUV444ToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const b
 void ptConvert_YUV444PToRGB888(const bbU8* pSrcY, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUV444PToRGBA8888(const bbU8* pSrcY, const bbU8* pSrcU, const bbU8* pSrcV, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_YUV444ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
-void ptConvert_AYUVToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
+void ptConvert_AYUVToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB, ptENDIAN srcEndian, ptENDIAN dstEndian);
 void ptConvert_AYUVToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB);
 void ptConvert_RGGBToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift);
 void ptConvert_GRBGToRGB888(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, bbUINT vphase, bbUINT shift);

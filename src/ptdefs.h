@@ -175,7 +175,7 @@ struct ptColFmtInfo
     {/*ptCOLFMT_YUV422RP     */  8, 1,2, 1,8, 1,  3, 0, 1, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV444       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV444P      */  8, 1,1, 1,8, 0,  3, 0, 0, ptCOLFMTFLAG_YUV},\
-    {/*ptCOLFMT_AYUV         */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_YUV/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_AYUV         */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
     {/*ptCOLFMT_RGGB16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
     {/*ptCOLFMT_GRBG16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\
     {/*ptCOLFMT_GBRG16       */ 16, 2,1, 2,16,1,  1, 0, 0, ptCOLFMTFLAG_BAYER|ptCOLFMTFLAG_ENDIAN},\

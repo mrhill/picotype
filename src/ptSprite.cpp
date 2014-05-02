@@ -536,19 +536,21 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             ptConvert_AYUVToRGBA8888(this->pPlane[0] + offsetY,
                                      pDataTmp,
                                      this->width,
-                                     pYUV2RGB);
+                                     pYUV2RGB,
+                                     this->GetEndian(),
+                                     ptENDIAN_LE);
             offsetY += this->GetStride();
             break;
 
         case ptCOLFMT_YUV411:
             ptConvert_YUV411ToAYUV(this->pPlane[0] + offsetY, pDataTmp, this->width, ptENDIAN_LE);
-            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB);
+            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB, ptENDIAN_LE, ptENDIAN_LE);
             offsetY += this->GetStride();
             break;
 
         case ptCOLFMT_YUV422_V210:
             ptConvert_YUVV210ToAYUV(this->pPlane[0] + offsetY, pDataTmp, this->width, this->GetEndian(), ptENDIAN_LE);
-            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB);
+            ptConvert_AYUVToRGBA8888(pDataTmp, pDataTmp, this->width, pYUV2RGB, ptENDIAN_LE, ptENDIAN_LE);
             offsetY += this->GetStride();
             break;
 
@@ -606,8 +608,8 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
 
     while (height>0)
     {
-        // - convert 2 lines of source YUV to AYUV
-        if (pDst->GetColFmt()==ptCOLFMT_AYUV)
+        // - convert 2 lines of source YUV to AYUV LE
+        if (pDst->GetColFmt() == ptCOLFMT_AYUV && pDst->GetEndian() == ptENDIAN_LE)
         {
             pDataTmp = pDst->pData + dstOffsetY;
             pDataTmp2 = pDataTmp + pDst->stride;
@@ -697,10 +699,15 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                             ptENDIAN_LE);
                 break;
             case ptCOLFMT_AYUV:
-                pDataTmp = this->pData + srcOffsetY;
-                pDataTmp2 = pDataTmp + this->stride;
-                srcOffsetY += this->GetStride()<<1;
-                goto Convert_YUV2YUV_src_out;
+                if (this->GetEndian() == ptENDIAN_LE)
+                {
+                    pDataTmp = this->pData + srcOffsetY;
+                    pDataTmp2 = pDataTmp + this->stride;
+                    srcOffsetY += this->GetStride()<<1;
+                    goto Convert_YUV2YUV_src_out;
+                }
+                ptConvert_Endian32(this->pData + srcOffsetY, pDataTmp, this->width);
+                break;
             default:
                 bbErrSet(bbENOTSUP);
                 goto ptSprite_Convert_YUV2YUV_err;
@@ -793,7 +800,10 @@ bbERR ptSprite::Convert_YUV2YUV(ptSprite* pDst) const
                                             pDst->pPlane[0] + dstOffsetY,
                                             this->width);
                 break;
-            case ptCOLFMT_AYUV: break;
+            case ptCOLFMT_AYUV:
+                if (pDst->GetEndian() != ptENDIAN_LE)
+                    ptConvert_Endian32(pDataTmp, pDst->pData + dstOffsetY, this->width);
+                break;
             default:
                 bbErrSet(bbENOTSUP);
                 goto ptSprite_Convert_YUV2YUV_err;
@@ -926,7 +936,7 @@ bbERR ptSprite::Convert_RGB2YUV(ptSprite* pDst) const
         switch(pDst->GetColFmt())
         {
         case ptCOLFMT_YUV444: ptConvert_RGBA8888ToYUV444(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
-        case ptCOLFMT_AYUV:   ptConvert_RGBA8888ToAYUV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
+        case ptCOLFMT_AYUV:   ptConvert_RGBA8888ToAYUV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix(), pDst->GetEndian()); break;
         case ptCOLFMT_YUYV:
         case ptCOLFMT_YVYU:   ptConvert_RGBA8888ToYUYV(pDataTmp, pDataDst, this->width, rgb2yuv.GetMatrix()); break;
         case ptCOLFMT_UYVY:

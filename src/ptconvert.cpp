@@ -1670,31 +1670,103 @@ void ptConvert_AYUVToRGB888(const bbU8* pSrc,
     }
 }
 
-void ptConvert_AYUVToRGBA8888(const bbU8* pSrc,
-                              bbU8* pDst,
-                              bbU32 width,
-                              const bbS16* pYUV2RGB)
+void ptConvert_AYUVToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pYUV2RGB, ptENDIAN srcEndian, ptENDIAN dstEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
 
-    while (pDst < pDstEnd)
+    if (srcEndian == ptENDIAN_LE)
     {
-        int const y = ((int)pSrc[2] + pYUV2RGB[0]);
-        int const u = ((int)(bbS8)(pSrc[1] + pYUV2RGB[1]));
-        int const v = ((int)(bbS8)(pSrc[0] + pYUV2RGB[2]));
+        if (dstEndian == ptENDIAN_LE)
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y = ((int)pSrc[2] + pYUV2RGB[0]);
+                int const u = ((int)(bbS8)(pSrc[1] + pYUV2RGB[1]));
+                int const v = ((int)(bbS8)(pSrc[0] + pYUV2RGB[2]));
 
-        register int p;
-        if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[2] = p; // B
-        if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[1] = p; // G
-        if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
-        if (p>255) p=255;
-        pDst[0] = p; // R
-        pDst[3] = pSrc[3]; pSrc+=4;
-        pDst += 4;
+                register int p;
+                if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // B
+                if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // G
+                if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[0] = p; // R
+                pDst[3] = pSrc[3]; pSrc+=4;
+                pDst += 4;
+            }
+        }
+        else
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y = ((int)pSrc[2] + pYUV2RGB[0]);
+                int const u = ((int)(bbS8)(pSrc[1] + pYUV2RGB[1]));
+                int const v = ((int)(bbS8)(pSrc[0] + pYUV2RGB[2]));
+
+                register int p;
+                if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // B
+                if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // G
+                if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3] = p; // R
+                pDst[0] = pSrc[3]; pSrc+=4;
+                pDst += 4;
+            }
+        }
+    }
+    else
+    {
+        if (dstEndian == ptENDIAN_LE)
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y = ((int)pSrc[1] + pYUV2RGB[0]);
+                int const u = ((int)(bbS8)(pSrc[2] + pYUV2RGB[1]));
+                int const v = ((int)(bbS8)(pSrc[3] + pYUV2RGB[2]));
+
+                register int p;
+                if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // B
+                if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // G
+                if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[0] = p; // R
+                pDst[3] = pSrc[0]; pSrc+=4;
+                pDst += 4;
+            }
+        }
+        else
+        {
+            while (pDst < pDstEnd)
+            {
+                int const y = ((int)pSrc[1] + pYUV2RGB[0]);
+                int const u = ((int)(bbS8)(pSrc[2] + pYUV2RGB[1]));
+                int const v = ((int)(bbS8)(pSrc[3] + pYUV2RGB[2]));
+
+                register int p;
+                if ((p = (y * pYUV2RGB[9] + u * pYUV2RGB[10]+ v * pYUV2RGB[11]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[1] = p; // B
+                if ((p = (y * pYUV2RGB[6] + u * pYUV2RGB[7] + v * pYUV2RGB[8]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[2] = p; // G
+                if ((p = (y * pYUV2RGB[3] + u * pYUV2RGB[4] + v * pYUV2RGB[5]) >> 10) < 0) p=0;
+                if (p>255) p=255;
+                pDst[3] = p; // R
+                pDst[0] = pSrc[0]; pSrc+=4;
+                pDst += 4;
+            }
+        }
     }
 }
 
@@ -1806,33 +1878,64 @@ void ptConvert_RGBA8888ToYUV444(const bbU8* pSrc, bbU8* pDst, bbU32 width, const
     }
 }
 
-void ptConvert_RGBA8888ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV)
+void ptConvert_RGBA8888ToAYUV(const bbU8* pSrc, bbU8* pDst, bbU32 width, const bbS16* pRGB2YUV, ptENDIAN dstEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
-    while (pDst < pDstEnd)
+    if (dstEndian == ptENDIAN_LE)
     {
-        int const r = (int)pSrc[0];
-        int const g = (int)pSrc[1];
-        int const b = (int)pSrc[2];
+        while (pDst < pDstEnd)
+        {
+            int const r = (int)pSrc[0];
+            int const g = (int)pSrc[1];
+            int const b = (int)pSrc[2];
 
-        register int p = (r * pRGB2YUV[3] + g * pRGB2YUV[4] + b * pRGB2YUV[5]) >> 10;
-        if ((p+=(int)pRGB2YUV[0]) < 0) p=0;
-        if (p>255) p=255;
-        pDst[2] = p; // Y
+            register int p = (r * pRGB2YUV[3] + g * pRGB2YUV[4] + b * pRGB2YUV[5]) >> 10;
+            if ((p+=(int)pRGB2YUV[0]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // Y
 
-        p = (r * pRGB2YUV[6] + g * pRGB2YUV[7] + b * pRGB2YUV[8]) >> 10;
-        if ((p+=(int)pRGB2YUV[1]) < 0) p=0;
-        if (p>255) p=255;
-        pDst[1] = p; // U
+            p = (r * pRGB2YUV[6] + g * pRGB2YUV[7] + b * pRGB2YUV[8]) >> 10;
+            if ((p+=(int)pRGB2YUV[1]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // U
 
-        p = (r * pRGB2YUV[9] + g * pRGB2YUV[10]+ b * pRGB2YUV[11]) >> 10;
-        if ((p+=(int)pRGB2YUV[2]) < 0) p=0;
-        if (p>255) p=255;
-        pDst[0] = p; // V
+            p = (r * pRGB2YUV[9] + g * pRGB2YUV[10]+ b * pRGB2YUV[11]) >> 10;
+            if ((p+=(int)pRGB2YUV[2]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[0] = p; // V
 
-        pDst[3] = pSrc[3];
-        pSrc += 4;
-        pDst += 4;
+            pDst[3] = pSrc[3];
+            pSrc += 4;
+            pDst += 4;
+        }
+    }
+    else
+    {
+        while (pDst < pDstEnd)
+        {
+            int const r = (int)pSrc[0];
+            int const g = (int)pSrc[1];
+            int const b = (int)pSrc[2];
+
+            register int p = (r * pRGB2YUV[3] + g * pRGB2YUV[4] + b * pRGB2YUV[5]) >> 10;
+            if ((p+=(int)pRGB2YUV[0]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[1] = p; // Y
+
+            p = (r * pRGB2YUV[6] + g * pRGB2YUV[7] + b * pRGB2YUV[8]) >> 10;
+            if ((p+=(int)pRGB2YUV[1]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[2] = p; // U
+
+            p = (r * pRGB2YUV[9] + g * pRGB2YUV[10]+ b * pRGB2YUV[11]) >> 10;
+            if ((p+=(int)pRGB2YUV[2]) < 0) p=0;
+            if (p>255) p=255;
+            pDst[3] = p; // V
+
+            pDst[0] = pSrc[3];
+            pSrc += 4;
+            pDst += 4;
+        }
     }
 }
 
