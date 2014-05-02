@@ -3382,3 +3382,14 @@ void ptConvert_AYUVToYUVNV21(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0,
         }
     }
 }
+
+void ptConvert_Endian32(const bbU8* pSrc, bbU8* pDst, bbU32 width)
+{
+    bbU8* const pDstEnd = pDst + (width<<2);
+    while (pDst < pDstEnd)
+    {
+        bbU32 v = bbLD32LE(pSrc); pSrc+=4;
+        bbST32BE(pDst, v); pDst+=4;
+    }
+}
+

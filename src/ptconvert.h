@@ -86,5 +86,7 @@ void ptConvert_AYUVToYUV420(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, 
 void ptConvert_AYUVToYUVNV12(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstUV, bbU32 width, ptENDIAN srcEndian);
 void ptConvert_AYUVToYUVNV21(const bbU8* pSrc0, const bbU8* pSrc1, bbU8* pDstY0, bbU8* pDstY1, bbU8* pDstVU, bbU32 width, ptENDIAN srcEndian);
 
+void ptConvert_Endian32(const bbU8* pSrc, bbU8* pDst, bbU32 width);
+
 #endif /* ptCONVERT_H_ */
 
