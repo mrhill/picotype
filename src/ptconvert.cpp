@@ -1870,16 +1870,55 @@ void ptConvert_RGBA8888ToBGR888(const bbU8* pSrc, bbU8* pDst, bbU32 width)
     }
 }
 
-void ptConvert_RGBA8888ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width)
+void ptConvert_RGBA8888ToBGRA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian, ptENDIAN dstEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
     bbU32 const mask = 0xFF00FF00UL;
-    while (pDst < pDstEnd)
+    if (srcEndian == ptENDIAN_LE)
     {
-        register bbU32 rgba = bbLD32LE(pSrc); pSrc+=4;
-        register bbU32 gb = rgba &~ mask;
-        rgba = (rgba & mask) | ((gb>>16) | (gb<<16));
-        bbST32LE(pDst, rgba); pDst+=4;
+        if (dstEndian == ptENDIAN_LE)
+        {
+            while (pDst < pDstEnd)
+            {
+                register bbU32 rgba = bbLD32LE(pSrc); pSrc+=4;
+                register bbU32 gb = rgba &~ mask;
+                rgba = (rgba & mask) | ((gb>>16) | (gb<<16));
+                bbST32LE(pDst, rgba); pDst+=4;
+            }
+        }
+        else
+        {
+            while (pDst < pDstEnd)
+            {
+                register bbU32 rgba = bbLD32LE(pSrc); pSrc+=4;
+                register bbU32 gb = rgba &~ mask;
+                rgba = (rgba & mask) | ((gb>>16) | (gb<<16));
+                bbST32BE(pDst, rgba); pDst+=4;
+            }
+        }
+    }
+    else
+    {
+        if (dstEndian == ptENDIAN_LE)
+        {
+            while (pDst < pDstEnd)
+            {
+                register bbU32 rgba = bbLD32BE(pSrc); pSrc+=4;
+                register bbU32 gb = rgba &~ mask;
+                rgba = (rgba & mask) | ((gb>>16) | (gb<<16));
+                bbST32LE(pDst, rgba); pDst+=4;
+            }
+        }
+        else
+        {
+            while (pDst < pDstEnd)
+            {
+                register bbU32 rgba = bbLD32BE(pSrc); pSrc+=4;
+                register bbU32 gb = rgba &~ mask;
+                rgba = (rgba & mask) | ((gb>>16) | (gb<<16));
+                bbST32BE(pDst, rgba); pDst+=4;
+            }
+        }
     }
 }
 
@@ -2192,10 +2231,10 @@ void ptConvert_BGR888ToRGB888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIA
     }
 }
 
-void ptConvert_BGRA8888ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN endian)
+void ptConvert_BGRA8888ToRGBA8888(const bbU8* pSrc, bbU8* pDst, bbU32 width, ptENDIAN srcEndian)
 {
     bbU8* const pDstEnd = pDst + (width<<2);
-    if (endian == ptENDIAN_LE)
+    if (srcEndian == ptENDIAN_LE)
     {
         while (pDst < pDstEnd)
         {

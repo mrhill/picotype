@@ -570,7 +570,7 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
             case ptCOLFMT_RGB888: ptConvert_RGBA8888ToRGB888(pDataTmp, pDataDst, this->width); break;
             case ptCOLFMT_BGR888: ptConvert_RGBA8888ToBGR888(pDataTmp, pDataDst, this->width); break;
             case ptCOLFMT_RGBA8888: break;
-            case ptCOLFMT_BGRA8888: ptConvert_RGBA8888ToBGRA8888(pDataTmp, pDataDst, this->width); break;
+            case ptCOLFMT_BGRA8888: ptConvert_RGBA8888ToBGRA8888(pDataTmp, pDataDst, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
             default:
                 bbErrSet(bbENOTSUP);
                 goto ptSprite_Convert_YUV2RGB_err;
@@ -855,7 +855,7 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
         case ptCOLFMT_RGB888: ptConvert_RGBA8888ToRGB888(pDataTmp, pDataDst, this->width); break;
         case ptCOLFMT_BGR888: ptConvert_RGBA8888ToBGR888(pDataTmp, pDataDst, this->width); break;
         case ptCOLFMT_RGBA8888: bbMemMove(pDataDst, pDataTmp, this->width<<2); break;
-        case ptCOLFMT_BGRA8888: ptConvert_RGBA8888ToBGRA8888(pDataTmp, pDataDst, this->width); break;
+        case ptCOLFMT_BGRA8888: ptConvert_RGBA8888ToBGRA8888(pDataTmp, pDataDst, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
         default:
             bbErrSet(bbENOTSUP);
             goto ptSprite_Convert_RGB2RGB_err;

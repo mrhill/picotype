@@ -155,7 +155,7 @@ struct ptColFmtInfo
     {/*ptCOLFMT_RGB888       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
     {/*ptCOLFMT_BGR888       */ 24, 1,1, 3,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB},\
     {/*ptCOLFMT_RGBA8888     */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
-    {/*ptCOLFMT_BGRA8888     */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB/*|ptCOLFMTFLAG_ENDIAN*/|ptCOLFMTFLAG_ALPHA},\
+    {/*ptCOLFMT_BGRA8888     */ 32, 1,1, 4,8, 0,  1, 0, 0, ptCOLFMTFLAG_RGB|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_ALPHA},\
     {/*ptCOLFMT_YUV420P      */  8, 2,2, 2,8, 1,  3, 1, 1, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV420P_YV12 */  8, 2,2, 2,8, 1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
     {/*ptCOLFMT_YUV420P_IMC3 */  8, 2,2, 2,8, 1,  3, 0, 1, ptCOLFMTFLAG_YUV}, /*PlaneShiftH is 0 (UV stride is equal to Y stride)*/\
