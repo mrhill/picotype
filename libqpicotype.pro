@@ -11,7 +11,7 @@ QMAKE_CXXFLAGS_DEBUG += /Zc:wchar_t /Zp4
 }
 
 debug {
-DEFINES += DEBUG
+#DEFINES += DEBUG
 }
 
 # Input
