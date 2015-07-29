@@ -91,7 +91,8 @@ enum ptCOLFMT
     ptCOLFMT_YUV420P_NV12,//!< Semi-planar Y,UV 4:2:0, 2 planes, UV plane with interleaved pixels
     ptCOLFMT_YUV420P_NV21,//!< Semi-planar Y,VU 4:2:0, 2 planes, VU plane with interleaved pixels
     ptCOLFMT_YUV420P_16,  //!< YUV 4:2:0, 3 planes, 16-bit channels
-    ptCOLFMT_YUV411,      //!< YUV 4:4:0, 1 plane, 6 byte tuples of U0,Y0,V0,Y1,Y2,Y3 
+    ptCOLFMT_YUV420P_P016,//!< Semi-planar YUV 4:2:0, 2 planes, UV plane with interleaved pixels, 16-bit channels
+    ptCOLFMT_YUV411,      //!< YUV 4:4:0, 1 plane, 6 byte tuples of U0,Y0,V0,Y1,Y2,Y3
     ptCOLFMT_YUV422_V210, //!< YUV 4:2:2, 1 plane, 4 DWORD tuples of 10-bit YUV, V01_Y0_U01 Y2_U23_Y1 U45_Y3_V23 Y5_V45_Y4
     ptCOLFMT_YUYV,        //!< YUV 4:2:2, 1 plane, 0xVVYYUUYY packing
     ptCOLFMT_UYVY,        //!< YUV 4:2:2, 1 plane, 0xYYVVYYUU packing
@@ -165,6 +166,7 @@ struct ptColFmtInfo
     {/*ptCOLFMT_YUV420P_NV12 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV}, /**/\
     {/*ptCOLFMT_YUV420P_NV21 */  8, 2,2, 2,8, 1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_SWAPUV},\
     {/*ptCOLFMT_YUV420P_16   */ 16, 2,2, 4,16,1,  3, 1, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
+    {/*ptCOLFMT_YUV420P_P016 */ 16, 2,2, 4,16,1,  2, 0, 1, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
     {/*ptCOLFMT_YUV411       */ 12, 4,1, 6,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV},\
     {/*ptCOLFMT_YUV422_V210  */ 20, 6,1,16,10,1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN|ptCOLFMTFLAG_NOTREG},\
     {/*ptCOLFMT_YUYV         */ 16, 2,1, 4,8, 1,  1, 0, 0, ptCOLFMTFLAG_YUV|ptCOLFMTFLAG_ENDIAN},\
@@ -218,7 +220,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     @param (ptCOLFMT) Colour format ID
     @return true if variable bits supported, false otherwise
 */
-#define ptColFmtHasVariableBitPerComponent(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_BAYER) || (colfmt==ptCOLFMT_YUV420P_16))
+#define ptColFmtHasVariableBitPerComponent(colfmt) ((ptgColFmtInfo[colfmt].flags & ptCOLFMTFLAG_BAYER) || (colfmt==ptCOLFMT_YUV420P_16)|| (colfmt==ptCOLFMT_YUV420P_P016))
 
 /** Get bits per pixel for colour format.
     @return BPP
@@ -253,6 +255,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
     bbT("YVU420 planar NV12"),\
     bbT("YVU420 planar NV21"),\
     bbT("YVU420 planar 16-bit"),\
+    bbT("YVU420 planar P010/P016"),\
     bbT("YUV411"),\
     bbT("YUV422 10-bit V210"),\
     bbT("YUV422 YUYV"),\
@@ -273,7 +276,7 @@ ptCOLTYPE ptColFmtGetType(ptCOLFMT fmt);
 #define ptCOLFMTNAMEMAXLEN 24
 
 /** Index of FourCC code in colour format name, or 0 if none. */
-#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,0,14,7,7,7,7,14,0,0,0,0, 0,0,0,0
+#define ptCOLFMTFOURCCIDX 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,19,0,14,7,7,7,7,14,0,0,0,0, 0,0,0,0
 
 /** YUV to RGB conversion matrix IDs. */
 enum ptYUV2RGBID

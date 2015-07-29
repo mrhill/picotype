@@ -39,6 +39,7 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
         break;
     case ptCOLFMT_YUV420P_NV12:
     case ptCOLFMT_YUV420P_NV21:
+    case ptCOLFMT_YUV420P_P016:
         this->pPlane[0] = pPlanes[0];
         this->pPlane[1] = pPlanes[0] + stride;
         this->pPlane[2] = pPlanes[1];
@@ -56,6 +57,7 @@ void ptSprite::Create(bbU8** pPlanes, bbU32 width, bbU32 height, bbU32 stride, b
     this->colfmt = fmt;
     this->endian = endian;
     this->bitorder = bitorder;
+    this->bpc = ptgColFmtInfo[fmt].bpc;
 }
 
 void ptSprite::Create(bbU8* pData, bbU32 width, bbU32 height, bbU32 stride, bbU32 strideUV, ptCOLFMT fmt, ptENDIAN endian, ptBITORDER bitorder)
@@ -115,6 +117,7 @@ bbUINT ptSprite::GetPlaneCount() const
         return 4;
     case ptCOLFMT_YUV420P_NV12:
     case ptCOLFMT_YUV420P_NV21:
+    case ptCOLFMT_YUV420P_P016:
         return 3;
     default:
         return ptgColFmtInfo[colfmt].PlaneCount;
@@ -172,6 +175,7 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
             break;
         case ptCOLFMT_YUV420P_NV12:
         case ptCOLFMT_YUV420P_NV21:
+        case ptCOLFMT_YUV420P_P016:
             if (plane <= 1)
             {
                 pPlane->mColComp = 0;
@@ -187,7 +191,7 @@ void ptSprite::GetPlane(bbUINT plane, ptPlane* pPlane) const
                 pPlane->mWidth >>= 1;
                 pPlane->mHeight >>= 1;
                 pPlane->mStride = strideUV;
-                pPlane->mBPP = 16;
+                pPlane->mBPP = colfmt == ptCOLFMT_YUV420P_P016 ? 32 : 16;
             }
             break;
         default:
@@ -255,6 +259,7 @@ bbERR ptSprite::ApplyCrop(bbU32 x, bbU32 y, bbU32 width, bbU32 height)
             break;
         case ptCOLFMT_YUV420P_NV12:
         case ptCOLFMT_YUV420P_NV21:
+        case ptCOLFMT_YUV420P_P016:
             this->pPlane[0] += this->stride*y + x;
             this->pPlane[1] += this->stride*y + x;
             this->pPlane[2] += this->strideUV*(y>>pInfo->PlaneShiftV) + x;
@@ -464,6 +469,22 @@ bbERR ptSprite::Convert_YUV2RGB(ptSprite* pDst) const
                                          pYUV2RGB,
                                          shift,
                                          this->GetEndian());
+            offsetY  += this->GetStride()<<1;
+            offsetUV += this->GetStrideUV();
+            lines = 2;
+            break;
+
+        case ptCOLFMT_YUV420P_P016:
+            shift = this->GetBitsPerComponent()-8;
+            if (shift<0) shift=0;
+            ptConvert_YUV420P016ToRGBA8888(this->pPlane[0] + offsetY,
+                                           (height==1) ? NULL : this->pPlane[1] + offsetY,
+                                           this->pPlane[2] + offsetUV,
+                                           pDataTmp,
+                                           this->width,
+                                           pYUV2RGB,
+                                           shift,
+                                           this->GetEndian());
             offsetY  += this->GetStride()<<1;
             offsetUV += this->GetStrideUV();
             lines = 2;
@@ -870,7 +891,7 @@ bbERR ptSprite::Convert_RGB2RGB(ptSprite* pDst) const
             if (pDst->GetEndian() == ptENDIAN_LE)
                 bbMemMove(pDataDst, pDataTmp, this->width<<2);
             else
-                ptConvert_Endian32(pDataTmp, pDataDst, this->width);                
+                ptConvert_Endian32(pDataTmp, pDataDst, this->width);
             break;
         case ptCOLFMT_BGRA8888: ptConvert_RGBA8888ToBGRA8888(pDataTmp, pDataDst, this->width, ptENDIAN_LE, pDst->GetEndian()); break;
         default:
